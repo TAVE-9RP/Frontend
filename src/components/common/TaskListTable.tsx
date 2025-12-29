@@ -28,7 +28,6 @@ export default function TaskListTable({
   const navigate = useNavigate();
 
   const isOutbound = type === 'outbound';
-  const basePath = isOutbound ? '/outbound-task' : '/inbound-task';
   const taskLabel = isOutbound ? '출하' : '입고';
   const finalPath = externalPath || (isOutbound ? '/outbound-task' : '/inbound-task');
 
@@ -36,15 +35,15 @@ export default function TaskListTable({
     navigate(`${finalPath}/${projectNumber}`);
   };
 
-  const tableHeaderClasses =
-    'py-3 px-4 font-bold text-sm text-greyColor-grey700 bg-subColor-orange050 border-b border-subColor-orange100 border-r border-greyColor-grey200';
+  const commonCellClasses =
+    'h-[40px] px-4 border-r-2 last:border-r-0 border-greyColor-grey200 text-center align-middle text-sm';
 
-  const tableCellClasses =
-    'py-3 px-4 text-sm text-greyColor-grey800 border-b border-greyColor-grey200 border-r border-greyColor-grey200';
+  const tableHeaderClasses = `${commonCellClasses} border-b-2 font-bold text-greyColor-grey700 bg-subColor-orange050`;
+
+  const tableCellClasses = `${commonCellClasses}`;
 
   const statusChipClasses = (status: TaskData['status']) => {
-    const baseChipStyle =
-      'inline-flex items-center justify-center rounded-full px-[10px] py-[4px] text-xs font-medium whitespace-nowrap';
+    const baseChipStyle = 'px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap';
 
     switch (status) {
       case 'TASK_ASSIGNMENT':
@@ -79,52 +78,64 @@ export default function TaskListTable({
   }
 
   return (
-    <div className="overflow-x-auto border border-greyColor-grey200" style={{ width: '1040px' }}>
-      <table className="min-w-full divide-y divide-greyColor-grey200">
-        <thead className="bg-subColor-orange050">
-          <tr>
-            <th className={`${tableHeaderClasses} text-center`}>프로젝트 넘버</th>
-            <th className={`${tableHeaderClasses} text-center`}>{taskLabel} 업무명</th>
-            <th className={`${tableHeaderClasses} text-center`}>{taskLabel} 품목</th>
-            <th className={`${tableHeaderClasses} text-center`}>위치</th>
-            <th className={`${tableHeaderClasses} text-center`}>요청일</th>
-            <th className={`${tableHeaderClasses} text-center`}>담당자</th>
-            <th className={`${tableHeaderClasses} border-r-0 text-center`}>진행 상태</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-greyColor-grey200 bg-white">
-          {data.length === 0 ? (
+    <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200">
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-fixed border-collapse bg-white">
+          <thead className="bg-subColor-orange050">
             <tr>
-              <td
-                colSpan={7}
-                className={`${tableCellClasses} border-r-0 text-center text-greyColor-grey500`}
-              >
-                해당 업무 목록이 없습니다.
-              </td>
+              <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
+              <th className={`${tableHeaderClasses} w-[170px]`}>{taskLabel} 업무명</th>
+              <th className={`${tableHeaderClasses} w-[200px]`}>{taskLabel} 품목</th>
+              <th className={`${tableHeaderClasses} w-[180px]`}>요청일</th>
+              <th className={`${tableHeaderClasses} w-[170px]`}>담당자</th>
+              <th className={`${tableHeaderClasses} w-[140px]`}>진행 상태</th>
             </tr>
-          ) : (
-            data.map((task) => (
-              <tr
-                key={task.id}
-                className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
-                onClick={() => handleRowClick(task.projectNumber)}
-              >
-                <td className={`${tableCellClasses} font-mono`}>{task.projectNumber}</td>
-                <td className={tableCellClasses}>{task.taskName}</td>
-                <td className={tableCellClasses}>{task.items}</td>
-                <td className={tableCellClasses}>{task.location}</td>
-                <td className={tableCellClasses}>{task.requestDate}</td>
-                <td className={tableCellClasses}>{task.manager}</td>
-                <td className={`${tableCellClasses} border-r-0 text-center`}>
-                  <span className={statusChipClasses(task.status)}>
-                    {getStatusText(task.status)}
-                  </span>
+          </thead>
+          <tbody>
+            {data.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="h-[40px] text-center text-sm text-greyColor-grey500">
+                  해당 업무 목록이 없습니다.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              data.map((task, index) => {
+                const isLastRow = index === data.length - 1;
+                const bottomBorderClass = isLastRow ? 'border-b-0' : 'border-b-2';
+
+                return (
+                  <tr
+                    key={task.id}
+                    onClick={() => handleRowClick(task.projectNumber)}
+                    className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
+                  >
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>
+                      {task.projectNumber}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {task.taskName}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {task.items}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {task.requestDate}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {task.manager}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass}`}>
+                      <span className={statusChipClasses(task.status)}>
+                        {getStatusText(task.status)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
