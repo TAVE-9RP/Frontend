@@ -189,18 +189,24 @@ export default function ProjectManagementListPage() {
 
       <main className="flex-1 bg-white">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <h1 className="font-pretendard text-2xl font-bold text-black">전체 프로젝트 관리</h1>
+          <div className="mb-[67px] flex items-center">
+            <h1 className="whitespace-nowrap font-pretendard text-2xl font-bold text-black">
+              전체 프로젝트 관리
+            </h1>
 
-          <div className="mt-12 w-[1040px]">
-            <SearchBar
-              placeholder="프로젝트 넘버 또는 프로젝트 제목을 입력하세요."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
+            <button
+              onClick={handleCreateProjectClick}
+              className="ml-[725px] mt-[14.5px] flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
+            >
+              <img src="src/assets/add.png" alt="Add Icon" className="mr-[5px] h-[26px] w-[26px]" />
+              <span className="font-pretendard text-[17px] font-bold text-white">
+                프로젝트 생성
+              </span>
+            </button>
           </div>
 
-          <div className="mb-6 mt-5 flex w-[1040px] items-center justify-between">
-            <div className="flex gap-4">
+          <div className="mb-[27px] flex items-center">
+            <div className="flex gap-[10px]">
               {INITIAL_STATUS_DATA.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
@@ -212,16 +218,13 @@ export default function ProjectManagementListPage() {
               ))}
             </div>
 
-            <button
-              onClick={handleCreateProjectClick}
-              className="flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
-            >
-              <img src="src/assets/add.png" alt="Add Icon" className="mr-[5px] h-[26px] w-[26px]" />
-
-              <span className="font-pretendard text-[17px] font-bold text-white">
-                프로젝트 생성
-              </span>
-            </button>
+            <div className="ml-[362px]">
+              <SearchBar
+                placeholder="프로젝트 넘버 또는 프로젝트 제목을 입력하세요."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
         </div>
 

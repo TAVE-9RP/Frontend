@@ -11,11 +11,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   ...rest
 }) => {
   return (
-    <div className="border-greyColor-500 flex h-[45px] w-[500px] items-center justify-between rounded-[10px] border bg-white px-[20px] py-[10px]">
+    <div className="flex h-[40px] w-[450px] items-center justify-between rounded-[10px] border border-greyColor-grey400 bg-white px-[20px] py-[10px]">
       <input
         type="text"
         placeholder={placeholder}
-        className="h-full flex-1 border-none bg-transparent pr-[10px] font-pretendard text-[15px] font-normal outline-none"
+        className="h-full flex-1 border-none bg-transparent pr-[10px] font-pretendard text-[17px] font-normal placeholder-greyColor-grey400 outline-none"
         {...rest}
       />
 

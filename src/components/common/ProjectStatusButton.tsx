@@ -16,24 +16,13 @@ export default function ProjectStatusButton({
   className = '',
 }: ProjectStatusButtonProps) {
   const baseClasses = `
-    flex h-10 px-[15px] py-[10px] 
-    justify-center items-center gap-[5px] 
-    rounded-[50px] cursor-pointer text-center
-    transition-colors duration-200
-    whitespace-nowrap ${className}
+  flex px-[12px] py-[8px] justify-center items-center gap-[5px] rounded-[50px] cursor-pointer text-center transition-colors duration-200 whitespace-nowrap ${className}
   `;
 
-  const activeClasses = `
-    border border-mainColor-blue600 
-    bg-mainColor-blue050 
-    text-mainColor-blue600
+  const activeClasses = `border border-mainColor-blue600 bg-mainColor-blue050 text-mainColor-blue600
   `;
 
-  const inactiveClasses = `
-    border border-greyColor-grey400 
-    bg-white 
-    text-greyColor-grey400 
-    hover:border-mainColor-blue300 hover:text-mainColor-blue300
+  const inactiveClasses = `border border-greyColor-grey400 bg-white text-greyColor-grey400 hover:border-mainColor-blue300 hover:text-mainColor-blue300
   `;
 
   return (
