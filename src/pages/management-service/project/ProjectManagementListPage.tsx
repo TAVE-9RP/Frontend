@@ -79,6 +79,8 @@ const MOCK_PROJECT_LIST: Project[] = [
   },
 ];
 
+// 정적 카운트 대신 상태에 따라 변할 수 있도록 컴포넌트 내부에서 계산하거나
+// 여기서는 간단히 초기 Mock 데이터 기준만 유지합니다. (실제 구현 시엔 동적으로 바꿔야 함)
 const getStatusCounts = () => ({
   IN_PROGRESS: MOCK_PROJECT_LIST.filter((p) => p.status === 'IN_PROGRESS').length,
   PENDING: MOCK_PROJECT_LIST.filter((p) => p.status === 'PENDING').length,
@@ -93,7 +95,7 @@ const INITIAL_STATUS_DATA = [
   { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
 ];
 
-const pageTitleStyle = {
+const pageTitleStyle: React.CSSProperties = {
   color: '#000',
   fontFamily: 'Pretendard',
   fontSize: '24px',
@@ -107,6 +109,7 @@ export default function ProjectManagementListPage() {
   const [activeStatus, setActiveStatus] = useState<string>('IN_PROGRESS');
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -117,30 +120,74 @@ export default function ProjectManagementListPage() {
       project.projectNumber.includes(searchTerm) || project.projectTitle.includes(searchTerm),
   );
 
+  // [수정됨] LocalStorage 데이터 + Mock 데이터를 합쳐서 상태별로 필터링하는 함수
+  // [수정됨] LocalStorage 데이터 + Mock 데이터를 합쳐서 상태별로 필터링하는 함수
   const fetchProjectsByStatus = (status: string) => {
     setIsLoading(true);
 
-    // API 호출 모방
     setTimeout(() => {
-      const filteredList = MOCK_PROJECT_LIST.filter((project) => project.status === status);
+      // 1. 로컬 스토리지에서 데이터 가져오기
+      const savedProjectsString = localStorage.getItem('projects');
+      let savedProjects: any[] = [];
+
+      if (savedProjectsString) {
+        try {
+          const parsed = JSON.parse(savedProjectsString);
+          savedProjects = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          console.error('Failed to parse projects from localStorage', e);
+        }
+      }
+
+      // 2. 데이터 형식 변환 (담당자 이름 추출 로직 강화)
+      const formattedSavedProjects: Project[] = savedProjects.map((p: any) => ({
+        id: p.id || Date.now(),
+        projectNumber: p.projectNumber || 'NEW-PROJ',
+        projectTitle: p.title || p.projectTitle || '제목 없음',
+        projectDescription: p.description || p.projectDescription || '',
+        client: p.client || '',
+        creationDate: p.creationDate || new Date().toISOString().split('T')[0],
+
+        // [수정 포인트] 담당자가 객체 배열로 저장되어 있으므로, label(이름)을 추출합니다.
+        manager: Array.isArray(p.manager)
+          ? p.manager.map((m: any) => m.label || m.name || String(m)).join(', ')
+          : typeof p.manager === 'object' && p.manager !== null
+            ? p.manager.label || p.manager.name || '확인 필요'
+            : p.manager || '미정',
+
+        status:
+          p.status === '진행중'
+            ? 'IN_PROGRESS'
+            : p.status === '미진행'
+              ? 'PENDING'
+              : p.status === '완료'
+                ? 'COMPLETED'
+                : 'IN_PROGRESS',
+      }));
+
+      // 3. 최신순 정렬 및 Mock 데이터 병합
+      const allProjects = [...formattedSavedProjects.reverse(), ...MOCK_PROJECT_LIST];
+
+      // 4. 상태별 필터링
+      const filteredList = allProjects.filter((project) => project.status === status);
+
       setProjectList(filteredList);
       setIsLoading(false);
-    }, 500);
+    }, 300);
   };
 
   const handleStatusClick = (status: string) => {
     if (activeStatus === status) return;
     setActiveStatus(status);
-    fetchProjectsByStatus(status);
+    // 상태가 변경되면 다시 fetch 실행
+    // useEffect에서 activeStatus 변경을 감지하므로 여기서는 상태만 변경해도 됨
   };
-
-  const navigate = useNavigate();
 
   const handleCreateProjectClick = () => {
     navigate('/project-create');
-    console.log('프로젝트 생성 페이지로 이동');
   };
 
+  // activeStatus가 변경될 때마다 데이터를 다시 불러옴
   useEffect(() => {
     fetchProjectsByStatus(activeStatus);
   }, [activeStatus]);
@@ -167,7 +214,7 @@ export default function ProjectManagementListPage() {
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
-                  count={item.count}
+                  count={item.count} // 주의: 이 count는 Mock 데이터 기준 고정값입니다. 동적으로 하려면 별도 로직 필요
                   isActive={activeStatus === item.status}
                   onClick={() => handleStatusClick(item.status)}
                 />
@@ -176,19 +223,23 @@ export default function ProjectManagementListPage() {
 
             <button
               onClick={handleCreateProjectClick}
-              className="flex items-center gap-[5px] bg-mainColor-blue600 transition-colors"
+              className="flex items-center gap-[5px] bg-mainColor-blue600 transition-colors hover:bg-blue-600"
               style={{
                 height: '40px',
                 width: '151px',
                 borderRadius: '10px',
+                cursor: 'pointer',
+                border: 'none',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
+              {/* 이미지 경로 확인 필요 */}
               <img
                 src="src/assets/add.png"
                 alt="Add Icon"
-                width={26}
-                height={26}
-                className="ml-[10px]"
+                style={{ width: '26px', height: '26px', marginRight: '5px' }}
               />
 
               <span
@@ -198,7 +249,6 @@ export default function ProjectManagementListPage() {
                   fontSize: '17px',
                   fontWeight: 700,
                   fontStyle: 'normal',
-                  marginRight: '10px',
                 }}
               >
                 프로젝트 생성

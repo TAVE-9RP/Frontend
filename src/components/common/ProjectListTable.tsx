@@ -20,7 +20,6 @@ interface ProjectListTableProps {
 export default function ProjectListTable({ data, isLoading }: ProjectListTableProps) {
   const navigate = useNavigate();
 
-  // 행 클릭 시 프로젝트 상세 페이지로 이동
   const handleRowClick = (projectId: number) => {
     navigate(`/project/${projectId}`);
     console.log(`프로젝트 ${projectId} 상세 페이지로 이동`);

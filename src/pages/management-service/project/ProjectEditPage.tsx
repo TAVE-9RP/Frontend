@@ -282,7 +282,6 @@ export default function ProjectCreatePage() {
         isOpen={isModalOpen}
         onClose={handleModalClose}
         onConfirm={handleModalConfirm}
-        message="프로젝트를 수정하시겠습니까?"
       />
     </div>
   );

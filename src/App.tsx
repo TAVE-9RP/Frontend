@@ -43,7 +43,6 @@ function App() {
         <Route path="signupfailure" element={<SignupFailurePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sidebartest" element={<Sidebartest />} />
-        {/* <Route path="projectmanagementlist" element={<ProjectManagementListPage />} /> */}
         <Route path="/project-management" element={<ProjectManagementListPage />} />
         <Route path="/project-create" element={<ProjectCreatePage />} />
         <Route path="/project-edit" element={<ProjectEditPage />} />

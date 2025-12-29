@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. 네비게이션 훅 import
 import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
@@ -6,6 +7,7 @@ import AssignmentChip from '../../../components/common/AssignmentChip';
 import DropdownInput, { DropdownOption } from '../../../components/common/DropdownInput';
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
+import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
 
 const labelStyle: React.CSSProperties = {
   fontFamily: 'Pretendard',
@@ -42,6 +44,8 @@ const FormGroup: React.FC<FormGroupProps> = ({ label, children, marginBottom = '
 );
 
 export default function ProjectCreatePage() {
+  const navigate = useNavigate(); // 2. 네비게이트 함수 생성
+
   const [formData, setFormData] = useState({
     projectTitle: '',
     projectDescription: '',
@@ -55,7 +59,9 @@ export default function ProjectCreatePage() {
   const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -65,12 +71,9 @@ export default function ProjectCreatePage() {
   const handleChipClick = (type: 'inbound' | 'logistics') => {
     setActiveAssignment(type);
 
-    // 선택되지 않은 쪽의 데이터를 초기화합니다.
     if (type === 'inbound') {
-      // 입고 업무를 선택하면, 물류 업무 담당자 데이터를 비웁니다.
       setLogisticsManager([]);
     } else {
-      // 물류 업무를 선택하면, 입고 업무 담당자 데이터를 비웁니다.
       setInventoryManager([]);
     }
   };
@@ -91,17 +94,43 @@ export default function ProjectCreatePage() {
     return baseValid && managerValid;
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
 
-  const handleModalConfirm = () => {
-    setIsModalOpen(false);
-    alert('프로젝트가 성공적으로 생성되었습니다!');
-  };
-
-  const handleModalClose = () => setIsModalOpen(false);
-
   const handleCreateProject = () => {
     if (isFormValid) {
-      setIsModalOpen(true);
+      setIsConfirmModalOpen(true);
     }
+  };
+
+  // 3. 데이터 저장 및 완료 모달 띄우기 로직
+  const handleModalConfirm = () => {
+    setIsConfirmModalOpen(false);
+
+    // [임시 구현] LocalStorage에 데이터 저장 (API 연동 전까지 사용)
+    const newProject = {
+      id: Date.now(), // 고유 ID 생성
+      projectNumber: 'SYS-01-001', // 현재 하드코딩된 값 (실제로는 로직 필요)
+      title: formData.projectTitle,
+      client: formData.client,
+      description: formData.projectDescription,
+      targetDate: `${formData.targetYear}-${formData.targetMonth}-${formData.targetDay}`,
+      type: activeAssignment, // 'inbound' or 'logistics'
+      manager: activeAssignment === 'inbound' ? inventoryManager : logisticsManager,
+      status: '진행중', // 기본 상태
+    };
+
+    // 기존 리스트 가져오기 (없으면 빈 배열)
+    const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+    // 새 프로젝트 추가
+    localStorage.setItem('projects', JSON.stringify([...existingProjects, newProject]));
+
+    setIsSuccessModalOpen(true);
+  };
+
+  const handleConfirmModalClose = () => setIsConfirmModalOpen(false);
+
+  // 4. 목록으로 돌아가기 버튼 로직
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalOpen(false);
+    navigate('/project-management'); // 해당 경로로 이동
   };
 
   const buttonStyle: React.CSSProperties = {
@@ -226,7 +255,7 @@ export default function ProjectCreatePage() {
                   <DropdownInput
                     initialSelected={inventoryManager}
                     onChange={setInventoryManager}
-                    disabled={activeAssignment !== 'inbound'} // 물류 업무 선택 시 비활성화
+                    disabled={activeAssignment !== 'inbound'}
                   />
                 </FormGroup>
               </div>
@@ -236,7 +265,7 @@ export default function ProjectCreatePage() {
                   <DropdownInput
                     initialSelected={logisticsManager}
                     onChange={setLogisticsManager}
-                    disabled={activeAssignment !== 'logistics'} // 입고 업무 선택 시 비활성화
+                    disabled={activeAssignment !== 'logistics'}
                   />
                 </FormGroup>
               </div>
@@ -297,11 +326,12 @@ export default function ProjectCreatePage() {
       </main>
 
       <ProjectCreateModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
+        isOpen={isConfirmModalOpen}
+        onClose={handleConfirmModalClose}
         onConfirm={handleModalConfirm}
-        message="프로젝트를 생성하시겠습니까?"
       />
+
+      <ProjectSuccessModal isOpen={isSuccessModalOpen} onClose={handleSuccessModalClose} />
     </div>
   );
 }

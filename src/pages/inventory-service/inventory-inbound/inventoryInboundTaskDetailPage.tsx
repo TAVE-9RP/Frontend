@@ -94,7 +94,6 @@ const MOCK_ITEMS: InboundItem[] = [
   },
 ];
 
-// 스타일 및 헬퍼 컴포넌트
 const labelStyle: React.CSSProperties = {
   fontFamily: 'Pretendard',
   fontSize: '19px',
@@ -113,7 +112,6 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; marginBott
   </div>
 );
 
-// 메인 컴포넌트
 export default function InventoryInboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
   const navigate = useNavigate();
@@ -127,15 +125,13 @@ export default function InventoryInboundTaskDetailPage() {
     status: '',
   });
 
-  const [items, setItems] = useState<InboundItem[]>([]); // 테이블 데이터 상태
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  const [items, setItems] = useState<InboundItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // 업무 상세 정보 찾기
     const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
     if (foundData) setTaskDetail(foundData);
 
-    // 물품 목록 가져오기 (API 호출 시뮬레이션)
     setIsLoading(true);
     setTimeout(() => {
       setItems(MOCK_ITEMS);

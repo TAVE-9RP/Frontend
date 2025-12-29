@@ -12,13 +12,13 @@ import companyImage from '@/assets/companyimage.png';
 export default function EmployeeRegisterSecondPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // 이전 페이지에서 전달받은 데이터
-  const { userId, email, password } = (location.state as {
-    userId?: string;
-    email?: string;
-    password?: string;
-  }) || {};
+
+  const { userId, email, password } =
+    (location.state as {
+      userId?: string;
+      email?: string;
+      password?: string;
+    }) || {};
 
   useEffect(() => {
     console.log('=== EmployeeRegisterSecondPage에서 받은 데이터 ===');
@@ -32,7 +32,6 @@ export default function EmployeeRegisterSecondPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 검색어가 변경될 때마다 API 호출
   useEffect(() => {
     const searchCompanies = async () => {
       if (searchTerm.trim() === '') {
@@ -57,7 +56,6 @@ export default function EmployeeRegisterSecondPage() {
       }
     };
 
-    // 디바운싱: 300ms 후에 검색
     const timeoutId = setTimeout(() => {
       searchCompanies();
     }, 300);

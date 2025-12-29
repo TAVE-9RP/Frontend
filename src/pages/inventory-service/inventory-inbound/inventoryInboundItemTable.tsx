@@ -16,7 +16,6 @@ interface InboundItemTableProps {
 }
 
 export default function InboundItemTable({ items, isLoading }: InboundItemTableProps) {
-  // 해당 컬럼의 데이터가 모두 비어있는지('-') 확인
   const isColumnEmpty = (key: keyof InboundItem) => {
     if (items.length === 0) return true;
     return items.every(
@@ -25,9 +24,7 @@ export default function InboundItemTable({ items, isLoading }: InboundItemTableP
     );
   };
 
-  // 헤더 텍스트 색상 결정
   const getHeaderTextColor = (key: keyof InboundItem | 'selection') => {
-    // '선택' 컬럼은 데이터가 없으므로(항상 '-') 무조건 grey300 처리
     if (key === 'selection') return 'text-greyColor-grey300';
 
     return isColumnEmpty(key) ? 'text-greyColor-grey300' : 'text-greyColor-grey900';

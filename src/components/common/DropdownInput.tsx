@@ -74,9 +74,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
     width: '390px',
     height: '50px',
     borderRadius: '10px',
-    // 삼항 연산자를 사용하여 disabled 상태에 따라 배경색을 결정합니다.
     background: disabled ? 'var(--greyColor-grey100, #F3F4F6)' : '#FFF',
-    // disabled일 때 클릭할 수 없다는 시각적 피드백을 위해 cursor 속성도 추가하는 것이 좋습니다.
     cursor: disabled ? 'not-allowed' : 'pointer',
   };
 

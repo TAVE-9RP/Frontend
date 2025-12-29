@@ -63,21 +63,17 @@ export default function MembershipManagementTable({
   const handleSave = async () => {
     setIsSaving(true);
 
-    // 1. 서버 전송용 데이터 생성 (단어 매핑 적용)
     const updates = Object.entries(statusChanges).map(([id, status]) => ({
       memberId: Number(id),
       newStatus: REVERSE_STATUS_MAP[status],
     }));
 
     try {
-      // 2. API 호출
       await updateMemberStatuses(updates);
 
-      // 3. 성공 시 상태 초기화 및 데이터 새로고침
       setStatusChanges({});
       await loadData();
 
-      // 사용자 경험을 위해 가벼운 알림 정도만 남겨둡니다.
       alert('성공적으로 변경되었습니다.');
     } catch (err: any) {
       console.error('가입 상태 변경 실패:', err);
@@ -91,7 +87,6 @@ export default function MembershipManagementTable({
   const isDirty = Object.keys(statusChanges).length > 0;
   const isLoading = parentLoading || localLoading;
 
-  // --- 🎨 기존 디자인 클래스 복구 ---
   const tableHeaderClasses =
     'py-3 px-4 font-bold text-sm text-greyColor-grey700 bg-subColor-orange050 border-b border-subColor-orange100 border-r border-greyColor-grey200';
   const tableCellClasses =

@@ -6,13 +6,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { postMemberSignup } from '@/apis/apiConnection';
 import defaultLogoImg from '@/assets/logoimg.png';
 
-// 부서 옵션 (표시명: 서버값)
 const DEPARTMENT_OPTIONS = [
   { label: '물류 부서', value: 'LOGISTICS' },
   { label: '재고 부서', value: 'INVENTORY' },
 ] as const;
 
-// 직급 옵션 (표시명: 서버값)
 const POSITION_OPTIONS = [
   { label: '인턴', value: 'INTERN' },
   { label: '주임', value: 'ASSISTANT_MANAGER' },
@@ -25,13 +23,13 @@ export default function EmployeeRegisterFourthPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 이전 페이지에서 전달받은 데이터
-  const { companyId, userId, email, password } = (location.state as {
-    companyId?: number;
-    userId?: string;
-    email?: string;
-    password?: string;
-  }) || {};
+  const { companyId, userId, email, password } =
+    (location.state as {
+      companyId?: number;
+      userId?: string;
+      email?: string;
+      password?: string;
+    }) || {};
 
   useEffect(() => {
     console.log('=== EmployeeRegisterFourthPage에서 받은 데이터 ===');
@@ -42,11 +40,10 @@ export default function EmployeeRegisterFourthPage() {
   }, [companyId, userId, email, password]);
 
   const [formData, setFormData] = useState({
-    department: '', // 서버에 보낼 값 (LOGISTICS, INVENTORY)
-    position: '', // 서버에 보낼 값 (INTERN, ASSISTANT_MANAGER, etc.)
+    department: '',
+    position: '',
   });
 
-  // 표시용 값 (한글)
   const [displayValues, setDisplayValues] = useState({
     department: '',
     position: '',
@@ -109,7 +106,7 @@ export default function EmployeeRegisterFourthPage() {
       const requestData = {
         loginId: userId,
         password: password,
-        name: userId, // loginId와 동일
+        name: userId,
         email: email,
         department: formData.department as 'LOGISTICS' | 'INVENTORY',
         position: formData.position as
@@ -132,7 +129,7 @@ export default function EmployeeRegisterFourthPage() {
       if (response.isSuccess) {
         navigate('/signupsuccess', {
           state: {
-            name: userId, // loginId를 name으로 전달
+            name: userId,
           },
         });
       } else {
