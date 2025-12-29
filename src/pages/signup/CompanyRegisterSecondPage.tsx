@@ -8,8 +8,7 @@ import { postMemberSignup } from '@/apis/apiConnection';
 export default function CompanyRegisterSecondPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // 이전 페이지에서 전달받은 companyId
+
   const companyId = location.state?.companyId as number | undefined;
 
   useEffect(() => {
@@ -96,11 +95,11 @@ export default function CompanyRegisterSecondPage() {
       const requestData = {
         loginId: formData.userId,
         password: formData.password,
-        name: formData.userId, // loginId와 동일
+        name: formData.userId,
         email: formData.email,
         department: 'MANAGEMENT' as const,
         position: 'OWNER' as const,
-        companyId: String(companyId), // number를 string으로 변환
+        companyId: String(companyId),
       };
 
       console.log('=== 회원가입 API 요청 ===');

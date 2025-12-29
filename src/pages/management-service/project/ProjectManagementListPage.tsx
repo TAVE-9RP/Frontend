@@ -93,20 +93,12 @@ const INITIAL_STATUS_DATA = [
   { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
 ];
 
-const pageTitleStyle = {
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
-};
-
 export default function ProjectManagementListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStatus, setActiveStatus] = useState<string>('IN_PROGRESS');
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -120,25 +112,71 @@ export default function ProjectManagementListPage() {
   const fetchProjectsByStatus = (status: string) => {
     setIsLoading(true);
 
-    // API 호출 모방
     setTimeout(() => {
-      const filteredList = MOCK_PROJECT_LIST.filter((project) => project.status === status);
+      const savedProjectsString = localStorage.getItem('projects');
+      let savedProjects: any[] = [];
+
+      if (savedProjectsString) {
+        try {
+          const parsed = JSON.parse(savedProjectsString);
+          savedProjects = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          console.error('Failed to parse projects from localStorage', e);
+        }
+      }
+
+      const formattedSavedProjects: Project[] = savedProjects.map((p: any) => {
+        let managerDisplay = '미정';
+
+        if (Array.isArray(p.manager) && p.manager.length > 0) {
+          const firstManager = p.manager[0];
+          const firstName = firstManager.label || firstManager.name || String(firstManager);
+
+          if (p.manager.length > 1) {
+            managerDisplay = `${firstName} 외 ${p.manager.length - 1}명`;
+          } else {
+            managerDisplay = firstName;
+          }
+        } else if (typeof p.manager === 'object' && p.manager !== null) {
+          managerDisplay = p.manager.label || p.manager.name || '확인 필요';
+        } else if (p.manager) {
+          managerDisplay = String(p.manager);
+        }
+
+        return {
+          id: p.id || Date.now(),
+          projectNumber: p.projectNumber || 'NEW-PROJ',
+          projectTitle: p.title || p.projectTitle || '제목 없음',
+          projectDescription: p.description || p.projectDescription || '',
+          client: p.client || '',
+          creationDate: p.creationDate || new Date().toISOString().split('T')[0],
+          manager: managerDisplay,
+          status:
+            p.status === '진행중'
+              ? 'IN_PROGRESS'
+              : p.status === '미진행'
+                ? 'PENDING'
+                : p.status === '완료'
+                  ? 'COMPLETED'
+                  : 'IN_PROGRESS',
+        };
+      });
+
+      const allProjects = [...formattedSavedProjects.reverse(), ...MOCK_PROJECT_LIST];
+      const filteredList = allProjects.filter((project) => project.status === status);
+
       setProjectList(filteredList);
       setIsLoading(false);
-    }, 500);
+    }, 300);
   };
 
   const handleStatusClick = (status: string) => {
     if (activeStatus === status) return;
     setActiveStatus(status);
-    fetchProjectsByStatus(status);
   };
-
-  const navigate = useNavigate();
 
   const handleCreateProjectClick = () => {
     navigate('/project-create');
-    console.log('프로젝트 생성 페이지로 이동');
   };
 
   useEffect(() => {
@@ -151,7 +189,7 @@ export default function ProjectManagementListPage() {
 
       <main className="flex-1 bg-white">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <h1 style={pageTitleStyle}>전체 프로젝트 관리</h1>
+          <h1 className="font-pretendard text-2xl font-bold text-black">전체 프로젝트 관리</h1>
 
           <div className="mt-12 w-[1040px]">
             <SearchBar
@@ -176,31 +214,11 @@ export default function ProjectManagementListPage() {
 
             <button
               onClick={handleCreateProjectClick}
-              className="flex items-center gap-[5px] bg-mainColor-blue600 transition-colors"
-              style={{
-                height: '40px',
-                width: '151px',
-                borderRadius: '10px',
-              }}
+              className="flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
             >
-              <img
-                src="src/assets/add.png"
-                alt="Add Icon"
-                width={26}
-                height={26}
-                className="ml-[10px]"
-              />
+              <img src="src/assets/add.png" alt="Add Icon" className="mr-[5px] h-[26px] w-[26px]" />
 
-              <span
-                style={{
-                  color: '#fff',
-                  fontFamily: 'Pretendard',
-                  fontSize: '17px',
-                  fontWeight: 700,
-                  fontStyle: 'normal',
-                  marginRight: '10px',
-                }}
-              >
+              <span className="font-pretendard text-[17px] font-bold text-white">
                 프로젝트 생성
               </span>
             </button>

@@ -5,27 +5,6 @@ import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '19px',
-  fontWeight: 700,
-  color: '#000',
-};
-
-const pageTitleStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontWeight: 700,
-  color: '#000',
-};
-
-const subTextStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '17px',
-  fontWeight: 400,
-  color: '#000',
-};
-
 const MOCK_DATA = [
   {
     projectNumber: 'SYS-01-001',
@@ -80,12 +59,12 @@ const MOCK_DATA = [
 interface FormGroupProps {
   label: string;
   children: React.ReactNode;
-  marginBottom?: string;
+  className?: string;
 }
 
-const FormGroup: React.FC<FormGroupProps> = ({ label, children, marginBottom = '0px' }) => (
-  <div style={{ marginBottom }}>
-    <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>{label}</label>
+const FormGroup: React.FC<FormGroupProps> = ({ label, children, className = '' }) => (
+  <div className={className}>
+    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     {children}
   </div>
 );
@@ -94,7 +73,6 @@ export default function InboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
   const navigate = useNavigate();
 
-  // 상세 데이터를 담을 상태
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
     taskName: '',
@@ -105,13 +83,11 @@ export default function InboundTaskDetailPage() {
   });
 
   useEffect(() => {
-    // URL의 projectNumber와 일치하는 데이터를 리스트에서 찾음
     const found = MOCK_DATA.find((item) => item.projectNumber === projectNumber);
 
     if (found) {
       setTaskDetail(found);
     } else {
-      // 데이터를 못 찾았을 경우 초기값 세팅 (또는 에러 처리)
       setTaskDetail({
         projectNumber: projectNumber || '',
         taskName: '데이터 없음',
@@ -127,32 +103,12 @@ export default function InboundTaskDetailPage() {
     navigate(-1);
   };
 
-  // 진행 상태바 스타일 결정 함수
-  const getStatusStyle = (currentStatus: string) => {
-    const isActive = taskDetail.status === currentStatus;
-    return {
-      backgroundColor: isActive ? '#FF8C00' : '#F2F4F7',
-      color: isActive ? '#FFFFFF' : '#C5C8CE',
-      fontWeight: isActive ? 700 : 400,
-    };
-  };
-
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
-        <div
-          className="relative flex flex-col shadow-xl"
-          style={{
-            width: '967px',
-            minHeight: '1000px',
-            borderRadius: '30px',
-            background: '#FFF',
-            padding: '78px',
-            boxShadow: '0 0 10px rgba(0,0,0,0.10)',
-          }}
-        >
+        <div className="relative flex min-h-[1000px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
           <button
             onClick={handleClose}
             className="absolute right-[50px] top-[50px] text-[30px] text-greyColor-grey600"
@@ -168,14 +124,14 @@ export default function InboundTaskDetailPage() {
 
           <div className="mt-[3px] flex-1"></div>
           <div className="mt-[60px] flex-1">
-            <div style={{ marginBottom: '60px' }}>
-              <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>
+            <div className="mb-[60px]">
+              <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">
                 진행 상태
               </label>
               <StatusStepBar currentStatus={taskDetail.status} type="inbound" />
             </div>
 
-            <div className="flex justify-between" style={{ marginBottom: '60px' }}>
+            <div className="mb-[60px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="프로젝트 넘버">
                   <BasicInput
@@ -194,7 +150,7 @@ export default function InboundTaskDetailPage() {
               </div>
             </div>
 
-            <div className="flex justify-between" style={{ marginBottom: '60px' }}>
+            <div className="mb-[60px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="입고 업무 담당자">
                   <BasicInput value={taskDetail.manager} readOnly />
@@ -208,9 +164,9 @@ export default function InboundTaskDetailPage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '80px' }}>
+            <div className="mb-[80px]">
               <FormGroup label="업무 설명">
-                <LargeInput value={taskDetail.description} readOnly style={{ height: '240px' }} />
+                <LargeInput value={taskDetail.description} readOnly className="h-[240px]" />
               </FormGroup>
             </div>
           </div>

@@ -102,18 +102,8 @@ const INITIAL_STATUS_DATA = [
   },
 ];
 
-const pageTitleStyle = {
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
-};
-
 export default function InboundTaskListPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  // '전체'를 초기 활성 상태로 설정
   const [activeStatus, setActiveStatus] = useState<InboundTask['status']>('ALL');
   const [taskList, setTaskList] = useState<InboundTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -122,7 +112,6 @@ export default function InboundTaskListPage() {
     setSearchTerm(event.target.value);
   };
 
-  // 상태에 따라 목록 필터링 (API 호출 모방)
   const fetchTasksByStatus = (status: InboundTask['status']) => {
     setIsLoading(true);
 
@@ -134,14 +123,13 @@ export default function InboundTaskListPage() {
         filteredList = MOCK_INBOUND_TASK_LIST.filter((task) => task.status === status);
       }
 
-      // 검색어 필터링 적용 (프로젝트 넘버 또는 업무명)
       const finalFilteredList = filteredList.filter(
         (task) => task.projectNumber.includes(searchTerm) || task.taskName.includes(searchTerm),
       );
 
       setTaskList(finalFilteredList);
       setIsLoading(false);
-    }, 300); // 로딩 시뮬레이션
+    }, 300);
   };
 
   const handleStatusClick = (status: InboundTask['status']) => {
@@ -149,10 +137,9 @@ export default function InboundTaskListPage() {
     setActiveStatus(status);
   };
 
-  // 검색어나 활성 상태가 변경될 때마다 목록을 다시 가져옴
   useEffect(() => {
     fetchTasksByStatus(activeStatus);
-  }, [activeStatus, searchTerm]); // 검색어도 의존성 배열에 포함
+  }, [activeStatus, searchTerm]);
 
   return (
     <div className="flex min-h-screen w-full">
@@ -160,7 +147,9 @@ export default function InboundTaskListPage() {
 
       <main className="flex-1 bg-white">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <h1 style={pageTitleStyle}>입고 업무 리스트</h1>
+          <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
+            입고 업무 리스트
+          </h1>
           <div className="mt-12 w-[1040px]">
             <SearchBar
               placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."

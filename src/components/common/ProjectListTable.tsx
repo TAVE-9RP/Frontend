@@ -20,7 +20,6 @@ interface ProjectListTableProps {
 export default function ProjectListTable({ data, isLoading }: ProjectListTableProps) {
   const navigate = useNavigate();
 
-  // 행 클릭 시 프로젝트 상세 페이지로 이동
   const handleRowClick = (projectId: number) => {
     navigate(`/project/${projectId}`);
     console.log(`프로젝트 ${projectId} 상세 페이지로 이동`);
@@ -50,10 +49,7 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
   }
 
   return (
-    <div
-      className="overflow-x-auto border border-greyColor-grey200"
-      style={{ width: '1040px', height: 'auto' }}
-    >
+    <div className="h-auto w-[1040px] overflow-x-auto border border-greyColor-grey200">
       <table className="min-w-full divide-y divide-greyColor-grey200">
         <thead className="bg-subColor-orange050">
           <tr>

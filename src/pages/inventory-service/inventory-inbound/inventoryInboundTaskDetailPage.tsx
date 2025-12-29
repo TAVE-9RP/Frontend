@@ -94,26 +94,17 @@ const MOCK_ITEMS: InboundItem[] = [
   },
 ];
 
-// 스타일 및 헬퍼 컴포넌트
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '19px',
-  fontWeight: 700,
-  color: '#000',
-};
-
-const FormGroup: React.FC<{ label: string; children: React.ReactNode; marginBottom?: string }> = ({
-  label,
-  children,
-  marginBottom = '0px',
-}) => (
-  <div style={{ marginBottom }}>
-    <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>{label}</label>
+const FormGroup: React.FC<{
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}> = ({ label, children, className = '' }) => (
+  <div className={className}>
+    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     {children}
   </div>
 );
 
-// 메인 컴포넌트
 export default function InventoryInboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
   const navigate = useNavigate();
@@ -127,15 +118,13 @@ export default function InventoryInboundTaskDetailPage() {
     status: '',
   });
 
-  const [items, setItems] = useState<InboundItem[]>([]); // 테이블 데이터 상태
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  const [items, setItems] = useState<InboundItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // 업무 상세 정보 찾기
     const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
     if (foundData) setTaskDetail(foundData);
 
-    // 물품 목록 가져오기 (API 호출 시뮬레이션)
     setIsLoading(true);
     setTimeout(() => {
       setItems(MOCK_ITEMS);
@@ -150,16 +139,7 @@ export default function InventoryInboundTaskDetailPage() {
       <SideBar />
 
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
-        <div
-          className="relative flex flex-col shadow-xl"
-          style={{
-            width: '967px',
-            minHeight: '1200px',
-            borderRadius: '30px',
-            background: '#FFF',
-            padding: '78px',
-          }}
-        >
+        <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <button
             onClick={handleClose}
             className="absolute right-[50px] top-[50px] text-[30px] text-greyColor-grey600"
@@ -173,7 +153,7 @@ export default function InventoryInboundTaskDetailPage() {
           </p>
 
           <div className="mt-[60px]">
-            <div className="flex justify-between" style={{ marginBottom: '60px' }}>
+            <div className="mb-[60px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="프로젝트 넘버">
                   <BasicInput
@@ -191,11 +171,11 @@ export default function InventoryInboundTaskDetailPage() {
               </div>
             </div>
 
-            <FormGroup label="업무 설명" marginBottom="60px">
-              <LargeInput value={taskDetail.description} readOnly style={{ height: '160px' }} />
+            <FormGroup label="업무 설명" className="mb-[60px]">
+              <LargeInput value={taskDetail.description} readOnly className="h-[160px]" />
             </FormGroup>
 
-            <div className="flex justify-between" style={{ marginBottom: '60px' }}>
+            <div className="mb-[60px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="요청일">
                   <BasicInput value={taskDetail.requestDate} readOnly />
@@ -210,7 +190,7 @@ export default function InventoryInboundTaskDetailPage() {
 
             <div className="mt-10">
               <div className="mb-[36px] flex items-center justify-between">
-                <h2 style={labelStyle}>입고 물품 목록</h2>
+                <h2 className="font-pretendard text-[19px] font-bold text-black">입고 물품 목록</h2>
                 <div className="flex gap-[8px]">
                   <button className="flex h-[37px] w-[117px] items-center justify-center whitespace-nowrap rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 px-[8px] py-[5px] font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200">
                     기존 재고 추가

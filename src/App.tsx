@@ -43,10 +43,9 @@ function App() {
         <Route path="signupfailure" element={<SignupFailurePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sidebartest" element={<Sidebartest />} />
-        {/* <Route path="projectmanagementlist" element={<ProjectManagementListPage />} /> */}
         <Route path="/project-management" element={<ProjectManagementListPage />} />
         <Route path="/project-create" element={<ProjectCreatePage />} />
-        <Route path="/project-edit" element={<ProjectEditPage />} />
+        <Route path="/project/:id" element={<ProjectEditPage />} />
         <Route path="/inbound-task" element={<InboundTaskListPage />} />
         <Route path="/inbound-task/:projectNumber" element={<InboundTaskDetailPage />} />
         <Route path="/outbound-task" element={<OutBoundTaskListPage />} />

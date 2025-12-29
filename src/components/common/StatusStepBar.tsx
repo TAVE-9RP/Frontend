@@ -11,7 +11,7 @@ const StatusChip: React.FC<StatusChipProps> = ({ label, isActive }) => {
     <div
       className={`flex h-[36px] min-w-[68px] items-center justify-center whitespace-nowrap rounded-full px-[10px] text-[12px] transition-all ${
         isActive
-          ? 'bg-[#FF9B3F] font-bold text-white'
+          ? 'bg-subColor-orange500 font-bold text-white'
           : 'border border-greyColor-grey300 bg-white font-normal text-greyColor-grey300'
       } `}
     >

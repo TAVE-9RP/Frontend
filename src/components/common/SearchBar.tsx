@@ -11,33 +11,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
   ...rest
 }) => {
   return (
-    <div
-      className="border-greyColor-500 flex items-center rounded-[10px] border bg-white"
-      style={{
-        width: '500px',
-        height: '45px',
-        padding: '10px 20px',
-        justifyContent: 'space-between',
-      }}
-    >
+    <div className="border-greyColor-500 flex h-[45px] w-[500px] items-center justify-between rounded-[10px] border bg-white px-[20px] py-[10px]">
       <input
         type="text"
         placeholder={placeholder}
-        style={{
-          flexGrow: 1,
-          height: '100%',
-          border: 'none',
-          outline: 'none',
-          paddingRight: '10px',
-          fontFamily: 'Pretendard',
-          fontSize: '15px',
-          fontWeight: 400,
-        }}
+        className="h-full flex-1 border-none bg-transparent pr-[10px] font-pretendard text-[15px] font-normal outline-none"
         {...rest}
       />
 
       {iconSrc && (
-        <img src={iconSrc} alt="Search Icon" width={20} height={20} style={{ cursor: 'pointer' }} />
+        <img src={iconSrc} alt="Search Icon" width={20} height={20} className="cursor-pointer" />
       )}
     </div>
   );
