@@ -15,12 +15,15 @@ export interface MemberSignupRequest {
   name: string;
   email: string;
   department: 'MANAGEMENT' | 'INVENTORY' | 'LOGISTICS';
-  position: 'OWNER' | 'DEPARTMENT_HEAD' | 'SENIOR_MANAGER' | 'MANAGER' | 'ASSISTANT_MANAGER' | 'INTERN';
+  position:
+    | 'OWNER'
+    | 'DEPARTMENT_HEAD'
+    | 'SENIOR_MANAGER'
+    | 'MANAGER'
+    | 'ASSISTANT_MANAGER'
+    | 'INTERN';
   companyId: string;
 }
-
-
-
 
 export interface MemberSignupResponse {
   timestamp: string;
@@ -30,4 +33,3 @@ export interface MemberSignupResponse {
   message: string;
   result?: any;
 }
-

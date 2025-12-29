@@ -10,6 +10,7 @@ export interface DropdownOption {
 interface DropdownInputProps {
   onChange?: (selected: DropdownOption[]) => void;
   initialSelected?: DropdownOption[];
+  disabled?: boolean;
 }
 
 const options: DropdownOption[] = [
@@ -21,7 +22,11 @@ const options: DropdownOption[] = [
   { id: 6, label: '손흥민', subLabel: '입고 1팀', team: '입고' },
 ];
 
-const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected = [] }) => {
+const DropdownInput: React.FC<DropdownInputProps> = ({
+  onChange,
+  initialSelected = [],
+  disabled = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedItems, setSelectedItems] = useState<DropdownOption[]>(initialSelected);
@@ -30,6 +35,10 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected
   useEffect(() => {
     if (onChange) onChange(selectedItems);
   }, [selectedItems, onChange]);
+
+  useEffect(() => {
+    setSelectedItems(initialSelected);
+  }, [initialSelected]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,6 +52,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected
   }, []);
 
   const handleInputClick = () => {
+    if (disabled) return;
     setIsOpen((prev) => !prev);
     setIsFocused(true);
   };
@@ -64,7 +74,10 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected
     width: '390px',
     height: '50px',
     borderRadius: '10px',
-    background: '#FFF',
+    // 삼항 연산자를 사용하여 disabled 상태에 따라 배경색을 결정합니다.
+    background: disabled ? 'var(--greyColor-grey100, #F3F4F6)' : '#FFF',
+    // disabled일 때 클릭할 수 없다는 시각적 피드백을 위해 cursor 속성도 추가하는 것이 좋습니다.
+    cursor: disabled ? 'not-allowed' : 'pointer',
   };
 
   const focusedBorderStyle = isFocused
@@ -74,7 +87,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className={`flex cursor-pointer items-center border transition-all duration-150 ${focusedBorderStyle}`}
+        className={`flex items-center border transition-all duration-150 ${focusedBorderStyle}`}
         style={baseInputStyle}
         onClick={handleInputClick}
       >
@@ -87,10 +100,13 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected
               <Chip key={item.id} label={item.label} onRemove={handleChipRemove(item.id)} />
             ))
           ) : (
-            <div className="text-[17px] text-greyColor-grey600">선택하세요</div>
+            <div
+              className={`text-[17px] ${disabled ? 'text-greyColor-grey400' : 'text-greyColor-grey600'}`}
+            >
+              {disabled ? '' : ''}
+            </div>
           )}
         </div>
-
         <div
           className="flex items-center justify-end"
           style={{ width: '40px', paddingRight: '10px' }}
@@ -98,7 +114,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, initialSelected
           <img
             src="src/assets/chevron-down.png"
             alt="Dropdown icon"
-            style={{ width: '13px', height: '13px' }}
+            style={{ width: '13px', height: '13px', opacity: disabled ? 0.3 : 1 }}
           />
         </div>
       </div>

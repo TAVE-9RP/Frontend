@@ -53,7 +53,7 @@ export default function ProjectCreatePage() {
   });
 
   const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
-  const [inventoryManager, setInventoryManager] = useState('');
+  const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -64,21 +64,32 @@ export default function ProjectCreatePage() {
 
   const handleChipClick = (type: 'inbound' | 'logistics') => {
     setActiveAssignment(type);
+
+    // 선택되지 않은 쪽의 데이터를 초기화합니다.
+    if (type === 'inbound') {
+      // 입고 업무를 선택하면, 물류 업무 담당자 데이터를 비웁니다.
+      setLogisticsManager([]);
+    } else {
+      // 물류 업무를 선택하면, 입고 업무 담당자 데이터를 비웁니다.
+      setInventoryManager([]);
+    }
   };
 
   const isFormValid = useMemo(() => {
-    return (
+    const baseValid =
       formData.projectTitle.trim() !== '' &&
       formData.projectDescription.trim() !== '' &&
       formData.client.trim() !== '' &&
       formData.jobDescription.trim() !== '' &&
-      inventoryManager.trim() !== '' &&
-      logisticsManager.length > 0 &&
       formData.targetYear.trim() !== '' &&
       formData.targetMonth.trim() !== '' &&
-      formData.targetDay.trim() !== ''
-    );
-  }, [formData, inventoryManager, logisticsManager]);
+      formData.targetDay.trim() !== '';
+
+    const managerValid =
+      activeAssignment === 'inbound' ? inventoryManager.length > 0 : logisticsManager.length > 0;
+
+    return baseValid && managerValid;
+  }, [formData, activeAssignment, inventoryManager, logisticsManager]);
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
@@ -211,18 +222,22 @@ export default function ProjectCreatePage() {
 
             <div className="mt-[80px] flex justify-between" style={{ marginBottom: '80px' }}>
               <div className="w-[390px]">
-                <FormGroup label="재고 업무 담당자">
-                  <BasicInput
-                    placeholder="담당자를 선택해주세요"
-                    value={inventoryManager}
-                    onChange={(e) => setInventoryManager(e.target.value)}
+                <FormGroup label="입고 업무 담당자">
+                  <DropdownInput
+                    initialSelected={inventoryManager}
+                    onChange={setInventoryManager}
+                    disabled={activeAssignment !== 'inbound'} // 물류 업무 선택 시 비활성화
                   />
                 </FormGroup>
               </div>
 
               <div className="w-[390px]">
                 <FormGroup label="물류 업무 담당자">
-                  <DropdownInput onChange={setLogisticsManager} />
+                  <DropdownInput
+                    initialSelected={logisticsManager}
+                    onChange={setLogisticsManager}
+                    disabled={activeAssignment !== 'logistics'} // 입고 업무 선택 시 비활성화
+                  />
                 </FormGroup>
               </div>
             </div>
