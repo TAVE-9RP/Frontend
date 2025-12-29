@@ -9,8 +9,7 @@ export default function SideBar() {
     {
       title: '관리 서비스',
       icon: '/src/assets/management_service.png',
-      marginTop: 'mt-[44px]',
-      marginBottom: 'mb-[20px]',
+      marginTop: 'mt-[69.77px]',
       homePath: '/management-home',
       subMenus: [
         { text: '전체 프로젝트 관리', path: '/project-management' },
@@ -23,7 +22,6 @@ export default function SideBar() {
       title: '재고 서비스',
       icon: '/src/assets/box.png',
       marginTop: 'mt-[32px]',
-      marginBottom: 'mb-[16px]',
       homePath: '/inventory-home',
       subMenus: [
         { text: '입고 업무 관리', path: '/inventory-inbound-task' },
@@ -34,47 +32,48 @@ export default function SideBar() {
       title: '물류 서비스',
       icon: '/src/assets/delivery.png',
       marginTop: 'mt-[32px]',
-      marginBottom: 'mb-[16px]',
       homePath: '/logistics-home',
       subMenus: [{ text: '출하 업무 관리', path: '/logistics-outbound-task' }],
     },
   ];
 
   const renderSubMenus = (subMenus: { text: string; path: string }[]) => {
-    return subMenus.map((menu, index) => {
-      const isProjectManagementActive =
-        menu.path === '/project-management' &&
-        (currentPath === '/project-create' || currentPath.startsWith('/project/'));
+    return (
+      <div className="mt-[16px] flex flex-col gap-[8px]">
+        {subMenus.map((menu) => {
+          const isProjectManagementActive =
+            menu.path === '/project-management' &&
+            (currentPath === '/project-create' || currentPath.startsWith('/project/'));
 
-      const isActive = currentPath.startsWith(menu.path) || isProjectManagementActive;
+          const isActive = currentPath.startsWith(menu.path) || isProjectManagementActive;
 
-      const marginTopClass = index === 0 ? 'mt-0' : 'mt-[10px]';
-
-      return (
-        <button
-          key={menu.text + menu.path}
-          onClick={() => navigate(menu.path)}
-          className={`ml-[61.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] px-[8px] py-[7px] pr-[10px] ${marginTopClass} ${
-            isActive ? 'bg-[rgba(0,122,255,0.1)]' : 'bg-transparent'
-          }`}
-        >
-          <span
-            className={`font-pretendard text-[15px] font-bold leading-normal ${
-              isActive ? 'text-mainColor-blue600' : 'text-greyColor-grey600'
-            }`}
-          >
-            {menu.text}
-          </span>
-        </button>
-      );
-    });
+          return (
+            <button
+              key={menu.text + menu.path}
+              onClick={() => navigate(menu.path)}
+              className={`ml-[61.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${
+                isActive ? 'bg-mainColor-blue050' : 'bg-transparent hover:bg-greyColor-grey100'
+              }`}
+            >
+              <span
+                className={`whitespace-nowrap font-pretendard text-[15px] font-bold leading-normal ${
+                  isActive ? 'text-mainColor-blue600' : 'text-greyColor-grey600'
+                }`}
+              >
+                {menu.text}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
-    <aside className="sticky top-0 flex h-screen w-[220px] flex-col border-r border-greyColor-grey200 bg-white">
+    <aside className="sticky top-0 flex h-screen w-[220px] flex-col overflow-x-hidden border-r border-greyColor-grey200 bg-white">
       <button
         onClick={() => navigate('/management-home')}
-        className="ml-[27px] mt-[38px] flex items-center"
+        className="ml-[27px] mt-[33px] flex items-center"
       >
         <img src="/src/assets/logo.png" alt="logo" width={129} height={36.47} />
       </button>
@@ -91,21 +90,11 @@ export default function SideBar() {
 
       <button
         onClick={() => navigate('/owner')}
-        className="ml-[27px] mt-[11px] flex items-center gap-[10px]"
+        className="ml-[27px] mt-[13px] flex items-center gap-[10px]"
       >
         <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
           Owner | 홍길동
-        </span>
-      </button>
-
-      <button
-        onClick={() => navigate('/home')}
-        className="ml-[27px] mt-[57.77px] flex items-center gap-[10px]"
-      >
-        <img src="/src/assets/home.png" alt="home" width={20} height={20} />
-        <span className="font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey900">
-          홈
         </span>
       </button>
 
@@ -117,7 +106,7 @@ export default function SideBar() {
                 navigate(section.homePath);
               }
             }}
-            className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop} ${section.marginBottom}`}
+            className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop}`}
           >
             <img src={section.icon} alt={section.title} width={20} height={20} />
             <span className="font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey900">
