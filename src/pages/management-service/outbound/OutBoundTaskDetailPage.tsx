@@ -5,13 +5,6 @@ import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '19px',
-  fontWeight: 700,
-  color: '#000',
-};
-
 const MOCK_DATA_OUTBOUND = [
   {
     projectNumber: 'SYS-01-001',
@@ -98,12 +91,12 @@ const MOCK_DATA_OUTBOUND = [
 interface FormGroupProps {
   label: string;
   children: React.ReactNode;
-  marginBottom?: string;
+  className?: string;
 }
 
-const FormGroup: React.FC<FormGroupProps> = ({ label, children, marginBottom = '0px' }) => (
-  <div style={{ marginBottom }}>
-    <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>{label}</label>
+const FormGroup: React.FC<FormGroupProps> = ({ label, children, className = '' }) => (
+  <div className={className}>
+    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     {children}
   </div>
 );
@@ -148,10 +141,7 @@ export default function OutboundTaskDetailPage() {
       <SideBar />
 
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
-        <div
-          className="relative flex flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]"
-          style={{ width: '967px', minHeight: '1100px' }}
-        >
+        <div className="relative flex min-h-[1100px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
           <button
             onClick={handleClose}
             className="absolute right-[50px] top-[50px] text-[30px] text-greyColor-grey600"
@@ -167,8 +157,8 @@ export default function OutboundTaskDetailPage() {
           </p>
 
           <div className="mt-[60px] flex-1">
-            <div style={{ marginBottom: '60px' }}>
-              <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>
+            <div className="mb-[60px]">
+              <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">
                 진행 상태
               </label>
               <StatusStepBar currentStatus={taskDetail.status} type="outbound" />
@@ -218,9 +208,9 @@ export default function OutboundTaskDetailPage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '40px' }}>
+            <div className="mb-[40px]">
               <FormGroup label="업무 설명">
-                <LargeInput value={taskDetail.description} readOnly style={{ height: '240px' }} />
+                <LargeInput value={taskDetail.description} readOnly className="h-[240px]" />
               </FormGroup>
             </div>
           </div>

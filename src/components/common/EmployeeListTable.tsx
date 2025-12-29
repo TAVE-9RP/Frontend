@@ -22,8 +22,6 @@ const REVERSE_ROLE_MAP: Record<string, string> = {
 
 const PERMISSION_OPTIONS = ['전체', '재고', '물류'];
 
-const TABLE_WIDTH = '1040px';
-
 export default function EmployeeListTable({
   searchTerm,
   isLoading: parentLoading,
@@ -97,7 +95,7 @@ export default function EmployeeListTable({
     return <p className="py-10 text-center text-greyColor-grey500">직원 목록을 불러오는 중...</p>;
 
   return (
-    <div className="flex flex-col items-start" style={{ width: TABLE_WIDTH }}>
+    <div className="flex w-[1040px] flex-col items-start">
       <div className="mb-8 w-full overflow-x-auto border border-greyColor-grey200">
         <table className="min-w-full divide-y divide-greyColor-grey200">
           <thead className="bg-subColor-orange050">
@@ -143,7 +141,7 @@ export default function EmployeeListTable({
       <button
         onClick={handleSave}
         disabled={!isDirty || isSaving}
-        className={`/* 💡 버튼 디자인 복구 */ flex h-10 w-[113px] items-center justify-center self-end rounded-[10px] px-[15px] py-[5px] font-semibold text-white transition duration-200 ${
+        className={`flex h-10 w-[113px] items-center justify-center self-end rounded-[10px] px-[15px] py-[5px] font-semibold text-white transition duration-200 ${
           isDirty && !isSaving
             ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
             : 'cursor-not-allowed bg-greyColor-grey300'

@@ -35,13 +35,8 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
     return <p className="py-10 text-center text-greyColor-grey500">재고 목록을 불러오는 중...</p>;
   }
 
-  const containerStyle = {
-    width: '1040px',
-    height: 'auto',
-  };
-
   return (
-    <div className="overflow-x-auto border border-greyColor-grey200" style={containerStyle}>
+    <div className="h-auto w-[1040px] overflow-x-auto border border-greyColor-grey200">
       <table className="min-w-full divide-y divide-greyColor-grey200">
         <thead className="bg-subColor-orange050">
           <tr>

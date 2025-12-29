@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/signup/Header';
-import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { postMemberSignup } from '@/apis/apiConnection';
@@ -167,14 +166,13 @@ export default function EmployeeRegisterFourthPage() {
       </div>
 
       <div className="mt-[49px] flex w-full flex-col gap-[20px]">
-        {/* 부서 드롭다운 */}
         <div className="flex w-full flex-col">
-          <label className="mb-2 text-[19px] font-bold text-black">부서</label>
+          <label className="mb-2 font-pretendard text-[19px] font-bold text-black">부서</label>
           <select
             name="department"
             value={formData.department}
             onChange={handleDepartmentChange}
-            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
+            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] font-pretendard text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
           >
             <option value="">부서를 선택하세요.</option>
             {DEPARTMENT_OPTIONS.map((option) => (
@@ -185,14 +183,13 @@ export default function EmployeeRegisterFourthPage() {
           </select>
         </div>
 
-        {/* 직급 드롭다운 */}
         <div className="flex w-full flex-col">
-          <label className="mb-2 text-[19px] font-bold text-black">직급</label>
+          <label className="mb-2 font-pretendard text-[19px] font-bold text-black">직급</label>
           <select
             name="position"
             value={formData.position}
             onChange={handlePositionChange}
-            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
+            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] font-pretendard text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
           >
             <option value="">직급을 선택하세요.</option>
             {POSITION_OPTIONS.map((option) => (

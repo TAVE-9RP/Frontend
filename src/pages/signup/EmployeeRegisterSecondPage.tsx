@@ -77,7 +77,7 @@ export default function EmployeeRegisterSecondPage() {
             setSelectedCompanyId(null);
           }}
           placeholder="회사명을 입력하세요"
-          className="flex-1 bg-transparent font-[Pretendard] text-[19px] font-[400] text-greyColor-grey900 outline-none placeholder:text-greyColor-grey300"
+          className="flex-1 bg-transparent font-pretendard text-[19px] font-normal text-greyColor-grey900 outline-none placeholder:text-greyColor-grey300"
         />
       </div>
 
@@ -96,12 +96,14 @@ export default function EmployeeRegisterSecondPage() {
             >
               <img src={companyImage} alt="로고" className="h-[36px] w-[36px] shrink-0" />
 
-              <span className="ml-[17px] flex-1 font-[Pretendard] text-[19px] font-[700] text-greyColor-grey900">
+              <span className="ml-[17px] flex-1 font-pretendard text-[19px] font-bold text-greyColor-grey900">
                 {company.name}
               </span>
 
               <div
-                className={`mr-[19px] h-[36px] w-[36px] transition-colors duration-200 ${isSelected ? 'bg-mainColor-blue600' : 'bg-greyColor-grey300'}`}
+                className={`mr-[19px] h-[36px] w-[36px] transition-colors duration-200 ${
+                  isSelected ? 'bg-mainColor-blue600' : 'bg-greyColor-grey300'
+                }`}
                 style={{
                   WebkitMaskImage: `url(${checkIcon})`,
                   maskImage: `url(${checkIcon})`,

@@ -1,14 +1,25 @@
 import React from 'react';
 
-const CHECKMARK_ICON_SRC = 'src/assets/projectcheckmark.png';
+import CHECKMARK_ICON_SRC from '../../assets/projectcheckmark.png';
 
 interface ProjectSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
+  type?: 'create' | 'edit';
 }
 
-const ProjectSuccessModal: React.FC<ProjectSuccessModalProps> = ({ isOpen, onClose }) => {
+const ProjectSuccessModal: React.FC<ProjectSuccessModalProps> = ({
+  isOpen,
+  onClose,
+  type = 'create',
+}) => {
   if (!isOpen) return null;
+
+  const isEdit = type === 'edit';
+  const titleText = isEdit ? '변경 완료' : '프로젝트 생성 완료';
+  const subText = isEdit
+    ? '프로젝트의 수정사항이 저장되었어요'
+    : '담당자에게 업무가 자동으로 할당되었어요';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -21,11 +32,11 @@ const ProjectSuccessModal: React.FC<ProjectSuccessModalProps> = ({ isOpen, onClo
         </div>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold leading-normal text-black">
-          프로젝트 생성 완료
+          {titleText}
         </p>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal leading-normal text-greyColor-grey500">
-          담당자에게 업무가 자동으로 할당되었어요
+          {subText}
         </p>
 
         <div className="mt-[34.45px]">

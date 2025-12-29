@@ -79,8 +79,6 @@ const MOCK_PROJECT_LIST: Project[] = [
   },
 ];
 
-// 정적 카운트 대신 상태에 따라 변할 수 있도록 컴포넌트 내부에서 계산하거나
-// 여기서는 간단히 초기 Mock 데이터 기준만 유지합니다. (실제 구현 시엔 동적으로 바꿔야 함)
 const getStatusCounts = () => ({
   IN_PROGRESS: MOCK_PROJECT_LIST.filter((p) => p.status === 'IN_PROGRESS').length,
   PENDING: MOCK_PROJECT_LIST.filter((p) => p.status === 'PENDING').length,
@@ -94,15 +92,6 @@ const INITIAL_STATUS_DATA = [
   { status: 'PENDING', label: '미진행', count: statusCounts.PENDING },
   { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
 ];
-
-const pageTitleStyle: React.CSSProperties = {
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
-};
 
 export default function ProjectManagementListPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -120,13 +109,10 @@ export default function ProjectManagementListPage() {
       project.projectNumber.includes(searchTerm) || project.projectTitle.includes(searchTerm),
   );
 
-  // [수정됨] LocalStorage 데이터 + Mock 데이터를 합쳐서 상태별로 필터링하는 함수
-  // [수정됨] LocalStorage 데이터 + Mock 데이터를 합쳐서 상태별로 필터링하는 함수
   const fetchProjectsByStatus = (status: string) => {
     setIsLoading(true);
 
     setTimeout(() => {
-      // 1. 로컬 스토리지에서 데이터 가져오기
       const savedProjectsString = localStorage.getItem('projects');
       let savedProjects: any[] = [];
 
@@ -139,36 +125,44 @@ export default function ProjectManagementListPage() {
         }
       }
 
-      // 2. 데이터 형식 변환 (담당자 이름 추출 로직 강화)
-      const formattedSavedProjects: Project[] = savedProjects.map((p: any) => ({
-        id: p.id || Date.now(),
-        projectNumber: p.projectNumber || 'NEW-PROJ',
-        projectTitle: p.title || p.projectTitle || '제목 없음',
-        projectDescription: p.description || p.projectDescription || '',
-        client: p.client || '',
-        creationDate: p.creationDate || new Date().toISOString().split('T')[0],
+      const formattedSavedProjects: Project[] = savedProjects.map((p: any) => {
+        let managerDisplay = '미정';
 
-        // [수정 포인트] 담당자가 객체 배열로 저장되어 있으므로, label(이름)을 추출합니다.
-        manager: Array.isArray(p.manager)
-          ? p.manager.map((m: any) => m.label || m.name || String(m)).join(', ')
-          : typeof p.manager === 'object' && p.manager !== null
-            ? p.manager.label || p.manager.name || '확인 필요'
-            : p.manager || '미정',
+        if (Array.isArray(p.manager) && p.manager.length > 0) {
+          const firstManager = p.manager[0];
+          const firstName = firstManager.label || firstManager.name || String(firstManager);
 
-        status:
-          p.status === '진행중'
-            ? 'IN_PROGRESS'
-            : p.status === '미진행'
-              ? 'PENDING'
-              : p.status === '완료'
-                ? 'COMPLETED'
-                : 'IN_PROGRESS',
-      }));
+          if (p.manager.length > 1) {
+            managerDisplay = `${firstName} 외 ${p.manager.length - 1}명`;
+          } else {
+            managerDisplay = firstName;
+          }
+        } else if (typeof p.manager === 'object' && p.manager !== null) {
+          managerDisplay = p.manager.label || p.manager.name || '확인 필요';
+        } else if (p.manager) {
+          managerDisplay = String(p.manager);
+        }
 
-      // 3. 최신순 정렬 및 Mock 데이터 병합
+        return {
+          id: p.id || Date.now(),
+          projectNumber: p.projectNumber || 'NEW-PROJ',
+          projectTitle: p.title || p.projectTitle || '제목 없음',
+          projectDescription: p.description || p.projectDescription || '',
+          client: p.client || '',
+          creationDate: p.creationDate || new Date().toISOString().split('T')[0],
+          manager: managerDisplay,
+          status:
+            p.status === '진행중'
+              ? 'IN_PROGRESS'
+              : p.status === '미진행'
+                ? 'PENDING'
+                : p.status === '완료'
+                  ? 'COMPLETED'
+                  : 'IN_PROGRESS',
+        };
+      });
+
       const allProjects = [...formattedSavedProjects.reverse(), ...MOCK_PROJECT_LIST];
-
-      // 4. 상태별 필터링
       const filteredList = allProjects.filter((project) => project.status === status);
 
       setProjectList(filteredList);
@@ -179,15 +173,12 @@ export default function ProjectManagementListPage() {
   const handleStatusClick = (status: string) => {
     if (activeStatus === status) return;
     setActiveStatus(status);
-    // 상태가 변경되면 다시 fetch 실행
-    // useEffect에서 activeStatus 변경을 감지하므로 여기서는 상태만 변경해도 됨
   };
 
   const handleCreateProjectClick = () => {
     navigate('/project-create');
   };
 
-  // activeStatus가 변경될 때마다 데이터를 다시 불러옴
   useEffect(() => {
     fetchProjectsByStatus(activeStatus);
   }, [activeStatus]);
@@ -198,7 +189,7 @@ export default function ProjectManagementListPage() {
 
       <main className="flex-1 bg-white">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <h1 style={pageTitleStyle}>전체 프로젝트 관리</h1>
+          <h1 className="font-pretendard text-2xl font-bold text-black">전체 프로젝트 관리</h1>
 
           <div className="mt-12 w-[1040px]">
             <SearchBar
@@ -214,7 +205,7 @@ export default function ProjectManagementListPage() {
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
-                  count={item.count} // 주의: 이 count는 Mock 데이터 기준 고정값입니다. 동적으로 하려면 별도 로직 필요
+                  count={item.count}
                   isActive={activeStatus === item.status}
                   onClick={() => handleStatusClick(item.status)}
                 />
@@ -223,34 +214,11 @@ export default function ProjectManagementListPage() {
 
             <button
               onClick={handleCreateProjectClick}
-              className="flex items-center gap-[5px] bg-mainColor-blue600 transition-colors hover:bg-blue-600"
-              style={{
-                height: '40px',
-                width: '151px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                border: 'none',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
+              className="flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
             >
-              {/* 이미지 경로 확인 필요 */}
-              <img
-                src="src/assets/add.png"
-                alt="Add Icon"
-                style={{ width: '26px', height: '26px', marginRight: '5px' }}
-              />
+              <img src="src/assets/add.png" alt="Add Icon" className="mr-[5px] h-[26px] w-[26px]" />
 
-              <span
-                style={{
-                  color: '#fff',
-                  fontFamily: 'Pretendard',
-                  fontSize: '17px',
-                  fontWeight: 700,
-                  fontStyle: 'normal',
-                }}
-              >
+              <span className="font-pretendard text-[17px] font-bold text-white">
                 프로젝트 생성
               </span>
             </button>

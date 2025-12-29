@@ -61,18 +61,9 @@ const MOCK_INVENTORY_LIST = [
   },
 ];
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '19px',
-  fontWeight: 700,
-  color: '#000',
-  marginBottom: '16px',
-  display: 'block',
-};
-
 const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="flex w-[390px] flex-col">
-    <label style={labelStyle}>{label}</label>
+    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     {children}
   </div>
 );
@@ -105,16 +96,7 @@ export default function InventoryStockDetailPage() {
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
-        <div
-          className="relative flex flex-col shadow-xl"
-          style={{
-            width: '967px',
-            minHeight: '1200px',
-            borderRadius: '30px',
-            background: '#FFF',
-            padding: '78px',
-          }}
-        >
+        <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <header>
             <h1 className="font-pretendard text-[24px] font-bold text-black">재고 상세</h1>
             <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
@@ -164,7 +146,7 @@ export default function InventoryStockDetailPage() {
               <FormGroup label="현재 안전재고">
                 <div className="flex gap-[10px]">
                   <BasicInput value={inventoryDetail.safetyQty} className="flex-1" />
-                  <button className="flex h-[50px] w-[60px] items-center justify-center rounded-[5px] bg-mainColor-blue600 text-[15px] font-bold text-white transition-all hover:bg-blue-700">
+                  <button className="flex h-[50px] w-[60px] items-center justify-center rounded-[5px] bg-mainColor-blue600 text-[15px] font-bold text-white transition-all hover:bg-mainColor-blue700">
                     변경
                   </button>
                 </div>
@@ -173,14 +155,16 @@ export default function InventoryStockDetailPage() {
           </div>
 
           <div className="mt-[80px]">
-            <h2 style={labelStyle}>입출고 이력</h2>
+            <h2 className="mb-4 block font-pretendard text-[19px] font-bold text-black">
+              입출고 이력
+            </h2>
             <div className="flex h-[200px] w-full items-center justify-center border-y border-greyColor-grey200 bg-white text-greyColor-grey400">
               이력 데이터가 없습니다.
             </div>
           </div>
 
           <div className="mt-auto flex justify-end pt-10">
-            <button className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-all hover:bg-blue-700">
+            <button className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-all hover:bg-mainColor-blue700">
               수정하기
             </button>
           </div>

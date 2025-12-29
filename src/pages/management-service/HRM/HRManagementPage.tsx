@@ -17,21 +17,12 @@ interface Employee {
 
 const PAGE_TITLE = '직원 목록';
 
-const pageTitleStyle = {
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
-};
-
 type ActiveTab = '직원 목록' | '가입 관리';
 
 export default function HRManagementPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('직원 목록');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -40,7 +31,7 @@ export default function HRManagementPage() {
   const handleTabChange = (tab: ActiveTab) => {
     if (activeTab === tab) return;
     setActiveTab(tab);
-    setSearchTerm(''); // 탭 변경 시 검색어 초기화
+    setSearchTerm('');
   };
 
   return (
@@ -48,7 +39,9 @@ export default function HRManagementPage() {
       <SideBar />
       <main className="flex-1 bg-white">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <h1 style={pageTitleStyle}>{PAGE_TITLE}</h1>
+          <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
+            {PAGE_TITLE}
+          </h1>
 
           <div className="mt-6 flex w-[1040px] justify-between">
             <TabToggle activeTab={activeTab} onTabChange={handleTabChange} />

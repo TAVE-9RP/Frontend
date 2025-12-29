@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+import ChevronDownIcon from '../../assets/chevron-down.png';
+import CheckCircleChecked from '../../assets/checkmark-circle-checked.png';
+import CheckCircleUnchecked from '../../assets/checkmark-circle-unchecked.png';
+
 export interface DropdownOption {
   id: number;
   label: string;
@@ -33,10 +37,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (onChange) onChange(selectedItems);
-  }, [selectedItems, onChange]);
-
-  useEffect(() => {
     setSelectedItems(initialSelected);
   }, [initialSelected]);
 
@@ -58,41 +58,40 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   };
 
   const handleOptionSelect = (option: DropdownOption) => {
-    setSelectedItems((prev) =>
-      prev.some((item) => item.id === option.id)
-        ? prev.filter((i) => i.id !== option.id)
-        : [...prev, option],
-    );
+    let newItems;
+    if (selectedItems.some((item) => item.id === option.id)) {
+      newItems = selectedItems.filter((i) => i.id !== option.id);
+    } else {
+      newItems = [...selectedItems, option];
+    }
+
+    setSelectedItems(newItems);
+    if (onChange) onChange(newItems);
   };
 
   const handleChipRemove = (id: number) => (event: React.MouseEvent) => {
     event.stopPropagation();
-    setSelectedItems((prev) => prev.filter((item) => item.id !== id));
-  };
+    const newItems = selectedItems.filter((item) => item.id !== id);
 
-  const baseInputStyle: React.CSSProperties = {
-    width: '390px',
-    height: '50px',
-    borderRadius: '10px',
-    background: disabled ? 'var(--greyColor-grey100, #F3F4F6)' : '#FFF',
-    cursor: disabled ? 'not-allowed' : 'pointer',
+    setSelectedItems(newItems);
+    if (onChange) onChange(newItems);
   };
 
   const focusedBorderStyle = isFocused
     ? 'border-mainColor-blue700 shadow-mainColor-blue700/50'
     : 'border-greyColor-grey400';
 
+  const disabledClasses = disabled
+    ? 'bg-greyColor-grey100 cursor-not-allowed'
+    : 'bg-white cursor-pointer';
+
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className={`flex items-center border transition-all duration-150 ${focusedBorderStyle}`}
-        style={baseInputStyle}
+        className={`flex h-[50px] w-[390px] items-center rounded-[10px] border transition-all duration-150 ${disabledClasses} ${focusedBorderStyle}`}
         onClick={handleInputClick}
       >
-        <div
-          className="flex flex-wrap items-center overflow-hidden"
-          style={{ padding: '4px 16px', width: '350px' }}
-        >
+        <div className="flex w-[350px] flex-wrap items-center overflow-hidden px-4 py-[4px]">
           {selectedItems.length > 0 ? (
             selectedItems.map((item) => (
               <Chip key={item.id} label={item.label} onRemove={handleChipRemove(item.id)} />
@@ -100,35 +99,28 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
           ) : (
             <div
               className={`text-[17px] ${disabled ? 'text-greyColor-grey400' : 'text-greyColor-grey600'}`}
-            >
-              {disabled ? '' : ''}
-            </div>
+            ></div>
           )}
         </div>
-        <div
-          className="flex items-center justify-end"
-          style={{ width: '40px', paddingRight: '10px' }}
-        >
+        <div className="flex w-[40px] items-center justify-end pr-[10px]">
           <img
-            src="src/assets/chevron-down.png"
+            src={ChevronDownIcon}
             alt="Dropdown icon"
-            style={{ width: '13px', height: '13px', opacity: disabled ? 0.3 : 1 }}
+            className={`h-[13px] w-[13px] ${disabled ? 'opacity-30' : 'opacity-100'}`}
           />
         </div>
       </div>
 
       {isOpen && (
-        <div
-          className="absolute z-10 mt-2 w-full rounded-lg border border-greyColor-grey400 bg-white"
-          style={{ width: '390px', maxHeight: '300px', overflowY: 'auto' }}
-        >
+        <div className="absolute z-10 mt-2 max-h-[300px] w-[390px] overflow-y-auto rounded-lg border border-greyColor-grey400 bg-white">
           {options.map((option) => {
             const isSelected = selectedItems.some((item) => item.id === option.id);
             return (
               <div
                 key={option.id}
-                className={`flex cursor-pointer items-center justify-between pr-6 transition-colors duration-100 ${isSelected ? 'bg-mainColor-blue050' : 'hover:bg-greyColor-grey100'}`}
-                style={{ paddingLeft: '1.5rem', paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+                className={`flex cursor-pointer items-center justify-between py-3 pl-6 pr-6 transition-colors duration-100 ${
+                  isSelected ? 'bg-mainColor-blue050' : 'hover:bg-greyColor-grey100'
+                }`}
                 onClick={() => handleOptionSelect(option)}
               >
                 <div className="flex items-center gap-16">
@@ -139,11 +131,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
                 </div>
 
                 <img
-                  src={
-                    isSelected
-                      ? 'src/assets/checkmark-circle-checked.png'
-                      : 'src/assets/checkmark-circle-unchecked.png'
-                  }
+                  src={isSelected ? CheckCircleChecked : CheckCircleUnchecked}
                   className="h-5 w-5"
                   alt="check icon"
                 />
@@ -166,11 +154,7 @@ interface ChipProps {
 const Chip: React.FC<ChipProps> = ({ label, onRemove }) => {
   return (
     <div
-      className="m-1 flex items-center rounded-full bg-mainColor-blue050 px-2 py-1 text-sm text-mainColor-blue700"
-      style={{
-        whiteSpace: 'nowrap',
-        height: '24px',
-      }}
+      className="m-1 flex h-[24px] items-center whitespace-nowrap rounded-full bg-mainColor-blue050 px-2 py-1 text-sm text-mainColor-blue700"
       onClick={(e) => e.stopPropagation()}
     >
       <span className="font-bold">{label}</span>

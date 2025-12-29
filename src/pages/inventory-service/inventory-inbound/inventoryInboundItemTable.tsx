@@ -90,7 +90,7 @@ export default function InboundItemTable({ items, isLoading }: InboundItemTableP
           items.map((item) => (
             <div
               key={item.id}
-              className="hover:bg-greyColor-grey050 flex h-[40px] w-full text-center text-[14px] text-greyColor-grey900"
+              className="flex h-[40px] w-full text-center text-[14px] text-greyColor-grey900 hover:bg-greyColor-grey50"
             >
               <div className="flex w-[60px] items-center justify-center border-b border-r border-greyColor-grey200">
                 -
@@ -115,8 +115,7 @@ export default function InboundItemTable({ items, isLoading }: InboundItemTableP
               </div>
               <div className="flex w-[90px] items-center justify-center border-b border-r border-greyColor-grey200">
                 <div
-                  className={`flex h-[24px] w-[50px] items-center justify-center text-[12px] font-medium ${item.status === '완료' ? 'bg-mainColor-blue050 text-mainColor-blue600' : 'bg-greyColor-grey200 text-greyColor-grey600'}`}
-                  style={{ borderRadius: '100px' }}
+                  className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium ${item.status === '완료' ? 'bg-mainColor-blue050 text-mainColor-blue600' : 'bg-greyColor-grey200 text-greyColor-grey600'}`}
                 >
                   {item.status}
                 </div>

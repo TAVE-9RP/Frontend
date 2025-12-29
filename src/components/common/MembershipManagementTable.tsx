@@ -96,7 +96,7 @@ export default function MembershipManagementTable({
     return <p className="py-10 text-center text-greyColor-grey500">가입 목록을 불러오는 중...</p>;
 
   return (
-    <div className="flex flex-col items-start" style={{ width: '1040px' }}>
+    <div className="flex w-[1040px] flex-col items-start">
       <div className="mb-8 w-full overflow-x-auto border border-greyColor-grey200">
         <table className="min-w-full divide-y divide-greyColor-grey200">
           <thead className="bg-subColor-orange050">
@@ -145,7 +145,7 @@ export default function MembershipManagementTable({
       <button
         onClick={handleSave}
         disabled={!isDirty || isSaving}
-        className={`/* 💡 버튼 디자인 복구 */ flex h-10 w-[113px] items-center justify-center self-end rounded-[10px] px-[15px] py-[5px] font-semibold text-white transition duration-200 ${
+        className={`flex h-10 w-[113px] items-center justify-center self-end rounded-[10px] px-[15px] py-[5px] font-semibold text-white transition duration-200 ${
           isDirty && !isSaving
             ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
             : 'cursor-not-allowed bg-greyColor-grey300'

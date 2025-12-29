@@ -1,4 +1,3 @@
-// 공통 응답 구조
 export interface BaseResponse<T> {
   timestamp: string;
   isSuccess: boolean;
@@ -8,7 +7,6 @@ export interface BaseResponse<T> {
   result: T;
 }
 
-// 1. 가입 상태 관련
 export interface MemberStatus {
   memberId: number;
   name: string;
@@ -25,7 +23,6 @@ export interface UpdateStatusRequest {
   }[];
 }
 
-// 2. 권한 관련
 export interface MemberPermission {
   memberId: number;
   name: string;

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. 네비게이션 훅 import
+import { useNavigate } from 'react-router-dom';
 import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
@@ -9,27 +9,6 @@ import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '19px',
-  fontWeight: 700,
-  color: '#000',
-};
-
-const pageTitleStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontWeight: 700,
-  color: '#000',
-};
-
-const subTextStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '17px',
-  fontWeight: 400,
-  color: '#000',
-};
-
 interface FormGroupProps {
   label: string;
   children: React.ReactNode;
@@ -38,13 +17,13 @@ interface FormGroupProps {
 
 const FormGroup: React.FC<FormGroupProps> = ({ label, children, marginBottom = '0px' }) => (
   <div style={{ marginBottom }}>
-    <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>{label}</label>
+    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     {children}
   </div>
 );
 
 export default function ProjectCreatePage() {
-  const navigate = useNavigate(); // 2. 네비게이트 함수 생성
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     projectTitle: '',
@@ -100,26 +79,26 @@ export default function ProjectCreatePage() {
     }
   };
 
-  // 3. 데이터 저장 및 완료 모달 띄우기 로직
   const handleModalConfirm = () => {
     setIsConfirmModalOpen(false);
 
-    // [임시 구현] LocalStorage에 데이터 저장 (API 연동 전까지 사용)
     const newProject = {
-      id: Date.now(), // 고유 ID 생성
-      projectNumber: 'SYS-01-001', // 현재 하드코딩된 값 (실제로는 로직 필요)
+      id: Date.now(),
+      projectNumber: 'SYS-01-001',
       title: formData.projectTitle,
-      client: formData.client,
+      projectTitle: formData.projectTitle,
       description: formData.projectDescription,
+      projectDescription: formData.projectDescription,
+      client: formData.client,
+      jobDescription: formData.jobDescription,
       targetDate: `${formData.targetYear}-${formData.targetMonth}-${formData.targetDay}`,
-      type: activeAssignment, // 'inbound' or 'logistics'
+      type: activeAssignment,
       manager: activeAssignment === 'inbound' ? inventoryManager : logisticsManager,
-      status: '진행중', // 기본 상태
+      status: '진행중',
+      creationDate: new Date().toISOString().split('T')[0],
     };
 
-    // 기존 리스트 가져오기 (없으면 빈 배열)
     const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]');
-    // 새 프로젝트 추가
     localStorage.setItem('projects', JSON.stringify([...existingProjects, newProject]));
 
     setIsSuccessModalOpen(true);
@@ -127,29 +106,9 @@ export default function ProjectCreatePage() {
 
   const handleConfirmModalClose = () => setIsConfirmModalOpen(false);
 
-  // 4. 목록으로 돌아가기 버튼 로직
   const handleSuccessModalClose = () => {
     setIsSuccessModalOpen(false);
-    navigate('/project-management'); // 해당 경로로 이동
-  };
-
-  const buttonStyle: React.CSSProperties = {
-    display: 'flex',
-    width: '113px',
-    height: '50px',
-    padding: '5px 15px',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '10px',
-    fontFamily: 'Pretendard',
-    fontSize: '19px',
-    fontWeight: 700,
-    color: '#FFF',
-    cursor: isFormValid ? 'pointer' : 'not-allowed',
-    background: isFormValid
-      ? 'var(--mainColor-blue600, #3B82F6)'
-      : 'var(--greyColor-grey300, #C5C8CE)',
-    transition: 'background 0.3s',
+    navigate('/project-management');
   };
 
   return (
@@ -157,24 +116,14 @@ export default function ProjectCreatePage() {
       <SideBar />
 
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
-        <div
-          className="flex flex-col shadow-xl"
-          style={{
-            width: '967px',
-            minHeight: '1300px',
-            borderRadius: '30px',
-            background: '#FFF',
-            padding: '78px',
-            boxShadow: '0 0 10px rgba(0,0,0,0.10)',
-          }}
-        >
-          <h1 style={pageTitleStyle}>프로젝트 생성하기</h1>
-          <p className="mt-2 text-greyColor-grey600" style={subTextStyle}>
+        <div className="flex min-h-[1300px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
+          <h1 className="font-pretendard text-2xl font-bold text-black">프로젝트 생성하기</h1>
+          <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
             프로젝트를 생성하여 사원들에게 업무를 할당해주세요.
           </p>
 
           <div className="mt-[80px] flex-1">
-            <div className="flex justify-between" style={{ marginBottom: '80px' }}>
+            <div className="mb-[80px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="프로젝트 넘버">
                   <BasicInput
@@ -199,7 +148,7 @@ export default function ProjectCreatePage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '80px' }}>
+            <div className="mb-[80px]">
               <FormGroup label="프로젝트 설명">
                 <LargeInput
                   name="projectDescription"
@@ -222,16 +171,7 @@ export default function ProjectCreatePage() {
               </div>
 
               <div className="flex flex-col">
-                <span
-                  style={{
-                    fontFamily: 'Pretendard',
-                    fontSize: '19px',
-                    fontWeight: 700,
-                    marginBottom: '16px',
-                  }}
-                >
-                  업무 할당
-                </span>
+                <span className="mb-4 font-pretendard text-[19px] font-bold">업무 할당</span>
 
                 <div className="flex gap-[20px]">
                   <AssignmentChip
@@ -249,7 +189,7 @@ export default function ProjectCreatePage() {
               </div>
             </div>
 
-            <div className="mt-[80px] flex justify-between" style={{ marginBottom: '80px' }}>
+            <div className="mb-[80px] mt-[80px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="입고 업무 담당자">
                   <DropdownInput
@@ -271,7 +211,7 @@ export default function ProjectCreatePage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '80px' }}>
+            <div className="mb-[80px]">
               <FormGroup label="업무 설명">
                 <LargeInput
                   name="jobDescription"
@@ -281,8 +221,8 @@ export default function ProjectCreatePage() {
               </FormGroup>
             </div>
 
-            <div style={{ marginBottom: '80px' }}>
-              <label style={{ ...labelStyle, display: 'block', marginBottom: '16px' }}>
+            <div className="mb-[80px]">
+              <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">
                 목표 완료일
               </label>
 
@@ -318,7 +258,15 @@ export default function ProjectCreatePage() {
           </div>
 
           <div className="mt-auto flex justify-end">
-            <button style={buttonStyle} onClick={handleCreateProject} disabled={!isFormValid}>
+            <button
+              onClick={handleCreateProject}
+              disabled={!isFormValid}
+              className={`flex h-[50px] w-[113px] items-center justify-center rounded-[10px] px-[15px] py-[5px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
+                isFormValid
+                  ? 'cursor-pointer bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                  : 'cursor-not-allowed bg-greyColor-grey300'
+              }`}
+            >
               생성하기
             </button>
           </div>

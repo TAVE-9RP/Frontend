@@ -49,10 +49,7 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
   }
 
   return (
-    <div
-      className="overflow-x-auto border border-greyColor-grey200"
-      style={{ width: '1040px', height: 'auto' }}
-    >
+    <div className="h-auto w-[1040px] overflow-x-auto border border-greyColor-grey200">
       <table className="min-w-full divide-y divide-greyColor-grey200">
         <thead className="bg-subColor-orange050">
           <tr>
