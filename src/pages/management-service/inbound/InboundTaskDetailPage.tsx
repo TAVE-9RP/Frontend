@@ -6,6 +6,8 @@ import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
 import ManagerChip from '@/components/common/ManagerChip';
 import InboundItemList from '@/components/common/InboundItemList';
+import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
+import ApproveModal from '@/components/modals/ApproveModal';
 
 const MOCK_DATA = [
   {
@@ -58,12 +60,6 @@ const MOCK_DATA = [
   },
 ];
 
-interface FormGroupProps {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}
-
 const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?: string }> = ({
   label,
   children,
@@ -79,7 +75,12 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?
 
 export default function InboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); //승인 처리 후 자동으로 목록 페이지로 이동?
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -94,6 +95,28 @@ export default function InboundTaskDetailPage() {
     const found = MOCK_DATA.find((item) => item.projectNumber === projectNumber);
     if (found) setTaskDetail(found);
   }, [projectNumber]);
+
+  const handleConfirmApproval = () => {
+    setIsModalOpen(false);
+    setStatusType('approve');
+    setIsStatusModalOpen(true);
+
+    setTaskDetail((prev) => ({
+      ...prev,
+      status: 'IN_PROGRESS',
+    }));
+  };
+
+  const handleRejectApproval = () => {
+    setIsModalOpen(false);
+    setStatusType('cancel');
+    setIsStatusModalOpen(true);
+
+    setTaskDetail((prev) => ({
+      ...prev,
+      status: 'TASK_ASSIGNMENT',
+    }));
+  };
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -158,9 +181,7 @@ export default function InboundTaskDetailPage() {
             {taskDetail.status !== 'IN_PROGRESS' && taskDetail.status !== 'COMPLETED' && (
               <button
                 disabled={taskDetail.status !== 'APPROVAL_PENDING'}
-                onClick={() => {
-                  if (taskDetail.status === 'APPROVAL_PENDING') alert('승인 처리되었습니다.');
-                }}
+                onClick={() => setIsModalOpen(true)}
                 className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
                   taskDetail.status === 'APPROVAL_PENDING'
                     ? 'cursor-pointer bg-mainColor-blue600'
@@ -173,6 +194,18 @@ export default function InboundTaskDetailPage() {
           </div>
         </div>
       </main>
+      <ManagerApprovalModal
+        isOpen={isModalOpen}
+        onClose={handleRejectApproval}
+        onConfirm={handleConfirmApproval}
+      />
+      <ApproveModal
+        isOpen={isStatusModalOpen}
+        type={statusType}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+      />
     </div>
   );
 }
