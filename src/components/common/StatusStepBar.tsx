@@ -9,13 +9,17 @@ interface StatusChipProps {
 const StatusChip: React.FC<StatusChipProps> = ({ label, isActive }) => {
   return (
     <div
-      className={`flex h-[36px] min-w-[68px] items-center justify-center whitespace-nowrap rounded-full px-[10px] text-[12px] transition-all ${
+      className={`flex items-center justify-center gap-[10px] whitespace-nowrap rounded-[100px] px-[10px] py-[10px] transition-all ${
         isActive
-          ? 'bg-subColor-orange500 font-bold text-white'
-          : 'border border-greyColor-grey300 bg-white font-normal text-greyColor-grey300'
-      } `}
+          ? 'bg-subColor-orange800 text-white'
+          : 'border border-greyColor-grey300 bg-white text-greyColor-grey300'
+      }`}
     >
-      {label}
+      <span
+        className={`font-pretendard text-[13px] leading-normal ${isActive ? 'font-bold' : 'font-bold'}`}
+      >
+        {label}
+      </span>
     </div>
   );
 };
@@ -41,7 +45,7 @@ export default function StatusStepBar({ currentStatus, type = 'inbound' }: Statu
         <React.Fragment key={step.id}>
           <StatusChip label={step.label} isActive={currentStatus === step.id} />
           {index < STATUS_STEPS.length - 1 && (
-            <img src={nextIcon} alt="next" className="h-[24px] w-[32px] object-contain" />
+            <img src={nextIcon} alt="next" className="h-[23px] w-[15px] object-contain" />
           )}
         </React.Fragment>
       ))}

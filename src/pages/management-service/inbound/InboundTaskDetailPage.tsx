@@ -4,6 +4,10 @@ import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
+import ManagerChip from '@/components/common/ManagerChip';
+import InboundItemList from '@/components/common/InboundItemList';
+import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
+import ApproveModal from '@/components/modals/ApproveModal';
 
 const MOCK_DATA = [
   {
@@ -56,22 +60,27 @@ const MOCK_DATA = [
   },
 ];
 
-interface FormGroupProps {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}
-
-const FormGroup: React.FC<FormGroupProps> = ({ label, children, className = '' }) => (
+const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?: string }> = ({
+  label,
+  children,
+  className = '',
+}) => (
   <div className={className}>
-    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
-    {children}
+    <label className="italic_none mb-4 block font-pretendard text-[19px] font-bold text-black">
+      {label}
+    </label>
+    <div className="mt-4">{children}</div>
   </div>
 );
 
 export default function InboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); //승인 처리 후 자동으로 목록 페이지로 이동?
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -84,23 +93,29 @@ export default function InboundTaskDetailPage() {
 
   useEffect(() => {
     const found = MOCK_DATA.find((item) => item.projectNumber === projectNumber);
-
-    if (found) {
-      setTaskDetail(found);
-    } else {
-      setTaskDetail({
-        projectNumber: projectNumber || '',
-        taskName: '데이터 없음',
-        manager: '-',
-        requestDate: '-',
-        description: '해당 프로젝트를 찾을 수 없습니다.',
-        status: '',
-      });
-    }
+    if (found) setTaskDetail(found);
   }, [projectNumber]);
 
-  const handleClose = () => {
-    navigate(-1);
+  const handleConfirmApproval = () => {
+    setIsModalOpen(false);
+    setStatusType('approve');
+    setIsStatusModalOpen(true);
+
+    setTaskDetail((prev) => ({
+      ...prev,
+      status: 'IN_PROGRESS',
+    }));
+  };
+
+  const handleRejectApproval = () => {
+    setIsModalOpen(false);
+    setStatusType('cancel');
+    setIsStatusModalOpen(true);
+
+    setTaskDetail((prev) => ({
+      ...prev,
+      status: 'TASK_ASSIGNMENT',
+    }));
   };
 
   return (
@@ -109,85 +124,88 @@ export default function InboundTaskDetailPage() {
 
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
         <div className="relative flex min-h-[1000px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
-          <button
-            onClick={handleClose}
-            className="absolute right-[50px] top-[50px] text-[30px] text-greyColor-grey600"
-          >
-            ✕
-          </button>
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             입고 업무 상세
           </h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-            선택한 입고 업무의 상세 정보를 볼 수 있어요.
+            요청일: {taskDetail.requestDate.replace(/-/g, '.')}
           </p>
 
-          <div className="mt-[3px] flex-1"></div>
-          <div className="mt-[60px] flex-1">
-            <div className="mb-[60px]">
-              <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">
-                진행 상태
-              </label>
-              <StatusStepBar currentStatus={taskDetail.status} type="inbound" />
+          <div className="mt-[70px] flex-1">
+            <div className="mb-[70px] flex justify-between">
+              <FormGroup label="진행 상태" className="w-fit">
+                <StatusStepBar currentStatus={taskDetail.status} type="inbound" />
+              </FormGroup>
+
+              <FormGroup label="프로젝트 넘버" className="w-[390px]">
+                <BasicInput
+                  value={taskDetail.projectNumber}
+                  disabled={true}
+                  readOnly
+                  className="text-greyColor-grey400"
+                />
+              </FormGroup>
             </div>
+            <div className="mb-[64px] flex justify-between">
+              <FormGroup label="입고 업무명" className="w-[390px]">
+                <BasicInput value={taskDetail.taskName} disabled={true} readOnly />
+              </FormGroup>
 
-            <div className="mb-[60px] flex justify-between">
-              <div className="w-[390px]">
-                <FormGroup label="프로젝트 넘버">
-                  <BasicInput
-                    value={taskDetail.projectNumber}
-                    disabled={true}
-                    readOnly
-                    className="text-greyColor-grey400"
-                  />
-                </FormGroup>
-              </div>
-
-              <div className="w-[390px]">
-                <FormGroup label="입고 업무명">
-                  <BasicInput value={taskDetail.taskName} disabled={false} readOnly />
-                </FormGroup>
-              </div>
+              <FormGroup label="입고 업무 담당자" className="w-[390px]">
+                <div className="flex h-[50px] w-[390px] items-center gap-[10px] rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-[16px] py-[15px]">
+                  {taskDetail.manager && taskDetail.manager !== '-' ? (
+                    <ManagerChip name={taskDetail.manager} />
+                  ) : (
+                    <span className="font-pretendard text-[17px] text-greyColor-grey500">-</span>
+                  )}
+                </div>
+              </FormGroup>
             </div>
-
-            <div className="mb-[60px] flex justify-between">
-              <div className="w-[390px]">
-                <FormGroup label="입고 업무 담당자">
-                  <BasicInput value={taskDetail.manager} readOnly />
-                </FormGroup>
-              </div>
-
-              <div className="w-[390px]">
-                <FormGroup label="요청일">
-                  <BasicInput value={taskDetail.requestDate} readOnly />
-                </FormGroup>
-              </div>
-            </div>
-
-            <div className="mb-[80px]">
+            <div className="mb-[40px]">
               <FormGroup label="업무 설명">
-                <LargeInput value={taskDetail.description} readOnly className="h-[240px]" />
+                <LargeInput
+                  value={taskDetail.description}
+                  disabled={true}
+                  readOnly
+                  className="h-[240px]"
+                />
+              </FormGroup>
+            </div>
+            <div className="mb-[40px] mt-[80px]">
+              <FormGroup label="입고 물품 목록">
+                <InboundItemList status={taskDetail.status} />
               </FormGroup>
             </div>
           </div>
-
-          <div className="mt-auto flex justify-end">
-            <button
-              disabled={taskDetail.status !== 'APPROVAL_PENDING'}
-              onClick={() => {
-                if (taskDetail.status === 'APPROVAL_PENDING') alert('승인 처리되었습니다.');
-              }}
-              className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                taskDetail.status === 'APPROVAL_PENDING'
-                  ? 'cursor-pointer bg-mainColor-blue600'
-                  : 'cursor-default bg-greyColor-grey300'
-              } `}
-            >
-              승인 처리
-            </button>
+          <div className="mt-[50px] flex justify-end">
+            {taskDetail.status !== 'IN_PROGRESS' && taskDetail.status !== 'COMPLETED' && (
+              <button
+                disabled={taskDetail.status !== 'APPROVAL_PENDING'}
+                onClick={() => setIsModalOpen(true)}
+                className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
+                  taskDetail.status === 'APPROVAL_PENDING'
+                    ? 'cursor-pointer bg-mainColor-blue600'
+                    : 'cursor-default bg-greyColor-grey300'
+                } `}
+              >
+                결제 처리
+              </button>
+            )}
           </div>
         </div>
       </main>
+      <ManagerApprovalModal
+        isOpen={isModalOpen}
+        onClose={handleRejectApproval}
+        onConfirm={handleConfirmApproval}
+      />
+      <ApproveModal
+        isOpen={isStatusModalOpen}
+        type={statusType}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+      />
     </div>
   );
 }

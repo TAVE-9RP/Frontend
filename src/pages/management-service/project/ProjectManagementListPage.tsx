@@ -184,19 +184,19 @@ export default function ProjectManagementListPage() {
   }, [activeStatus]);
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 bg-white">
-        <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <div className="mb-[67px] flex items-center">
+      <main className="flex-1">
+        <div className="pl-[70px] pr-10 pt-[60px]">
+          <div className="mb-[67px] flex items-baseline">
             <h1 className="whitespace-nowrap font-pretendard text-2xl font-bold text-black">
               전체 프로젝트 관리
             </h1>
 
             <button
               onClick={handleCreateProjectClick}
-              className="ml-[725px] mt-[14.5px] flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
+              className="ml-[725px] flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
             >
               <img src="src/assets/add.png" alt="Add Icon" className="mr-[5px] h-[26px] w-[26px]" />
               <span className="font-pretendard text-[17px] font-bold text-white">

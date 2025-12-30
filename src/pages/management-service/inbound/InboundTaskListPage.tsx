@@ -142,23 +142,17 @@ export default function InboundTaskListPage() {
   }, [activeStatus, searchTerm]);
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 bg-white">
-        <div className="mt-5 pl-[70px] pr-10 pt-10">
+      <main className="flex-1">
+        <div className="pl-[70px] pr-10 pt-[60px]">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             입고 업무 리스트
           </h1>
-          <div className="mt-12 w-[1040px]">
-            <SearchBar
-              placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <div className="mb-6 mt-5 flex w-[1040px] items-center justify-start">
-            <div className="flex gap-4">
+
+          <div className="mt-[64px] flex w-fit items-center">
+            <div className="flex gap-[10px]">
               {INITIAL_STATUS_DATA.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
@@ -169,11 +163,15 @@ export default function InboundTaskListPage() {
                 />
               ))}
             </div>
-          </div>
-        </div>
 
-        <div className="pl-[70px] pr-10">
-          <TaskListTable data={taskList} isLoading={isLoading} type="inbound" />
+            <div className="ml-[159px] w-[300px]">
+              <SearchBar placeholder="검색" value={searchTerm} onChange={handleSearchChange} />
+            </div>
+          </div>
+
+          <div className="mb-10 mt-[30px]">
+            <TaskListTable data={taskList} isLoading={isLoading} type="inbound" />
+          </div>
         </div>
       </main>
     </div>
