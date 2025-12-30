@@ -155,19 +155,21 @@ export default function InboundTaskDetailPage() {
             </div>
           </div>
           <div className="mt-[50px] flex justify-end">
-            <button
-              disabled={taskDetail.status !== 'APPROVAL_PENDING'}
-              onClick={() => {
-                if (taskDetail.status === 'APPROVAL_PENDING') alert('승인 처리되었습니다.');
-              }}
-              className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                taskDetail.status === 'APPROVAL_PENDING'
-                  ? 'cursor-pointer bg-mainColor-blue600'
-                  : 'cursor-default bg-greyColor-grey300'
-              } `}
-            >
-              결제 처리
-            </button>
+            {taskDetail.status !== 'IN_PROGRESS' && taskDetail.status !== 'COMPLETED' && (
+              <button
+                disabled={taskDetail.status !== 'APPROVAL_PENDING'}
+                onClick={() => {
+                  if (taskDetail.status === 'APPROVAL_PENDING') alert('승인 처리되었습니다.');
+                }}
+                className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
+                  taskDetail.status === 'APPROVAL_PENDING'
+                    ? 'cursor-pointer bg-mainColor-blue600'
+                    : 'cursor-default bg-greyColor-grey300'
+                } `}
+              >
+                결제 처리
+              </button>
+            )}
           </div>
         </div>
       </main>
