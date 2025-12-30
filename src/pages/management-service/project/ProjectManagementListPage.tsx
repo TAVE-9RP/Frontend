@@ -189,7 +189,7 @@ export default function ProjectManagementListPage() {
 
       <main className="flex-1">
         <div className="pl-[70px] pr-10 pt-[60px]">
-          <div className="mb-[67px] flex items-baseline">
+          <div className="mb-[67px] flex items-center">
             <h1 className="whitespace-nowrap font-pretendard text-2xl font-bold text-black">
               전체 프로젝트 관리
             </h1>

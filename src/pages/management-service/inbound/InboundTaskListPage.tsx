@@ -151,8 +151,8 @@ export default function InboundTaskListPage() {
             입고 업무 리스트
           </h1>
 
-          <div className="mt-[64px] flex w-fit items-center">
-            <div className="flex gap-[10px]">
+          <div className="mt-[67px] flex w-fit items-center">
+            <div className="flex gap-[8px]">
               {INITIAL_STATUS_DATA.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
