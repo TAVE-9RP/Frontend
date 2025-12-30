@@ -168,7 +168,7 @@ export default function LogisticsOutboundTaskListPage() {
             />
           </div>
           <div className="mb-6 mt-5 flex w-[1040px] items-center justify-start">
-            <div className="flex gap-4">
+            <div className="flex gap-[8px]">
               {INITIAL_STATUS_DATA.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
