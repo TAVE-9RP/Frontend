@@ -7,6 +7,7 @@ import StatusStepBar from '../../../components/common/StatusStepBar';
 import ManagerChip from '@/components/common/ManagerChip';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
+import OutboundItemList from '@/components/common/OutboundItemList';
 
 const MOCK_DATA_OUTBOUND = [
   {
@@ -157,7 +158,7 @@ export default function OutboundTaskDetailPage() {
       <SideBar />
 
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
-        <div className="relative flex min-h-[1100px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
+        <div className="relative flex min-h-[1000px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             출하 업무 상세
           </h1>
@@ -220,9 +221,15 @@ export default function OutboundTaskDetailPage() {
                 />
               </FormGroup>
             </div>
+
+            <div className="mt-[80px]">
+              <FormGroup label="출하 물품 목록">
+                <OutboundItemList status={taskDetail.status} />
+              </FormGroup>
+            </div>
           </div>
 
-          <div className="mt-auto flex justify-end">
+          <div className="mt-[50px] flex justify-end">
             <button
               disabled={taskDetail.status !== 'APPROVAL_PENDING'}
               onClick={() => setIsModalOpen(true)}
