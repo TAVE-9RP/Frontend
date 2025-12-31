@@ -1,12 +1,19 @@
 import React from 'react';
 import CHECKMARK_ICON_SRC from '../../assets/projectcheckmark.png';
 
-interface PermissionSuccessModalProps {
+interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
+  description: string;
 }
 
-const PermissionSuccessModal: React.FC<PermissionSuccessModalProps> = ({ isOpen, onClose }) => {
+const SuccessModal: React.FC<SuccessModalProps> = ({
+  isOpen,
+  onClose,
+  title = '저장 완료',
+  description,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -15,12 +22,15 @@ const PermissionSuccessModal: React.FC<PermissionSuccessModalProps> = ({ isOpen,
         <div className="mt-[32px]">
           <img src={CHECKMARK_ICON_SRC} alt="완료 아이콘" className="h-[30px] w-[30px]" />
         </div>
+
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold text-black">
-          저장 완료
+          {title}
         </p>
+
         <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal text-greyColor-grey500">
-          직원 권한 설정이 저장되었어요
+          {description}
         </p>
+
         <div className="mt-[34.45px]">
           <button
             onClick={onClose}
@@ -34,4 +44,4 @@ const PermissionSuccessModal: React.FC<PermissionSuccessModalProps> = ({ isOpen,
   );
 };
 
-export default PermissionSuccessModal;
+export default SuccessModal;

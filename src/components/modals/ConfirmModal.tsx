@@ -35,7 +35,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           {title}
         </p>
 
-        <p className="mt-[10.55px] text-center font-pretendard text-[13px] font-normal text-greyColor-grey500">
+        <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal text-greyColor-grey500">
           {description}
         </p>
 
