@@ -35,9 +35,9 @@ export default function HRManagementPage() {
   };
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
-      <main className="flex-1 bg-white">
+      <main className="flex-1">
         <div className="pl-[70px] pr-10 pt-10">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             {PAGE_TITLE}
