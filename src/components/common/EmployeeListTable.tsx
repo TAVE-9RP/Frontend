@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropdown from '../common/Dropdown';
 import { getMemberPermissions, updateMemberPermissions } from '../../apis/admin';
+import PermissionConfirmModal from '../modals/PermissionConfirmModal';
+import PermissionSuccessModal from '../modals/PermissionSuccessModal';
 
 interface EmployeeListTableProps {
   searchTerm: string;
@@ -8,19 +10,18 @@ interface EmployeeListTableProps {
 }
 
 const ROLE_MAP: Record<string, string> = {
-  ALL: '전체',
-  WRITE: '재고',
-  READ: '물류',
+  ALL: '전체 관리',
+  WRITE: '수정 가능',
+  READ: '조회 전용',
 };
 
 const REVERSE_ROLE_MAP: Record<string, string> = {
-  전체: 'ALL',
-  재고: 'WRITE',
-  물류: 'READ',
-  관리자: 'ALL',
+  '전체 관리': 'ALL',
+  '수정 가능': 'WRITE',
+  '조회 전용': 'READ',
 };
 
-const PERMISSION_OPTIONS = ['전체', '재고', '물류'];
+const PERMISSION_OPTIONS = ['전체 관리', '수정 가능', '조회 전용']; //워딩 확인
 
 export default function EmployeeListTable({
   searchTerm,
@@ -30,6 +31,9 @@ export default function EmployeeListTable({
   const [localLoading, setLocalLoading] = useState(true);
   const [permissionChanges, setPermissionChanges] = useState<Record<number, string>>({});
   const [isSaving, setIsSaving] = useState(false);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const loadData = async () => {
     try {
@@ -62,7 +66,12 @@ export default function EmployeeListTable({
     setPermissionChanges((prev) => ({ ...prev, [memberId]: newPermission }));
   };
 
-  const handleSave = async () => {
+  const handleSaveClick = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmSave = async () => {
+    setIsConfirmModalOpen(false);
     setIsSaving(true);
 
     const updatesArray = Object.entries(permissionChanges).map(([id, role]) => ({
@@ -74,81 +83,81 @@ export default function EmployeeListTable({
       await updateMemberPermissions(updatesArray);
       setPermissionChanges({});
       await loadData();
-      alert('권한이 성공적으로 변경되었습니다!');
+      setIsSuccessModalOpen(true);
     } catch (err: any) {
-      console.error('❌ 상세 에러:', err.response?.data);
       alert(`저장 실패: ${err.response?.data?.message}`);
     } finally {
       setIsSaving(false);
     }
   };
-
   const isDirty = Object.keys(permissionChanges).length > 0;
   const isLoading = parentLoading || localLoading;
 
-  const tableHeaderClasses =
-    'py-3 px-4 font-bold text-sm text-greyColor-grey700 bg-subColor-orange050 border-b border-subColor-orange100 border-r border-greyColor-grey200';
-  const tableCellClasses =
-    'py-2 px-4 text-sm text-greyColor-grey800 border-b border-greyColor-grey200 border-r border-greyColor-grey200';
+  const headerBase =
+    'h-10 flex items-center justify-center bg-subColor-orange050 border border-greyColor-grey200 text-greyColor-grey800 font-pretendard text-[15px] font-bold';
+  const cellBase =
+    'h-10 flex items-center justify-center border-b border-l border-r border-greyColor-grey200 text-greyColor-grey700 font-pretendard text-[15px] font-normal';
 
   if (isLoading)
     return <p className="py-10 text-center text-greyColor-grey500">직원 목록을 불러오는 중...</p>;
 
   return (
     <div className="flex w-[1040px] flex-col items-start">
-      <div className="mb-8 w-full overflow-x-auto border border-greyColor-grey200">
-        <table className="min-w-full divide-y divide-greyColor-grey200">
-          <thead className="bg-subColor-orange050">
-            <tr>
-              <th className={`${tableHeaderClasses} w-[150px] text-left`}>이름</th>
-              <th className={`${tableHeaderClasses} w-[200px] text-left`}>부서</th>
-              <th className={`${tableHeaderClasses} w-[150px] text-left`}>직급</th>
-              <th className={`${tableHeaderClasses} border-r-0 text-center`}>권한 설정</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-greyColor-grey200 bg-white">
-            {filteredList.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={4}
-                  className={`${tableCellClasses} border-r-0 text-center text-greyColor-grey500`}
-                >
-                  등록된 직원 목록이 없습니다.
-                </td>
-              </tr>
-            ) : (
-              filteredList.map((emp) => (
-                <tr key={emp.memberId}>
-                  <td className={tableCellClasses}>{emp.name}</td>
-                  <td className={tableCellClasses}>{emp.department}</td>
-                  <td className={tableCellClasses}>{emp.position}</td>
-                  <td className={`${tableCellClasses} w-[300px] border-r-0 text-center`}>
-                    <div className="flex justify-center">
-                      <Dropdown
-                        options={PERMISSION_OPTIONS}
-                        selectedValue={permissionChanges[emp.memberId] || ROLE_MAP[emp.currentRole]}
-                        onSelect={(value) => handlePermissionChange(emp.memberId, value)}
-                        className="w-full max-w-[150px]"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="w-full">
+        <div className="flex w-full">
+          <div className={`${headerBase} w-[210px] rounded-tl-[10px]`}>이름</div>
+          <div className={`${headerBase} w-[290px] border-l-0`}>부서</div>
+          <div className={`${headerBase} w-[200px] border-l-0`}>직급</div>
+          <div className={`${headerBase} w-[340px] rounded-tr-[10px] border-l-0`}>가입 상태</div>
+        </div>
+
+        <div className="w-full bg-white">
+          {filteredList.length === 0 ? (
+            <div className={`${cellBase} w-full border-l border-r`}>
+              등록된 직원 목록이 없습니다.
+            </div>
+          ) : (
+            filteredList.map((emp) => (
+              <div key={emp.memberId} className="flex w-full">
+                <div className={`${cellBase} w-[210px]`}>{emp.name}</div>
+                <div className={`${cellBase} w-[290px] border-l-0`}>{emp.department}</div>
+                <div className={`${cellBase} w-[200px] border-l-0`}>{emp.position}</div>
+                <div className={`${cellBase} w-[340px] border-l-0`}>
+                  <Dropdown
+                    options={PERMISSION_OPTIONS}
+                    selectedValue={permissionChanges[emp.memberId] || ROLE_MAP[emp.currentRole]}
+                    onSelect={(value) => handlePermissionChange(emp.memberId, value)}
+                    className="w-[110px]"
+                  />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+
       <button
-        onClick={handleSave}
+        onClick={handleSaveClick}
         disabled={!isDirty || isSaving}
-        className={`flex h-10 w-[113px] items-center justify-center self-end rounded-[10px] px-[15px] py-[5px] font-semibold text-white transition duration-200 ${
+        className={`mt-8 flex h-10 w-[113px] items-center justify-center self-end rounded-[10px] font-semibold text-white transition duration-200 ${
           isDirty && !isSaving
             ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
-            : 'cursor-not-allowed bg-greyColor-grey300'
+            : 'bg-greyColor-grey300'
         }`}
       >
         {isSaving ? '저장 중...' : '저장하기'}
       </button>
+
+      <PermissionConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleConfirmSave}
+      />
+
+      <PermissionSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
     </div>
   );
 }
