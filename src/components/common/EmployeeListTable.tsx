@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropdown from '../common/Dropdown';
 import { getMemberPermissions, updateMemberPermissions } from '../../apis/admin';
-import PermissionConfirmModal from '../modals/PermissionConfirmModal';
-import PermissionSuccessModal from '../modals/PermissionSuccessModal';
+import ConfirmModal from '../modals/ConfirmModal';
+import SuccessModal from '../modals/SuccessModal';
 
 interface EmployeeListTableProps {
   searchTerm: string;
@@ -148,15 +148,18 @@ export default function EmployeeListTable({
         {isSaving ? '저장 중...' : '저장하기'}
       </button>
 
-      <PermissionConfirmModal
+      <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirmSave}
+        title="직원 권한을 저장하시겠습니까?"
+        description="확인을 누르면 변경된 권한 설정이 적용돼요"
       />
 
-      <PermissionSuccessModal
+      <SuccessModal
         isOpen={isSuccessModalOpen}
         onClose={() => setIsSuccessModalOpen(false)}
+        description="직원 권한 설정이 저장되었어요"
       />
     </div>
   );

@@ -1,16 +1,20 @@
 import React from 'react';
 import QUESTION_ICON_SRC from '../../assets/questionmark.png';
 
-interface PermissionConfirmModalProps {
+interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  title: string;
+  description: string;
 }
 
-const PermissionConfirmModal: React.FC<PermissionConfirmModalProps> = ({
+const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  title,
+  description,
 }) => {
   if (!isOpen) return null;
 
@@ -26,12 +30,15 @@ const PermissionConfirmModal: React.FC<PermissionConfirmModalProps> = ({
         <div className="mt-[32px]">
           <img src={QUESTION_ICON_SRC} alt="질문 아이콘" className="h-[30px] w-[30px]" />
         </div>
+
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold text-black">
-          직원 권한을 저장하시겠습니까?
+          {title}
         </p>
-        <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal text-greyColor-grey500">
-          확인을 누르면 변경된 권한 설정이 적용돼요
+
+        <p className="mt-[10.55px] text-center font-pretendard text-[13px] font-normal text-greyColor-grey500">
+          {description}
         </p>
+
         <div className="mt-[34.45px] flex gap-[17px]">
           <button
             onClick={onClose}
@@ -51,4 +58,4 @@ const PermissionConfirmModal: React.FC<PermissionConfirmModalProps> = ({
   );
 };
 
-export default PermissionConfirmModal;
+export default ConfirmModal;
