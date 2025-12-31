@@ -6,6 +6,7 @@ import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
 import ManagerChip from '@/components/common/ManagerChip';
 import ExistingInventoryModal from '@/components/modals/ExistingInventoryModal';
+import NewInventoryModal from '@/components/modals/NewInventoryModal';
 
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 
@@ -125,6 +126,13 @@ export default function InventoryInboundTaskDetailPage() {
   const [items, setItems] = useState<InboundItem[]>(MOCK_ITEMS);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+
+  const handleAddNewInventory = (newItem: InboundItem) => {
+    setItems((prev) => [...prev, newItem]);
+    setIsNewModalOpen(false);
+  };
+
   useEffect(() => {
     const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
     if (foundData) setTaskDetail(foundData);
@@ -220,7 +228,10 @@ export default function InventoryInboundTaskDetailPage() {
                     onClose={() => setIsInventoryModalOpen(false)}
                     onAdd={handleAddInventoryItems}
                   />
-                  <button className="flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200">
+                  <button
+                    onClick={() => setIsNewModalOpen(true)}
+                    className="flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200"
+                  >
                     신규 재고 추가
                   </button>
                 </div>
@@ -229,6 +240,12 @@ export default function InventoryInboundTaskDetailPage() {
               <InboundItemTable items={items} isLoading={isLoading} />
             </div>
           </div>
+
+          <NewInventoryModal
+            isOpen={isNewModalOpen}
+            onClose={() => setIsNewModalOpen(false)}
+            onAdd={handleAddNewInventory}
+          />
 
           <div className="mt-auto flex justify-end pt-10">
             <button
