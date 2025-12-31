@@ -4,6 +4,8 @@ import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
+import ManagerChip from '@/components/common/ManagerChip';
+import ExistingInventoryModal from '@/components/modals/ExistingInventoryModal';
 
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 
@@ -101,13 +103,15 @@ const FormGroup: React.FC<{
 }> = ({ label, children, className = '' }) => (
   <div className={className}>
     <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
-    {children}
+    <div className="mt-4">{children}</div>
   </div>
 );
 
 export default function InventoryInboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
   const navigate = useNavigate();
+
+  const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -118,7 +122,7 @@ export default function InventoryInboundTaskDetailPage() {
     status: '',
   });
 
-  const [items, setItems] = useState<InboundItem[]>([]);
+  const [items, setItems] = useState<InboundItem[]>(MOCK_ITEMS);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -134,69 +138,89 @@ export default function InventoryInboundTaskDetailPage() {
 
   const handleClose = () => navigate(-1);
 
+  const handleAddInventoryItems = (selectedItems: any[]) => {
+    const newItems: InboundItem[] = selectedItems.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      inboundQty: 0,
+      currentQty: item.quantity,
+      targetQty: 0,
+      status: '미진행',
+    }));
+
+    setItems((prev) => {
+      const existingIds = new Set(prev.map((i) => i.id));
+      const filteredNewItems = newItems.filter((i) => !existingIds.has(i.id));
+      return [...prev, ...filteredNewItems];
+    });
+
+    setIsInventoryModalOpen(false);
+  };
+
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
-          <button
-            onClick={handleClose}
-            className="absolute right-[50px] top-[50px] text-[30px] text-greyColor-grey600"
-          >
-            ✕
-          </button>
-
           <h1 className="font-pretendard text-[24px] font-bold text-black">입고 업무 상세</h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
-            내용 변경 시 자동으로 승인요청 버튼이 활성화됩니다.
+            요청일: {taskDetail.requestDate.replace(/-/g, '.')}
           </p>
 
-          <div className="mt-[60px]">
-            <div className="mb-[60px] flex justify-between">
-              <div className="w-[390px]">
-                <FormGroup label="프로젝트 넘버">
-                  <BasicInput
-                    value={taskDetail.projectNumber}
-                    readOnly
-                    disabled
-                    className="bg-greyColor-grey100 text-greyColor-grey400"
-                  />
-                </FormGroup>
-              </div>
-              <div className="w-[390px]">
-                <FormGroup label="입고 업무명">
-                  <BasicInput value={taskDetail.taskName} readOnly />
-                </FormGroup>
-              </div>
+          <div className="mt-[70px]">
+            <div className="mb-[70px] flex justify-between">
+              <FormGroup label="진행 상태" className="w-fit">
+                <StatusStepBar currentStatus={taskDetail.status} type="inbound" />
+              </FormGroup>
+
+              <FormGroup label="프로젝트 넘버" className="w-[390px]">
+                <BasicInput
+                  value={taskDetail.projectNumber}
+                  readOnly
+                  disabled
+                  className="bg-greyColor-grey100 text-greyColor-grey400"
+                />
+              </FormGroup>
             </div>
 
-            <FormGroup label="업무 설명" className="mb-[60px]">
-              <LargeInput value={taskDetail.description} readOnly className="h-[160px]" />
+            <div className="mb-[64px] flex justify-between">
+              <FormGroup label="입고 업무명" className="w-[390px]">
+                <BasicInput value={taskDetail.taskName} readOnly disabled />
+              </FormGroup>
+
+              <FormGroup label="입고 업무 담당자" className="w-[390px]">
+                <div className="flex h-[50px] w-[390px] items-center gap-[10px] rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-[16px] py-[15px]">
+                  {taskDetail.manager && taskDetail.manager !== '-' ? (
+                    <ManagerChip name={taskDetail.manager} />
+                  ) : (
+                    <span className="font-pretendard text-[17px] text-greyColor-grey500">-</span>
+                  )}
+                </div>
+              </FormGroup>
+            </div>
+
+            <FormGroup label="업무 설명" className="mb-[40px]">
+              <LargeInput value={taskDetail.description} readOnly disabled className="h-[160px]" />
             </FormGroup>
 
-            <div className="mb-[60px] flex justify-between">
-              <div className="w-[390px]">
-                <FormGroup label="요청일">
-                  <BasicInput value={taskDetail.requestDate} readOnly />
-                </FormGroup>
-              </div>
-              <div className="w-[390px]">
-                <FormGroup label="진행 상태">
-                  <StatusStepBar currentStatus={taskDetail.status} type="inbound" />
-                </FormGroup>
-              </div>
-            </div>
-
-            <div className="mt-10">
+            <div className="mt-[80px]">
               <div className="mb-[36px] flex items-center justify-between">
                 <h2 className="font-pretendard text-[19px] font-bold text-black">입고 물품 목록</h2>
                 <div className="flex gap-[8px]">
-                  <button className="flex h-[37px] w-[117px] items-center justify-center whitespace-nowrap rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 px-[8px] py-[5px] font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200">
+                  <button
+                    onClick={() => setIsInventoryModalOpen(true)}
+                    className="flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200"
+                  >
                     기존 재고 추가
                   </button>
-
-                  <button className="flex h-[37px] w-[117px] items-center justify-center whitespace-nowrap rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 px-[8px] py-[5px] font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200">
+                  <ExistingInventoryModal
+                    isOpen={isInventoryModalOpen}
+                    onClose={() => setIsInventoryModalOpen(false)}
+                    onAdd={handleAddInventoryItems}
+                  />
+                  <button className="flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200">
                     신규 재고 추가
                   </button>
                 </div>
