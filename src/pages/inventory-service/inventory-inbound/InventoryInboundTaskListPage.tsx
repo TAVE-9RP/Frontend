@@ -3,6 +3,7 @@ import SearchBar from '../../../components/common/SearchBar';
 import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import TaskListTable from '../../../components/common/TaskListTable';
+import TaskToggleButton from '@/components/common/TaskToggleButton';
 
 interface InboundTask {
   id: number;
@@ -88,6 +89,8 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
   },
 ];
 
+const MY_NAME = '박하은';
+
 const INITIAL_STATUS_DATA = [
   { status: 'ALL', label: '전체', count: MOCK_INBOUND_TASK_LIST.length },
   {
@@ -117,24 +120,30 @@ export default function InventoryInboundTaskListPage() {
   const [activeStatus, setActiveStatus] = useState<InboundTask['status']>('ALL');
   const [taskList, setTaskList] = useState<InboundTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'ALL' | 'MY'>('ALL');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const fetchTasksByStatus = (status: InboundTask['status']) => {
+  const fetchTasksByStatus = (status: InboundTask['status'], currentViewMode: 'ALL' | 'MY') => {
     setIsLoading(true);
 
     setTimeout(() => {
-      let filteredList: InboundTask[];
-      if (status === 'ALL') {
-        filteredList = MOCK_INBOUND_TASK_LIST;
-      } else {
-        filteredList = MOCK_INBOUND_TASK_LIST.filter((task) => task.status === status);
+      let filteredList = MOCK_INBOUND_TASK_LIST;
+
+      if (status !== 'ALL') {
+        filteredList = filteredList.filter((task) => task.status === status);
+      }
+
+      if (currentViewMode === 'MY') {
+        filteredList = filteredList.filter((task) => task.manager === MY_NAME);
       }
 
       const finalFilteredList = filteredList.filter(
-        (task) => task.projectNumber.includes(searchTerm) || task.taskName.includes(searchTerm),
+        (task) =>
+          task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
       setTaskList(finalFilteredList);
@@ -148,41 +157,55 @@ export default function InventoryInboundTaskListPage() {
   };
 
   useEffect(() => {
-    fetchTasksByStatus(activeStatus);
-  }, [activeStatus, searchTerm]);
+    fetchTasksByStatus(activeStatus, viewMode);
+  }, [activeStatus, searchTerm, viewMode]);
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 bg-white">
+      <main className="flex-1">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             입고 업무 리스트
           </h1>
-          <div className="mt-12 w-[1040px]">
-            <SearchBar
-              placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
+
+          <div className="mt-8">
+            <TaskToggleButton viewMode={viewMode} onChange={setViewMode} />
           </div>
-          <div className="mb-6 mt-5 flex w-[1040px] items-center justify-start">
-            <div className="flex gap-4">
+
+          <div className="mt-[43px] flex items-center">
+            <div className="flex gap-[8px]">
               {INITIAL_STATUS_DATA.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
-                  count={item.count}
+                  count={
+                    viewMode === 'MY'
+                      ? MOCK_INBOUND_TASK_LIST.filter(
+                          (t) =>
+                            (item.status === 'ALL' || t.status === item.status) &&
+                            t.manager === MY_NAME,
+                        ).length
+                      : item.count
+                  }
                   isActive={activeStatus === item.status}
                   onClick={() => handleStatusClick(item.status as InboundTask['status'])}
                 />
               ))}
             </div>
+
+            <div className="ml-[160px] w-[500px]">
+              <SearchBar
+                placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="pl-[70px] pr-10">
+        <div className="mt-[27px] pl-[70px] pr-10">
           <TaskListTable
             data={taskList}
             isLoading={isLoading}

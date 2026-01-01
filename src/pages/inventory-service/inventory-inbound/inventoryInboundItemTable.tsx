@@ -13,9 +13,18 @@ export interface InboundItem {
 interface InboundItemTableProps {
   items: InboundItem[];
   isLoading?: boolean;
+  isProgress?: boolean;
+  selectedItemIds: string[];
+  onSelect: (id: string) => void;
 }
 
-export default function InboundItemTable({ items, isLoading }: InboundItemTableProps) {
+export default function InboundItemTable({
+  items,
+  isLoading,
+  isProgress = false,
+  selectedItemIds = [],
+  onSelect,
+}: InboundItemTableProps) {
   const isColumnEmpty = (key: keyof InboundItem) => {
     if (items.length === 0) return true;
     return items.every(
@@ -25,60 +34,35 @@ export default function InboundItemTable({ items, isLoading }: InboundItemTableP
   };
 
   const getHeaderTextColor = (key: keyof InboundItem | 'selection') => {
-    if (key === 'selection') return 'text-greyColor-grey300';
-
+    if (key === 'selection')
+      return isProgress ? 'text-greyColor-grey900' : 'text-greyColor-grey300';
     return isColumnEmpty(key) ? 'text-greyColor-grey300' : 'text-greyColor-grey900';
   };
 
   if (isLoading) {
     return (
-      <div className="flex h-[200px] w-[811px] items-center justify-center border border-greyColor-grey200 text-greyColor-grey500">
+      <div className="flex h-[200px] w-[810px] items-center justify-center border border-greyColor-grey200 text-greyColor-grey500">
         물품 목록을 불러오는 중...
       </div>
     );
   }
 
+  const cellBase =
+    'flex h-[40px] items-center justify-center border-b border-r border-greyColor-grey200 shrink-0';
+  const cell110 = `${cellBase} w-[110px]`;
+  const cell40 = `${cellBase} w-[40px]`;
+
   return (
-    <div className="flex w-[811px] flex-col self-stretch border-l border-t border-greyColor-grey200 bg-white">
-      <div className="flex h-[40px] w-full bg-greyColor-grey100 text-center text-[14px] font-bold">
-        <div
-          className={`flex w-[60px] items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('selection')}`}
-        >
-          선택
-        </div>
-        <div
-          className={`flex flex-1 items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('id')}`}
-        >
-          재고 번호
-        </div>
-        <div
-          className={`flex flex-1 items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('name')}`}
-        >
-          물품명
-        </div>
-        <div
-          className={`flex flex-1 items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('price')}`}
-        >
-          물품 가격
-        </div>
-        <div
-          className={`flex w-[80px] items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('inboundQty')}`}
-        >
-          입고 수량
-        </div>
-        <div
-          className={`flex w-[100px] items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('currentQty')}`}
-        >
-          현재 입고 수량
-        </div>
-        <div
-          className={`flex w-[100px] items-center justify-center border-b border-r border-greyColor-grey200 ${getHeaderTextColor('targetQty')}`}
-        >
-          목표 입고 수량
-        </div>
-        <div className="flex w-[90px] items-center justify-center border-b border-r border-greyColor-grey200 text-greyColor-grey900">
-          처리 상태
-        </div>
+    <div className="flex w-[810px] flex-col self-stretch border-l border-t border-greyColor-grey200 bg-white font-pretendard">
+      <div className="flex w-full bg-greyColor-grey100 text-center text-[14px] font-bold">
+        <div className={`${cell40} ${getHeaderTextColor('selection')}`}>선택</div>
+        <div className={`${cell110} ${getHeaderTextColor('id')}`}>재고 번호</div>
+        <div className={`${cell110} ${getHeaderTextColor('name')}`}>물품명</div>
+        <div className={`${cell110} ${getHeaderTextColor('price')}`}>물품 가격</div>
+        <div className={`${cell110} ${getHeaderTextColor('inboundQty')}`}>입고 수량</div>
+        <div className={`${cell110} ${getHeaderTextColor('currentQty')}`}>현재 입고 수량</div>
+        <div className={`${cell110} ${getHeaderTextColor('targetQty')}`}>목표 입고 수량</div>
+        <div className={`${cell110} text-greyColor-grey900`}>처리 상태</div>
       </div>
 
       <div className="flex w-full flex-col">
@@ -87,41 +71,57 @@ export default function InboundItemTable({ items, isLoading }: InboundItemTableP
             등록된 입고 물품이 없습니다.
           </div>
         ) : (
-          items.map((item) => (
-            <div
-              key={item.id}
-              className="flex h-[40px] w-full text-center text-[14px] text-greyColor-grey900 hover:bg-greyColor-grey50"
-            >
-              <div className="flex w-[60px] items-center justify-center border-b border-r border-greyColor-grey200">
-                -
-              </div>
-              <div className="flex flex-1 items-center justify-center border-b border-r border-greyColor-grey200">
-                {item.id}
-              </div>
-              <div className="flex flex-1 items-center justify-center border-b border-r border-greyColor-grey200">
-                {item.name}
-              </div>
-              <div className="flex flex-1 items-center justify-center border-b border-r border-greyColor-grey200">
-                {typeof item.price === 'number' ? `${item.price}원` : item.price}
-              </div>
-              <div className="flex w-[80px] items-center justify-center border-b border-r border-greyColor-grey200">
-                {item.inboundQty}
-              </div>
-              <div className="flex w-[100px] items-center justify-center border-b border-r border-greyColor-grey200">
-                {item.currentQty}
-              </div>
-              <div className="flex w-[100px] items-center justify-center border-b border-r border-greyColor-grey200">
-                {item.targetQty}
-              </div>
-              <div className="flex w-[90px] items-center justify-center border-b border-r border-greyColor-grey200">
-                <div
-                  className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium ${item.status === '완료' ? 'bg-mainColor-blue050 text-mainColor-blue600' : 'bg-greyColor-grey200 text-greyColor-grey600'}`}
-                >
-                  {item.status}
+          items.map((item) => {
+            const isSelected = selectedItemIds.includes(item.id);
+            return (
+              <div
+                key={item.id}
+                className={`flex w-full text-center text-[14px] transition-colors ${
+                  isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'
+                }`}
+              >
+                <div className={cell40}>
+                  {isProgress && item.status !== '완료' ? (
+                    <button
+                      onClick={() => onSelect(item.id)}
+                      className="flex h-full w-full items-center justify-center"
+                    >
+                      <img
+                        src={
+                          isSelected ? '/src/assets/checkbox_check.png' : '/src/assets/checkbox.png'
+                        }
+                        alt="checkbox"
+                        style={{ width: '19.5px', height: '19.5px' }}
+                        className="object-contain"
+                      />
+                    </button>
+                  ) : (
+                    <span className="text-greyColor-grey300">-</span>
+                  )}
+                </div>
+
+                <div className={`${cell110} text-greyColor-grey900`}>{item.id}</div>
+                <div className={`${cell110} text-greyColor-grey900`}>{item.name}</div>
+                <div className={`${cell110} text-greyColor-grey900`}>
+                  {typeof item.price === 'number' ? `${item.price.toLocaleString()}원` : item.price}
+                </div>
+                <div className={`${cell110} text-greyColor-grey900`}>{item.inboundQty}</div>
+                <div className={`${cell110} text-greyColor-grey900`}>{item.currentQty}</div>
+                <div className={`${cell110} text-greyColor-grey900`}>{item.targetQty}</div>
+                <div className={cell110}>
+                  <div
+                    className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium ${
+                      item.status === '완료'
+                        ? 'bg-mainColor-blue050 text-mainColor-blue600'
+                        : 'bg-greyColor-grey200 text-greyColor-grey600'
+                    }`}
+                  >
+                    {item.status}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
