@@ -22,40 +22,57 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
 
   const handleRowClick = (inventoryNumber: string) => {
     navigate(`/inventory-stock/${inventoryNumber}`);
-    console.log(`재고 ID ${inventoryNumber} 상세 페이지로 이동`);
   };
 
-  const tableHeaderClasses =
-    'py-3 px-4 font-bold text-sm text-greyColor-grey700 bg-subColor-orange050 border-b border-subColor-orange100 border-r border-greyColor-grey200';
+  const commonCellClasses =
+    'h-[40px] px-4 border-b border-r border-greyColor-grey200 flex items-center justify-center shrink-0';
 
-  const tableCellClasses =
-    'py-3 px-4 text-sm text-greyColor-grey800 border-b border-greyColor-grey200 border-r border-greyColor-grey200';
+  const headerTextClasses = 'font-pretendard text-[15px] font-bold text-black';
+
+  const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black';
 
   if (isLoading) {
-    return <p className="py-10 text-center text-greyColor-grey500">재고 목록을 불러오는 중...</p>;
+    return (
+      <p className="py-10 text-center font-pretendard text-greyColor-grey500">
+        재고 목록을 불러오는 중...
+      </p>
+    );
   }
 
   return (
-    <div className="h-auto w-[1040px] overflow-x-auto border border-greyColor-grey200">
-      <table className="min-w-full divide-y divide-greyColor-grey200">
+    <div className="w-[1040px] overflow-hidden border-l border-t border-greyColor-grey200">
+      <table className="w-full table-fixed border-collapse">
         <thead className="bg-subColor-orange050">
-          <tr>
-            <th className={`${tableHeaderClasses} text-left`}>재고 번호</th>
-            <th className={`${tableHeaderClasses} text-left`}>품목명</th>
-            <th className={`${tableHeaderClasses} text-left`}>수량</th>
-            <th className={`${tableHeaderClasses} text-left`}>품목 가격</th>
-            <th className={`${tableHeaderClasses} text-left`}>위치</th>
-            <th className={`${tableHeaderClasses} text-left`}>최근 입고일</th>
-            <th className={`${tableHeaderClasses} border-r-0 text-left`}>생성일</th>
+          <tr className="flex">
+            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
+              재고 번호
+            </th>
+            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
+              품목명
+            </th>
+            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses} justify-start`}>
+              수량
+            </th>
+            <th className={`${commonCellClasses} w-[120px] ${headerTextClasses} justify-start`}>
+              품목 가격
+            </th>
+            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses} justify-start`}>
+              위치
+            </th>
+            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
+              최근 입고일
+            </th>
+            <th
+              className={`${commonCellClasses} w-[160px] border-r-0 ${headerTextClasses} justify-start`}
+            >
+              생성일
+            </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-greyColor-grey200 bg-white">
+        <tbody className="bg-white">
           {data.length === 0 ? (
-            <tr>
-              <td
-                colSpan={7}
-                className={`${tableCellClasses} border-r-0 text-center text-greyColor-grey500`}
-              >
+            <tr className="flex">
+              <td className="flex h-[40px] w-full items-center justify-center border-b border-greyColor-grey200 font-pretendard text-[15px] text-greyColor-grey500">
                 해당 재고 목록이 없습니다.
               </td>
             </tr>
@@ -63,16 +80,30 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
             data.map((stock) => (
               <tr
                 key={stock.id}
-                className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
+                className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
                 onClick={() => handleRowClick(stock.inventoryNumber)}
               >
-                <td className={`${tableCellClasses} font-mono`}>{stock.inventoryNumber}</td>
-                <td className={tableCellClasses}>{stock.itemName}</td>
-                <td className={tableCellClasses}>{stock.quantity}</td>
-                <td className={tableCellClasses}>{stock.itemPrice}</td>
-                <td className={tableCellClasses}>{stock.location}</td>
-                <td className={tableCellClasses}>{stock.recentInboundDate}</td>
-                <td className={`${tableCellClasses} border-r-0`}>{stock.creationDate}</td>
+                <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
+                  {stock.inventoryNumber}
+                </td>
+                <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
+                  {stock.itemName}
+                </td>
+                <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
+                  {stock.quantity}
+                </td>
+                <td className={`${commonCellClasses} w-[120px] ${bodyTextClasses}`}>
+                  {stock.itemPrice}
+                </td>
+                <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
+                  {stock.location}
+                </td>
+                <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
+                  {stock.recentInboundDate}
+                </td>
+                <td className={`${commonCellClasses} w-[160px] border-r-0 ${bodyTextClasses}`}>
+                  {stock.creationDate}
+                </td>
               </tr>
             ))
           )}
