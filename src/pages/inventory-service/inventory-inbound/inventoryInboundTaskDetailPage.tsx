@@ -8,8 +8,9 @@ import ManagerChip from '@/components/common/ManagerChip';
 import ExistingInventoryModal from '@/components/modals/ExistingInventoryModal';
 import NewInventoryModal from '@/components/modals/NewInventoryModal';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
-
+import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
+import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -48,33 +49,6 @@ const MOCK_INBOUND_TASK_LIST = [
     description: '카피바라랜드 프로젝트 관련 애플망고 입고 건입니다.',
     status: 'COMPLETED',
   },
-  {
-    id: 5,
-    projectNumber: 'SYS-01-005',
-    taskName: '업무명입니다.',
-    manager: '신지혜',
-    requestDate: '2025-10-25',
-    description: '카피바라랜드 프로젝트 관련 애플망고 입고 건입니다.',
-    status: 'TASK_ASSIGNMENT',
-  },
-  {
-    id: 6,
-    projectNumber: 'SYS-01-006',
-    taskName: '업무명입니다.',
-    manager: '이희원',
-    requestDate: '2025-10-25',
-    description: '카피바라랜드 프로젝트 관련 애플망고 입고 건입니다.',
-    status: 'IN_PROGRESS',
-  },
-  {
-    id: 7,
-    projectNumber: 'SYS-01-007',
-    taskName: '업무명입니다.',
-    manager: '짱구',
-    requestDate: '2025-10-25',
-    description: '카피바라랜드 프로젝트 관련 애플망고 입고 건입니다.',
-    status: 'IN_PROGRESS',
-  },
 ];
 
 const MOCK_ITEMS: InboundItem[] = [
@@ -85,7 +59,7 @@ const MOCK_ITEMS: InboundItem[] = [
     inboundQty: '-',
     currentQty: '-',
     targetQty: 100,
-    status: '완료',
+    status: '미진행',
   },
   {
     id: 'INV-2025-002',
@@ -98,11 +72,11 @@ const MOCK_ITEMS: InboundItem[] = [
   },
 ];
 
-const FormGroup: React.FC<{
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}> = ({ label, children, className = '' }) => (
+const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?: string }> = ({
+  label,
+  children,
+  className = '',
+}) => (
   <div className={className}>
     <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     <div className="mt-4">{children}</div>
@@ -114,7 +88,6 @@ export default function InventoryInboundTaskDetailPage() {
   const navigate = useNavigate();
 
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
-
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
     taskName: '',
@@ -123,36 +96,69 @@ export default function InventoryInboundTaskDetailPage() {
     description: '',
     status: '',
   });
-
   const [items, setItems] = useState<InboundItem[]>(MOCK_ITEMS);
   const [isLoading, setIsLoading] = useState(false);
-
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isInboundConfirmModalOpen, setIsInboundConfirmModalOpen] = useState(false);
+  const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
+  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+  const [isFinalInbound, setIsFinalInbound] = useState(false);
+
+  useEffect(() => {
+    const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
+    if (foundData) setTaskDetail(foundData);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, [projectNumber]);
 
   const handleAddNewInventory = (newItem: InboundItem) => {
     setItems((prev) => [...prev, newItem]);
     setIsNewModalOpen(false);
   };
 
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const handleFinalConfirm = () => {
-    console.log('관리자에게 승인 요청 전송됨', taskDetail);
-    alert('승인 요청이 전달되었습니다.');
     setIsApprovalModalOpen(false);
+    setIsSuccessModalOpen(true);
   };
 
-  useEffect(() => {
-    const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
-    if (foundData) setTaskDetail(foundData);
+  const handleInboundProcess = () => {
+    if (selectedItemIds.length === 0) {
+      alert('입고 처리할 물품을 선택해주세요.');
+      return;
+    }
 
-    setIsLoading(true);
-    setTimeout(() => {
-      setItems(MOCK_ITEMS);
-      setIsLoading(false);
-    }, 500);
-  }, [projectNumber]);
+    const remainingUnprocessed = items.filter(
+      (item) => item.status !== '완료' && !selectedItemIds.includes(item.id),
+    );
 
-  const handleClose = () => navigate(-1);
+    const isAllDone = remainingUnprocessed.length === 0;
+    setIsFinalInbound(isAllDone);
+    setIsInboundConfirmModalOpen(true);
+  };
+
+  const handleInboundConfirm = () => {
+    const nextItems = items.map((item) =>
+      selectedItemIds.includes(item.id) ? { ...item, status: '완료' } : item,
+    );
+
+    setItems(nextItems);
+    setSelectedItemIds([]);
+    setIsInboundConfirmModalOpen(false);
+
+    const isTaskFullyCompleted = nextItems.every((item) => item.status === '완료');
+
+    if (isTaskFullyCompleted) {
+      setTaskDetail((prev) => ({ ...prev, status: 'COMPLETED' }));
+    }
+
+    setIsCompleteSuccessModalOpen(true);
+  };
+
+  const isFullyDone = taskDetail.status === 'COMPLETED';
 
   const handleAddInventoryItems = (selectedItems: any[]) => {
     const newItems: InboundItem[] = selectedItems.map((item) => ({
@@ -164,28 +170,35 @@ export default function InventoryInboundTaskDetailPage() {
       targetQty: 0,
       status: '미진행',
     }));
-
     setItems((prev) => {
       const existingIds = new Set(prev.map((i) => i.id));
       const filteredNewItems = newItems.filter((i) => !existingIds.has(i.id));
       return [...prev, ...filteredNewItems];
     });
-
     setIsInventoryModalOpen(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setTaskDetail((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setTaskDetail((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleItemSelect = (id: string) => {
+    const targetItem = items.find((item) => item.id === id);
+    if (targetItem?.status === '완료') return;
+
+    setSelectedItemIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    );
+  };
+
+  const isPending = taskDetail.status === 'APPROVAL_PENDING';
+  const isInProgress = taskDetail.status === 'IN_PROGRESS';
+  const isDisabled = isPending || isInProgress;
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
-
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <h1 className="font-pretendard text-[24px] font-bold text-black">입고 업무 상세</h1>
@@ -198,7 +211,6 @@ export default function InventoryInboundTaskDetailPage() {
               <FormGroup label="진행 상태" className="w-fit">
                 <StatusStepBar currentStatus={taskDetail.status} type="inbound" />
               </FormGroup>
-
               <FormGroup label="프로젝트 넘버" className="w-[390px]">
                 <BasicInput
                   value={taskDetail.projectNumber}
@@ -216,9 +228,10 @@ export default function InventoryInboundTaskDetailPage() {
                   value={taskDetail.taskName}
                   onChange={handleInputChange}
                   placeholder="업무명을 입력해주세요"
+                  readOnly={isDisabled}
+                  disabled={isDisabled}
                 />
               </FormGroup>
-
               <FormGroup label="입고 업무 담당자" className="w-[390px]">
                 <div className="flex h-[50px] w-[390px] items-center gap-[10px] rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-[16px] py-[15px]">
                   {taskDetail.manager && taskDetail.manager !== '-' ? (
@@ -237,6 +250,8 @@ export default function InventoryInboundTaskDetailPage() {
                 onChange={handleInputChange}
                 className="h-[160px]"
                 placeholder="상세 설명을 입력해주세요"
+                readOnly={isDisabled}
+                disabled={isDisabled}
               />
             </FormGroup>
 
@@ -245,8 +260,9 @@ export default function InventoryInboundTaskDetailPage() {
                 <h2 className="font-pretendard text-[19px] font-bold text-black">입고 물품 목록</h2>
                 <div className="flex gap-[8px]">
                   <button
+                    disabled={isPending}
                     onClick={() => setIsInventoryModalOpen(true)}
-                    className="flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200"
+                    className={`flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 font-pretendard text-[15px] font-bold transition-all ${isPending ? 'cursor-not-allowed bg-greyColor-grey100 text-greyColor-grey600' : 'cursor-pointer bg-greyColor-grey100 text-greyColor-grey600 hover:bg-greyColor-grey200'}`}
                   >
                     기존 재고 추가
                   </button>
@@ -256,15 +272,21 @@ export default function InventoryInboundTaskDetailPage() {
                     onAdd={handleAddInventoryItems}
                   />
                   <button
+                    disabled={isPending}
                     onClick={() => setIsNewModalOpen(true)}
-                    className="flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200"
+                    className={`flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 font-pretendard text-[15px] font-bold transition-all ${isPending ? 'cursor-not-allowed bg-greyColor-grey100 text-greyColor-grey600' : 'cursor-pointer bg-greyColor-grey100 text-greyColor-grey600 hover:bg-greyColor-grey200'}`}
                   >
                     신규 재고 추가
                   </button>
                 </div>
               </div>
-
-              <InboundItemTable items={items} isLoading={isLoading} />
+              <InboundItemTable
+                items={items}
+                isLoading={isLoading}
+                isProgress={isInProgress}
+                selectedItemIds={selectedItemIds}
+                onSelect={handleItemSelect}
+              />
             </div>
           </div>
 
@@ -275,19 +297,61 @@ export default function InventoryInboundTaskDetailPage() {
           />
 
           <div className="mt-auto flex justify-end pt-10">
-            <button
-              className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white"
-              onClick={() => setIsApprovalModalOpen(true)}
-            >
-              승인요청
-            </button>
+            {!isFullyDone &&
+              (isInProgress ? (
+                <button
+                  className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
+                  onClick={handleInboundProcess}
+                >
+                  입고처리
+                </button>
+              ) : (
+                <button
+                  disabled={isPending}
+                  className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
+                    isPending
+                      ? 'cursor-not-allowed bg-greyColor-grey300'
+                      : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                  }`}
+                  onClick={() => setIsApprovalModalOpen(true)}
+                >
+                  승인요청
+                </button>
+              ))}
           </div>
+
           <ManagerApprovalModal
             isOpen={isApprovalModalOpen}
             onClose={() => setIsApprovalModalOpen(false)}
             onConfirm={handleFinalConfirm}
             variant="request"
             managerName={taskDetail.manager}
+          />
+
+          <SuccessModal
+            isOpen={isSuccessModalOpen}
+            onClose={() => setIsSuccessModalOpen(false)}
+            title="승인 요청 완료"
+            description="관리자에게 승인 요청이 전달되었어요"
+          />
+
+          <InboundConfirmModal
+            isOpen={isInboundConfirmModalOpen}
+            onClose={() => setIsInboundConfirmModalOpen(false)}
+            onConfirm={handleInboundConfirm}
+            title={isFinalInbound ? '완료 처리하시겠습니까?' : '입고 처리하시겠습니까?'}
+            subTitle={
+              isFinalInbound
+                ? '확인을 누르면 입고 완료 처리가 진행돼요'
+                : '확인을 누르면 입고 처리가 진행돼요'
+            }
+          />
+
+          <SuccessModal
+            isOpen={isCompleteSuccessModalOpen}
+            onClose={() => setIsCompleteSuccessModalOpen(false)}
+            title="처리 완료"
+            description={isFinalInbound ? '입고 완료 처리되었어요' : '입고 처리되었어요'}
           />
         </div>
       </main>
