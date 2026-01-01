@@ -5,14 +5,29 @@ interface ManagerApprovalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  variant?: 'default' | 'request';
+  managerName?: string;
 }
 
 const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  variant = 'default',
+  managerName = '홍길동',
 }) => {
   if (!isOpen) return null;
+
+  const isRequestMode = variant === 'request';
+
+  const content = {
+    title: isRequestMode ? `승인 관리자: ${managerName}` : '관리자 승인을 진행하시겠습니까?',
+    description: isRequestMode
+      ? '확인을 누르면 관리자에게 승인 요청이 전달돼요'
+      : '승인 시 업무 상태가 진행 중으로 변경돼요',
+    cancelLabel: isRequestMode ? '취소' : '거절',
+    confirmLabel: isRequestMode ? '확인' : '승인',
+  };
 
   return (
     <div
@@ -28,11 +43,11 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
         </div>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold leading-normal text-black">
-          관리자 승인을 진행하시겠습니까?
+          {content.title}
         </p>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal leading-normal text-greyColor-grey500">
-          승인 시 업무 상태가 진행 중으로 변경돼요
+          {content.description}
         </p>
 
         <div className="mt-[34.45px] flex gap-[17px]">
@@ -40,14 +55,14 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
             onClick={onClose}
             className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] border border-greyColor-grey300 bg-greyColor-grey50 font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey500 transition-colors hover:bg-greyColor-grey100"
           >
-            거절
+            {content.cancelLabel}
           </button>
 
           <button
             onClick={onConfirm}
             className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[15px] font-bold leading-normal text-white transition-colors hover:bg-mainColor-blue700"
           >
-            승인
+            {content.confirmLabel}
           </button>
         </div>
       </div>

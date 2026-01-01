@@ -7,6 +7,7 @@ import StatusStepBar from '../../../components/common/StatusStepBar';
 import ManagerChip from '@/components/common/ManagerChip';
 import ExistingInventoryModal from '@/components/modals/ExistingInventoryModal';
 import NewInventoryModal from '@/components/modals/NewInventoryModal';
+import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 
@@ -133,6 +134,13 @@ export default function InventoryInboundTaskDetailPage() {
     setIsNewModalOpen(false);
   };
 
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const handleFinalConfirm = () => {
+    console.log('관리자에게 승인 요청 전송됨', taskDetail);
+    alert('승인 요청이 전달되었습니다.');
+    setIsApprovalModalOpen(false);
+  };
+
   useEffect(() => {
     const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
     if (foundData) setTaskDetail(foundData);
@@ -166,6 +174,14 @@ export default function InventoryInboundTaskDetailPage() {
     setIsInventoryModalOpen(false);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setTaskDetail((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
@@ -195,7 +211,12 @@ export default function InventoryInboundTaskDetailPage() {
 
             <div className="mb-[64px] flex justify-between">
               <FormGroup label="입고 업무명" className="w-[390px]">
-                <BasicInput value={taskDetail.taskName} readOnly disabled />
+                <BasicInput
+                  name="taskName"
+                  value={taskDetail.taskName}
+                  onChange={handleInputChange}
+                  placeholder="업무명을 입력해주세요"
+                />
               </FormGroup>
 
               <FormGroup label="입고 업무 담당자" className="w-[390px]">
@@ -210,7 +231,13 @@ export default function InventoryInboundTaskDetailPage() {
             </div>
 
             <FormGroup label="업무 설명" className="mb-[40px]">
-              <LargeInput value={taskDetail.description} readOnly disabled className="h-[160px]" />
+              <LargeInput
+                name="description"
+                value={taskDetail.description}
+                onChange={handleInputChange}
+                className="h-[160px]"
+                placeholder="상세 설명을 입력해주세요"
+              />
             </FormGroup>
 
             <div className="mt-[80px]">
@@ -249,12 +276,19 @@ export default function InventoryInboundTaskDetailPage() {
 
           <div className="mt-auto flex justify-end pt-10">
             <button
-              className="h-[54px] w-[140px] rounded-[10px] bg-greyColor-grey300 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue600"
-              onClick={() => alert('승인 요청되었습니다.')}
+              className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white"
+              onClick={() => setIsApprovalModalOpen(true)}
             >
               승인요청
             </button>
           </div>
+          <ManagerApprovalModal
+            isOpen={isApprovalModalOpen}
+            onClose={() => setIsApprovalModalOpen(false)}
+            onConfirm={handleFinalConfirm}
+            variant="request"
+            managerName={taskDetail.manager}
+          />
         </div>
       </main>
     </div>
