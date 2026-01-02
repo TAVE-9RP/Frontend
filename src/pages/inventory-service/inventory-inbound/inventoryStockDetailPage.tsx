@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
+import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
+import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
+import SuccessModal from '@/components/modals/SuccessModal';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -61,32 +64,31 @@ const MOCK_INVENTORY_LIST = [
   },
 ];
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Pretendard',
-  fontSize: '19px',
-  fontWeight: 700,
-  color: '#000',
-  marginBottom: '16px',
-  display: 'block',
-};
+const MOCK_HISTORY_DATA = [
+  { id: 1, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
+  { id: 2, type: '출고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
+  { id: 3, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
+  { id: 4, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
+];
 
 const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="flex w-[390px] flex-col">
-    <label style={labelStyle}>{label}</label>
+    <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
     {children}
   </div>
-);
-
-const SmallChangeButton = () => (
-  <button className="flex h-[50px] w-[60px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 text-[15px] font-bold text-greyColor-grey600 transition-all hover:bg-greyColor-grey200">
-    변경
-  </button>
 );
 
 export default function InventoryStockDetailPage() {
   const { inventoryNumber } = useParams<{ inventoryNumber: string }>();
 
   const [inventoryDetail, setInventoryDetail] = useState<any>(null);
+  const [isChanged, setIsChanged] = useState(false);
+
+  const [isTargetChanged, setIsTargetChanged] = useState(false);
+  const [isSafetyChanged, setIsSafetyChanged] = useState(false);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
 
   useEffect(() => {
     const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
@@ -94,6 +96,34 @@ export default function InventoryStockDetailPage() {
       setInventoryDetail(found);
     }
   }, [inventoryNumber]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInventoryDetail((prev: any) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === 'targetQty') setIsTargetChanged(true);
+    if (name === 'safetyQty') setIsSafetyChanged(true);
+    setIsChanged(true);
+  };
+
+  const handleApplyChange = (type: string) => {
+    alert('변경되었습니다.');
+    if (type === 'target') setIsTargetChanged(false);
+    if (type === 'safety') setIsSafetyChanged(false);
+  };
+
+  const handleEditSubmit = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmEdit = () => {
+    setIsConfirmModalOpen(false);
+    setIsCompleteSuccessModalOpen(true);
+    setIsChanged(false);
+  };
 
   if (!inventoryDetail) {
     return (
@@ -105,16 +135,7 @@ export default function InventoryStockDetailPage() {
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
-        <div
-          className="relative flex flex-col shadow-xl"
-          style={{
-            width: '967px',
-            minHeight: '1200px',
-            borderRadius: '30px',
-            background: '#FFF',
-            padding: '78px',
-          }}
-        >
+        <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <header>
             <h1 className="font-pretendard text-[24px] font-bold text-black">재고 상세</h1>
             <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
@@ -126,45 +147,92 @@ export default function InventoryStockDetailPage() {
             <div className="flex justify-between">
               <FormGroup label="재고 번호">
                 <BasicInput
+                  name="inventoryNumber"
                   value={inventoryDetail.inventoryNumber}
-                  readOnly
-                  className="bg-greyColor-grey100 text-greyColor-grey400"
+                  onChange={handleInputChange}
                 />
               </FormGroup>
               <FormGroup label="품목명">
-                <BasicInput value={inventoryDetail.itemName} />
+                <BasicInput
+                  name="itemName"
+                  value={inventoryDetail.itemName}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
             </div>
 
             <div className="flex justify-between">
               <FormGroup label="수량">
-                <BasicInput value={inventoryDetail.quantity} />
+                <BasicInput
+                  name="quantity"
+                  value={inventoryDetail.quantity}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
               <FormGroup label="물품 가격">
-                <BasicInput value={inventoryDetail.itemPrice} />
+                <BasicInput
+                  name="itemPrice"
+                  value={inventoryDetail.itemPrice}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
             </div>
 
             <div className="flex justify-between">
               <FormGroup label="위치">
-                <BasicInput value={inventoryDetail.location} />
+                <BasicInput
+                  name="location"
+                  value={inventoryDetail.location}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
               <FormGroup label="생성일">
-                <BasicInput value={inventoryDetail.creationDate} />
+                <BasicInput
+                  name="creationDate"
+                  value={inventoryDetail.creationDate}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
             </div>
 
             <div className="flex justify-between">
               <FormGroup label="현재 목표재고">
-                <div className="flex gap-[10px]">
-                  <BasicInput value={inventoryDetail.targetQty} className="flex-1" />
-                  <SmallChangeButton />
+                <div className="flex items-end gap-[21px]">
+                  <BasicInput
+                    name="targetQty"
+                    value={inventoryDetail.targetQty}
+                    className="h-[50px] w-[275px]"
+                    onChange={handleInputChange}
+                  />
+                  <button
+                    onClick={() => handleApplyChange('target')}
+                    className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
+                      isTargetChanged
+                        ? 'bg-mainColor-blue600 text-white'
+                        : 'cursor-not-allowed bg-greyColor-grey300 text-white'
+                    }`}
+                  >
+                    변경
+                  </button>
                 </div>
               </FormGroup>
+
               <FormGroup label="현재 안전재고">
-                <div className="flex gap-[10px]">
-                  <BasicInput value={inventoryDetail.safetyQty} className="flex-1" />
-                  <button className="flex h-[50px] w-[60px] items-center justify-center rounded-[5px] bg-mainColor-blue600 text-[15px] font-bold text-white transition-all hover:bg-blue-700">
+                <div className="flex items-end gap-[21px]">
+                  <BasicInput
+                    name="safetyQty"
+                    value={inventoryDetail.safetyQty}
+                    className="h-[50px] w-[275px]"
+                    onChange={handleInputChange}
+                  />
+                  <button
+                    onClick={() => handleApplyChange('safety')}
+                    className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
+                      isSafetyChanged
+                        ? 'bg-mainColor-blue600 text-white'
+                        : 'cursor-not-allowed bg-greyColor-grey300 text-white'
+                    }`}
+                  >
                     변경
                   </button>
                 </div>
@@ -173,19 +241,39 @@ export default function InventoryStockDetailPage() {
           </div>
 
           <div className="mt-[80px]">
-            <h2 style={labelStyle}>입출고 이력</h2>
-            <div className="flex h-[200px] w-full items-center justify-center border-y border-greyColor-grey200 bg-white text-greyColor-grey400">
-              이력 데이터가 없습니다.
-            </div>
+            <h2 className="mb-4 block font-pretendard text-[19px] font-bold text-black">
+              입출고 이력
+            </h2>
+            <InventoryHistoryTable historyData={MOCK_HISTORY_DATA} />
           </div>
 
           <div className="mt-auto flex justify-end pt-10">
-            <button className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-all hover:bg-blue-700">
+            <button
+              disabled={!isChanged}
+              onClick={handleEditSubmit}
+              className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-all ${
+                isChanged
+                  ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                  : 'cursor-not-allowed bg-greyColor-grey300'
+              }`}
+            >
               수정하기
             </button>
           </div>
         </div>
       </main>
+      <StockEditConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleConfirmEdit}
+      />
+
+      <SuccessModal
+        isOpen={isCompleteSuccessModalOpen}
+        onClose={() => setIsCompleteSuccessModalOpen(false)}
+        title="수정 완료"
+        description="수정사항이 저장되었어요"
+      />
     </div>
   );
 }

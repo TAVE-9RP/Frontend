@@ -3,8 +3,9 @@ import SearchBar from '../../../components/common/SearchBar';
 import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import TaskListTable from '../../../components/common/TaskListTable';
+import TaskToggleButton from '@/components/common/TaskToggleButton';
 
-interface InboundTask {
+interface OutboundTask {
   id: number;
   projectNumber: string;
   taskName: string;
@@ -15,13 +16,13 @@ interface InboundTask {
   status: 'ALL' | 'TASK_ASSIGNMENT' | 'APPROVAL_PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 }
 
-const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
+const MOCK_OUTBOUND_TASK_LIST: OutboundTask[] = [
   {
     id: 1,
     projectNumber: 'SYS-01-001',
     taskName: '타코',
     items: '애플망고 외 3...',
-    location: '위치입니다.',
+    location: '위치',
     requestDate: '2025-10-25',
     manager: '박하은',
     status: 'TASK_ASSIGNMENT',
@@ -30,8 +31,8 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
     id: 2,
     projectNumber: 'SYS-01-002',
     taskName: '엄뮤명',
-    items: '애플망고 외 3...',
-    location: '위치입니다.',
+    items: '카피바라 300마리',
+    location: '위치',
     requestDate: '2025-10-25',
     manager: '박카스',
     status: 'APPROVAL_PENDING',
@@ -40,8 +41,8 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
     id: 3,
     projectNumber: 'SYS-01-003',
     taskName: '에이씨밀란',
-    items: '애플망고 외 3...',
-    location: '위치입니다.',
+    items: 'ac milan',
+    location: '위치',
     requestDate: '2025-10-25',
     manager: '박하사탕',
     status: 'IN_PROGRESS',
@@ -51,7 +52,7 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
     projectNumber: 'SYS-01-004',
     taskName: '업무명입니다.',
     items: '애플망고 외 3...',
-    location: '위치입니다.',
+    location: '위치',
     requestDate: '2025-10-25',
     manager: '카피바라',
     status: 'COMPLETED',
@@ -61,9 +62,9 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
     projectNumber: 'SYS-01-005',
     taskName: '업무명입니다.',
     items: '애플망고 외 3...',
-    location: '위치입니다.',
+    location: '위치',
     requestDate: '2025-10-25',
-    manager: '신지혜',
+    manager: '박하은',
     status: 'TASK_ASSIGNMENT',
   },
   {
@@ -71,7 +72,7 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
     projectNumber: 'SYS-01-006',
     taskName: '업무명입니다.',
     items: '애플망고 외 3...',
-    location: '위치입니다.',
+    location: '위치',
     requestDate: '2025-10-25',
     manager: '이희원',
     status: 'IN_PROGRESS',
@@ -81,120 +82,114 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
     projectNumber: 'SYS-01-007',
     taskName: '업무명입니다.',
     items: '애플망고 외 3...',
-    location: '위치입니다.',
+    location: '위치',
     requestDate: '2025-10-25',
-    manager: '짱구',
+    manager: '박하은',
     status: 'IN_PROGRESS',
   },
 ];
 
-const INITIAL_STATUS_DATA = [
-  { status: 'ALL', label: '전체', count: MOCK_INBOUND_TASK_LIST.length },
-  {
-    status: 'TASK_ASSIGNMENT',
-    label: '업무 할당',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'TASK_ASSIGNMENT').length,
-  },
-  {
-    status: 'APPROVAL_PENDING',
-    label: '승인 대기',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'APPROVAL_PENDING').length,
-  },
-  {
-    status: 'IN_PROGRESS',
-    label: '진행중',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'IN_PROGRESS').length,
-  },
-  {
-    status: 'COMPLETED',
-    label: '완료',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'COMPLETED').length,
-  },
-];
-
-const pageTitleStyle = {
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
-};
+const MY_NAME = '박하은'; // api 연동 필요
 
 export default function LogisticsOutboundTaskListPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  // '전체'를 초기 활성 상태로 설정
-  const [activeStatus, setActiveStatus] = useState<InboundTask['status']>('ALL');
-  const [taskList, setTaskList] = useState<InboundTask[]>([]);
+  const [activeStatus, setActiveStatus] = useState<OutboundTask['status']>('ALL');
+  const [taskList, setTaskList] = useState<OutboundTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'ALL' | 'MY'>('ALL');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  // 상태에 따라 목록 필터링 (API 호출 모방)
-  const fetchTasksByStatus = (status: InboundTask['status']) => {
+  const fetchTasks = (status: OutboundTask['status'], currentViewMode: 'ALL' | 'MY') => {
     setIsLoading(true);
 
     setTimeout(() => {
-      let filteredList: InboundTask[];
-      if (status === 'ALL') {
-        filteredList = MOCK_INBOUND_TASK_LIST;
-      } else {
-        filteredList = MOCK_INBOUND_TASK_LIST.filter((task) => task.status === status);
+      let filteredList = MOCK_OUTBOUND_TASK_LIST;
+
+      if (status !== 'ALL') {
+        filteredList = filteredList.filter((task) => task.status === status);
       }
 
-      // 검색어 필터링 적용 (프로젝트 넘버 또는 업무명)
+      if (currentViewMode === 'MY') {
+        filteredList = filteredList.filter((task) => task.manager === MY_NAME);
+      }
+
       const finalFilteredList = filteredList.filter(
-        (task) => task.projectNumber.includes(searchTerm) || task.taskName.includes(searchTerm),
+        (task) =>
+          task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
       setTaskList(finalFilteredList);
       setIsLoading(false);
-    }, 300); // 로딩 시뮬레이션
+    }, 300);
   };
 
-  const handleStatusClick = (status: InboundTask['status']) => {
-    if (activeStatus === status) return;
-    setActiveStatus(status);
-  };
-
-  // 검색어나 활성 상태가 변경될 때마다 목록을 다시 가져옴
   useEffect(() => {
-    fetchTasksByStatus(activeStatus);
-  }, [activeStatus, searchTerm]); // 검색어도 의존성 배열에 포함
+    fetchTasks(activeStatus, viewMode);
+  }, [activeStatus, searchTerm, viewMode]);
+
+  const statusButtonData = [
+    { status: 'ALL', label: '전체' },
+    { status: 'TASK_ASSIGNMENT', label: '업무 할당' },
+    { status: 'APPROVAL_PENDING', label: '승인 대기' },
+    { status: 'IN_PROGRESS', label: '진행중' },
+    { status: 'COMPLETED', label: '완료' },
+  ].map((item) => ({
+    ...item,
+    count: MOCK_OUTBOUND_TASK_LIST.filter(
+      (t) =>
+        (item.status === 'ALL' || t.status === item.status) &&
+        (viewMode === 'ALL' || t.manager === MY_NAME),
+    ).length,
+  }));
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 bg-white">
+      <main className="flex-1">
         <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <h1 style={pageTitleStyle}>출하 업무 리스트</h1>
-          <div className="mt-12 w-[1040px]">
-            <SearchBar
-              placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
+          <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
+            출하 업무 리스트
+          </h1>
+
+          <div className="mt-8">
+            <TaskToggleButton viewMode={viewMode} onChange={setViewMode} />
           </div>
-          <div className="mb-6 mt-5 flex w-[1040px] items-center justify-start">
-            <div className="flex gap-4">
-              {INITIAL_STATUS_DATA.map((item) => (
+
+          <div className="mt-[43px] flex items-center">
+            <div className="flex gap-[8px]">
+              {statusButtonData.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
                   count={item.count}
                   isActive={activeStatus === item.status}
-                  onClick={() => handleStatusClick(item.status as InboundTask['status'])}
+                  onClick={() => setActiveStatus(item.status as OutboundTask['status'])}
                 />
               ))}
+            </div>
+
+            <div className="ml-[160px] w-[500px]">
+              <SearchBar
+                placeholder="프로젝트 넘버 또는 출하 업무명을 입력하세요."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
             </div>
           </div>
         </div>
 
-        <div className="pl-[70px] pr-10">
-          <TaskListTable data={taskList} isLoading={isLoading} type="outbound" />
+        <div className="mt-[27px] pl-[70px] pr-10">
+          <TaskListTable
+            data={taskList}
+            isLoading={isLoading}
+            type="outbound"
+            basePath="/logistics-outbound-task"
+          />
         </div>
       </main>
     </div>

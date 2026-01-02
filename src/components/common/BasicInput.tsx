@@ -26,7 +26,11 @@ const BasicInput: React.FC<BasicInputProps> = ({
         placeholder={placeholder}
         disabled={disabled}
         className={`h-full w-full border-none bg-transparent font-pretendard text-base font-normal outline-none placeholder:text-greyColor-grey400 ${
-          className.includes('text-') ? className : `text-greyColor-grey900 ${className}`
+          disabled
+            ? 'text-greyColor-grey500'
+            : className.includes('text-')
+              ? className
+              : `text-greyColor-grey900 ${className}`
         }`}
         {...rest}
       />

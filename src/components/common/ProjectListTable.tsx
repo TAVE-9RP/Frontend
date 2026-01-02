@@ -20,17 +20,17 @@ interface ProjectListTableProps {
 export default function ProjectListTable({ data, isLoading }: ProjectListTableProps) {
   const navigate = useNavigate();
 
-  // 행 클릭 시 프로젝트 상세 페이지로 이동
   const handleRowClick = (projectId: number) => {
     navigate(`/project/${projectId}`);
     console.log(`프로젝트 ${projectId} 상세 페이지로 이동`);
   };
 
-  const tableHeaderClasses =
-    'py-3 px-4 font-bold text-sm text-greyColor-grey700 bg-subColor-orange050 border-b border-subColor-orange100 border-r border-greyColor-grey200';
+  const commonCellClasses =
+    'h-[40px] px-4 border-r-2 last:border-r-0 border-greyColor-grey200 text-center align-middle text-sm';
 
-  const tableCellClasses =
-    'py-3 px-4 text-sm text-greyColor-grey800 border-b border-greyColor-grey200 border-r border-greyColor-grey200';
+  const tableHeaderClasses = `${commonCellClasses} border-b-2 font-bold text-greyColor-grey700 bg-subColor-orange050`;
+
+  const tableCellClasses = `${commonCellClasses} text-greyColor-grey800`;
 
   const statusChipClasses = (status: Project['status']) => {
     switch (status) {
@@ -50,60 +50,76 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
   }
 
   return (
-    <div
-      className="overflow-x-auto border border-greyColor-grey200"
-      style={{ width: '1040px', height: 'auto' }}
-    >
-      <table className="min-w-full divide-y divide-greyColor-grey200">
-        <thead className="bg-subColor-orange050">
-          <tr>
-            <th className={`${tableHeaderClasses} text-left`}>프로젝트 넘버</th>
-            <th className={`${tableHeaderClasses} text-left`}>프로젝트 제목</th>
-            <th className={`${tableHeaderClasses} text-left`}>프로젝트 설명</th>
-            <th className={`${tableHeaderClasses} text-left`}>거래처</th>
-            <th className={`${tableHeaderClasses} text-left`}>생성 일자</th>
-            <th className={`${tableHeaderClasses} text-left`}>담당자</th>
-            <th className={`${tableHeaderClasses} border-r-0 text-center`}>진행 상태</th>
-          </tr>
-        </thead>
-
-        <tbody className="divide-y divide-greyColor-grey200 bg-white">
-          {data.length === 0 ? (
+    <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200">
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-fixed border-collapse bg-white">
+          <thead className="bg-subColor-orange050">
             <tr>
-              <td
-                colSpan={7}
-                className={`${tableCellClasses} border-r-0 text-center text-greyColor-grey500`}
-              >
-                해당 프로젝트 목록이 없습니다.
-              </td>
+              <th className={`${tableHeaderClasses} w-[150px]`}>프로젝트 넘버</th>
+              <th className={`${tableHeaderClasses} w-[170px]`}>프로젝트 제목</th>
+              <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 설명</th>
+              <th className={`${tableHeaderClasses} w-[120px]`}>거래처</th>
+              <th className={`${tableHeaderClasses} w-[140px]`}>생성 일자</th>
+              <th className={`${tableHeaderClasses} w-[150px]`}>담당자</th>
+              <th className={`${tableHeaderClasses} w-[140px]`}>진행 상태</th>
             </tr>
-          ) : (
-            data.map((project) => (
-              <tr
-                key={project.id}
-                className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
-                onClick={() => handleRowClick(project.id)}
-              >
-                <td className={`${tableCellClasses} font-mono`}>{project.projectNumber}</td>
-                <td className={tableCellClasses}>{project.projectTitle}</td>
-                <td className={tableCellClasses}>{project.projectDescription}</td>
-                <td className={tableCellClasses}>{project.client}</td>
-                <td className={tableCellClasses}>{project.creationDate}</td>
-                <td className={tableCellClasses}>{project.manager}</td>
-                <td className={`${tableCellClasses} border-r-0 text-center`}>
-                  <span className={statusChipClasses(project.status)}>
-                    {project.status === 'IN_PROGRESS'
-                      ? '진행중'
-                      : project.status === 'PENDING'
-                        ? '미진행'
-                        : '완료'}
-                  </span>
+          </thead>
+
+          <tbody>
+            {data.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  className={`h-[40px] border-b-0 border-greyColor-grey200 text-center text-sm text-greyColor-grey500`}
+                >
+                  해당 프로젝트 목록이 없습니다.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              data.map((project, index) => {
+                const isLastRow = index === data.length - 1;
+                const bottomBorderClass = isLastRow ? 'border-b-0' : 'border-b-2';
+
+                return (
+                  <tr
+                    key={project.id}
+                    onClick={() => handleRowClick(project.id)}
+                    className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
+                  >
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>
+                      {project.projectNumber}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.projectTitle}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.projectDescription}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.client}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.creationDate}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.manager}
+                    </td>
+                    <td className={`${tableCellClasses} ${bottomBorderClass}`}>
+                      <span className={statusChipClasses(project.status)}>
+                        {project.status === 'IN_PROGRESS'
+                          ? '진행중'
+                          : project.status === 'PENDING'
+                            ? '미진행'
+                            : '완료'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

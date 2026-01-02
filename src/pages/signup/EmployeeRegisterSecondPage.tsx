@@ -12,13 +12,13 @@ import companyImage from '@/assets/companyimage.png';
 export default function EmployeeRegisterSecondPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // 이전 페이지에서 전달받은 데이터
-  const { userId, email, password } = (location.state as {
-    userId?: string;
-    email?: string;
-    password?: string;
-  }) || {};
+
+  const { userId, email, password } =
+    (location.state as {
+      userId?: string;
+      email?: string;
+      password?: string;
+    }) || {};
 
   useEffect(() => {
     console.log('=== EmployeeRegisterSecondPage에서 받은 데이터 ===');
@@ -32,7 +32,6 @@ export default function EmployeeRegisterSecondPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 검색어가 변경될 때마다 API 호출
   useEffect(() => {
     const searchCompanies = async () => {
       if (searchTerm.trim() === '') {
@@ -57,7 +56,6 @@ export default function EmployeeRegisterSecondPage() {
       }
     };
 
-    // 디바운싱: 300ms 후에 검색
     const timeoutId = setTimeout(() => {
       searchCompanies();
     }, 300);
@@ -79,7 +77,7 @@ export default function EmployeeRegisterSecondPage() {
             setSelectedCompanyId(null);
           }}
           placeholder="회사명을 입력하세요"
-          className="flex-1 bg-transparent font-[Pretendard] text-[19px] font-[400] text-greyColor-grey900 outline-none placeholder:text-greyColor-grey300"
+          className="flex-1 bg-transparent font-pretendard text-[19px] font-normal text-greyColor-grey900 outline-none placeholder:text-greyColor-grey300"
         />
       </div>
 
@@ -98,12 +96,14 @@ export default function EmployeeRegisterSecondPage() {
             >
               <img src={companyImage} alt="로고" className="h-[36px] w-[36px] shrink-0" />
 
-              <span className="ml-[17px] flex-1 font-[Pretendard] text-[19px] font-[700] text-greyColor-grey900">
+              <span className="ml-[17px] flex-1 font-pretendard text-[19px] font-bold text-greyColor-grey900">
                 {company.name}
               </span>
 
               <div
-                className={`mr-[19px] h-[36px] w-[36px] transition-colors duration-200 ${isSelected ? 'bg-mainColor-blue600' : 'bg-greyColor-grey300'}`}
+                className={`mr-[19px] h-[36px] w-[36px] transition-colors duration-200 ${
+                  isSelected ? 'bg-mainColor-blue600' : 'bg-greyColor-grey300'
+                }`}
                 style={{
                   WebkitMaskImage: `url(${checkIcon})`,
                   maskImage: `url(${checkIcon})`,

@@ -1,28 +1,33 @@
 import React from 'react';
+import APPROVAL_ICON_SRC from '../../assets/manager_approval.png';
 
-import QUESTION_ICON_SRC from '../../assets/questionmark.png';
-
-interface ProjectCreateModalProps {
+interface ManagerApprovalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  type?: 'create' | 'edit';
+  variant?: 'default' | 'request';
+  managerName?: string;
 }
 
-const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
+const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  type = 'create',
+  variant = 'default',
+  managerName = '홍길동',
 }) => {
   if (!isOpen) return null;
 
-  const isEdit = type === 'edit';
-  const titleText = isEdit ? '변경사항을 저장하시겠습니까?' : '새 프로젝트를 생성하시겠습니까?';
-  const subText = isEdit
-    ? '이대로 기존 프로젝트 내용을 수정할게요'
-    : '입력한 내용으로 새로운 프로젝트를 저장할게요';
-  const confirmBtnText = isEdit ? '저장하기' : '생성하기';
+  const isRequestMode = variant === 'request';
+
+  const content = {
+    title: isRequestMode ? `승인 관리자: ${managerName}` : '관리자 승인을 진행하시겠습니까?',
+    description: isRequestMode
+      ? '확인을 누르면 관리자에게 승인 요청이 전달돼요'
+      : '승인 시 업무 상태가 진행 중으로 변경돼요',
+    cancelLabel: isRequestMode ? '취소' : '거절',
+    confirmLabel: isRequestMode ? '확인' : '승인',
+  };
 
   return (
     <div
@@ -34,15 +39,15 @@ const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mt-[32px]">
-          <img src={QUESTION_ICON_SRC} alt="질문 아이콘" className="h-[30px] w-[30px]" />
+          <img src={APPROVAL_ICON_SRC} alt="승인 아이콘" className="h-[33.25px] w-[33.25px]" />
         </div>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold leading-normal text-black">
-          {titleText}
+          {content.title}
         </p>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal leading-normal text-greyColor-grey500">
-          {subText}
+          {content.description}
         </p>
 
         <div className="mt-[34.45px] flex gap-[17px]">
@@ -50,14 +55,14 @@ const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
             onClick={onClose}
             className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] border border-greyColor-grey300 bg-greyColor-grey50 font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey500 transition-colors hover:bg-greyColor-grey100"
           >
-            취소
+            {content.cancelLabel}
           </button>
 
           <button
             onClick={onConfirm}
-            className="flex h-[32px] w-[72px] cursor-pointer items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[15px] font-bold leading-normal text-white transition-colors hover:bg-mainColor-blue700"
+            className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[15px] font-bold leading-normal text-white transition-colors hover:bg-mainColor-blue700"
           >
-            {confirmBtnText}
+            {content.confirmLabel}
           </button>
         </div>
       </div>
@@ -65,4 +70,4 @@ const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
   );
 };
 
-export default ProjectCreateModal;
+export default ManagerApprovalModal;

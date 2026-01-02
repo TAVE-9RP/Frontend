@@ -67,15 +67,6 @@ const MOCK_INVENTORY_LIST: InventoryStock[] = [
   },
 ];
 
-const pageTitleStyle = {
-  color: '#000',
-  fontFamily: 'Pretendard',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 700,
-  lineHeight: 'normal',
-};
-
 export default function InventoryStockListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [stockList, setStockList] = useState<InventoryStock[]>([]);
@@ -91,8 +82,7 @@ export default function InventoryStockListPage() {
     setTimeout(() => {
       const filteredList = MOCK_INVENTORY_LIST.filter(
         (stock) =>
-          stock.inventoryNumber.includes(searchTerm) || // 재고 번호 검색
-          stock.itemName.includes(searchTerm), // 품목명 검색
+          stock.inventoryNumber.includes(searchTerm) || stock.itemName.includes(searchTerm),
       );
 
       setStockList(filteredList);
@@ -102,24 +92,26 @@ export default function InventoryStockListPage() {
 
   useEffect(() => {
     fetchStock();
-  }, [searchTerm]); // 검색어가 변경될 때마다 실행
+  }, [searchTerm]);
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 bg-white">
-        <div className="mt-5 pl-[70px] pr-10 pt-10">
-          <div className="mb-[24px] mt-12 w-[1040px]">
-            <SearchBar
-              placeholder="재고 번호 또는 품목명을 입력하세요."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
+      <main className="flex-1 pb-20 pl-[70px] pt-[60px]">
+        <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
+          재고 조회
+        </h1>
+
+        <div className="mt-[60px] w-[1040px]">
+          <SearchBar
+            placeholder="재고 번호 또는 품목명을 입력하세요."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
 
-        <div className="pl-[70px] pr-10">
+        <div className="mt-[29px] pr-10">
           <InventoryStockListTable data={stockList} isLoading={isLoading} />
         </div>
       </main>

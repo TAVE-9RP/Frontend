@@ -76,20 +76,24 @@ export default function LoginPage() {
         password: formData.password,
       });
       console.log('로그인 성공:', response);
+
+      if (response && response.result.accessToken) {
+        localStorage.setItem('accessToken', response.result.accessToken);
+      }
       // Access Token은 메모리에 저장됨
       // Refresh Token은 서버에서 HTTP Only Cookie로 자동 저장됨
       // ----------------분기 필요----------------
-      navigate('/dashboard'); 
+      navigate('/dashboard');
     } catch (error: any) {
       console.error('로그인 실패:', error);
-      
+
       // axios 에러 응답에서 에러 정보 추출
       const errorMessage = error?.response?.data?.message || '';
-      
+
       // 승인 대기 중인 경우
       if (errorMessage.includes('승인')) {
         alert('승인 대기 중입니다. 관리자 승인 후 로그인해주세요.');
-      } 
+      }
       // 아이디와 비밀번호 확인해야 하는 경우
       else {
         alert('아이디와 비밀번호를 확인해주세요.');

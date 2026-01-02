@@ -7,7 +7,6 @@ export default function SignupSuccessPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 이전 페이지에서 전달받은 name (loginId)
   const name = (location.state as { name?: string })?.name || '회원';
 
   return (
@@ -15,13 +14,13 @@ export default function SignupSuccessPage() {
       <Header title="" />
 
       <h1
-        className="font-pretendard mt-[80px] text-center text-[32px] font-bold leading-[100%] text-black"
+        className="mt-[80px] text-center font-pretendard text-[32px] font-bold leading-[100%] text-black"
         style={{ letterSpacing: '0%' }}
       >
         <span className="text-blue-600">{name}</span>님의 가입 요청이 완료되었습니다.
       </h1>
 
-      <p className="font-pretendard mt-[22px] text-center text-[19px] font-normal leading-normal text-gray-600">
+      <p className="mt-[22px] text-center font-pretendard text-[19px] font-normal leading-normal text-gray-600">
         회사의 승인 요청 후 가입이 완료됩니다.
       </p>
 

@@ -25,6 +25,7 @@ import HRManagementPage from './pages/management-service/HRM/HRManagementPage';
 import OutboundTaskDetailPage from './pages/management-service/outbound/OutBoundTaskDetailPage';
 import InventoryInboundTaskDetailPage from './pages/inventory-service/inventory-inbound/inventoryInboundTaskDetailPage';
 import InventoryDetailPage from './pages/inventory-service/inventory-inbound/inventoryStockDetailPage';
+import LogisticsOutboundTaskDetailPage from './pages/logistics-service/logistics-outbound/LogisticsOutboundTaskDetailPage';
 
 const queryClient = new QueryClient();
 
@@ -43,10 +44,9 @@ function App() {
         <Route path="signupfailure" element={<SignupFailurePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sidebartest" element={<Sidebartest />} />
-        {/* <Route path="projectmanagementlist" element={<ProjectManagementListPage />} /> */}
         <Route path="/project-management" element={<ProjectManagementListPage />} />
         <Route path="/project-create" element={<ProjectCreatePage />} />
-        <Route path="/project-edit" element={<ProjectEditPage />} />
+        <Route path="/project/:id" element={<ProjectEditPage />} />
         <Route path="/inbound-task" element={<InboundTaskListPage />} />
         <Route path="/inbound-task/:projectNumber" element={<InboundTaskDetailPage />} />
         <Route path="/outbound-task" element={<OutBoundTaskListPage />} />
@@ -57,6 +57,10 @@ function App() {
           element={<InventoryInboundTaskDetailPage />}
         />
         <Route path="/logistics-outbound-task" element={<LogisticsOutboundTaskListPage />} />
+        <Route
+          path="/logistics-outbound-task/:projectNumber"
+          element={<LogisticsOutboundTaskDetailPage />}
+        />
         <Route path="inventory-stock" element={<InventoryStockListPage />} />
         <Route path="/inventory-stock/:inventoryNumber" element={<InventoryDetailPage />} />
 

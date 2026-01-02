@@ -56,30 +56,28 @@ export default function CompanyRegisterPage() {
     console.log('API 호출 시작...');
     setIsLoading(true);
     try {
-      // 이미지 경로는 임시로 빈 문자열 또는 실제 업로드 후 받은 URL 사용
       const requestData = {
         name: formData.companyName,
         industryType: formData.businessType,
         description: formData.companyDescription || '',
         imagePath: formData.companyLogo ? URL.createObjectURL(formData.companyLogo) : '',
       };
-      
+
       console.log('=== API 요청 데이터 ===');
       console.log('요청 데이터:', requestData);
       console.log('postCompany 함수 호출 전');
-      
+
       const response = await postCompany(requestData);
-      
+
       console.log('postCompany 함수 호출 후');
 
       console.log('=== API 응답 ===');
       console.log('전체 응답:', response);
       console.log('response.result:', response.result);
       console.log('response.result?.companyId:', response.result?.companyId);
-      
+
       if (response.result?.companyId) {
         console.log('companyId:', response.result.companyId);
-        // companyId를 다음 페이지로 전달
         navigate('/companysignup/step2', {
           state: {
             companyId: response.result.companyId,
@@ -164,7 +162,6 @@ export default function CompanyRegisterPage() {
           />
         </div>
 
-        {/* 버튼 */}
         <div className="mt-[30px] flex w-full justify-center gap-[31.5px]">
           <Button
             type="button"

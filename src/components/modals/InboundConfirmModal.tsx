@@ -1,28 +1,22 @@
 import React from 'react';
-
 import QUESTION_ICON_SRC from '../../assets/questionmark.png';
 
-interface ProjectCreateModalProps {
+interface InboundConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  type?: 'create' | 'edit';
+  title?: string;
+  subTitle?: string;
 }
 
-const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
+const InboundConfirmModal: React.FC<InboundConfirmModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  type = 'create',
+  title = '입고 처리하시겠습니까?',
+  subTitle = '확인을 누르면 입고 처리가 진행돼요',
 }) => {
   if (!isOpen) return null;
-
-  const isEdit = type === 'edit';
-  const titleText = isEdit ? '변경사항을 저장하시겠습니까?' : '새 프로젝트를 생성하시겠습니까?';
-  const subText = isEdit
-    ? '이대로 기존 프로젝트 내용을 수정할게요'
-    : '입력한 내용으로 새로운 프로젝트를 저장할게요';
-  const confirmBtnText = isEdit ? '저장하기' : '생성하기';
 
   return (
     <div
@@ -38,11 +32,11 @@ const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
         </div>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold leading-normal text-black">
-          {titleText}
+          {title}
         </p>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[13px] font-normal leading-normal text-greyColor-grey500">
-          {subText}
+          {subTitle}
         </p>
 
         <div className="mt-[34.45px] flex gap-[17px]">
@@ -55,9 +49,9 @@ const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
 
           <button
             onClick={onConfirm}
-            className="flex h-[32px] w-[72px] cursor-pointer items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[15px] font-bold leading-normal text-white transition-colors hover:bg-mainColor-blue700"
+            className="flex h-[34px] w-[72px] cursor-pointer items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[15px] font-bold leading-normal text-white transition-colors hover:bg-mainColor-blue700"
           >
-            {confirmBtnText}
+            확인
           </button>
         </div>
       </div>
@@ -65,4 +59,4 @@ const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({
   );
 };
 
-export default ProjectCreateModal;
+export default InboundConfirmModal;

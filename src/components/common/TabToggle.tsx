@@ -15,9 +15,13 @@ const TabToggle: React.FC<TabToggleProps> = ({ activeTab, onTabChange }) => {
   const baseButtonClasses =
     'flex items-center gap-2 text-[17px] font-bold leading-normal transition-colors duration-150';
 
-  const activeClasses = 'py-2 px-[18px] rounded-[50px] bg-white shadow-md text-mainColor-blue600';
+  const activeClasses = 'py-2 px-[18px] rounded-[50px] bg-white text-mainColor-blue600';
 
   const inactiveClasses = 'py-2 px-[18px] text-greyColor-grey400';
+
+  const activeShadowStyle = {
+    boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)',
+  };
 
   const getTabClasses = (tabName: string) => {
     const isActive = activeTab === tabName;
@@ -36,7 +40,11 @@ const TabToggle: React.FC<TabToggleProps> = ({ activeTab, onTabChange }) => {
 
   return (
     <div className={backgroundClasses}>
-      <button onClick={() => onTabChange('직원 목록')} className={getTabClasses('직원 목록')}>
+      <button
+        onClick={() => onTabChange('직원 목록')}
+        className={getTabClasses('직원 목록')}
+        style={activeTab === '직원 목록' ? activeShadowStyle : {}}
+      >
         <img
           src={PersonFillIcon}
           alt="직원 목록 아이콘"
@@ -48,7 +56,11 @@ const TabToggle: React.FC<TabToggleProps> = ({ activeTab, onTabChange }) => {
         직원 목록
       </button>
 
-      <button onClick={() => onTabChange('가입 관리')} className={getTabClasses('가입 관리')}>
+      <button
+        onClick={() => onTabChange('가입 관리')}
+        className={getTabClasses('가입 관리')}
+        style={activeTab === '가입 관리' ? activeShadowStyle : {}}
+      >
         <img
           src={JournalCheckIcon}
           alt="가입 관리 아이콘"
