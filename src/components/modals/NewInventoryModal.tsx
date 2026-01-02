@@ -44,7 +44,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
       targetQty: 0,
       status: '미진행',
     });
-    setFormData({ id: '', name: '', location: '', price: '' }); // 초기화
+    setFormData({ id: '', name: '', location: '', price: '' });
     onClose();
   };
 
