@@ -98,15 +98,12 @@ export default function SideBar() {
         </span>
       </div>
 
-      <button
-        onClick={() => navigate('/owner')}
-        className="ml-[27px] mt-[13px] flex items-center gap-[10px]"
-      >
+      <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
         <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
           Owner | 홍길동
         </span>
-      </button>
+      </div>
 
       {menuSections.map((section) => {
         // 물류 서비스 섹션에 department 표시
