@@ -38,4 +38,9 @@ export const getProjects = async (keyword: string = '') => {
   return response.data;
 };
 
+export const getProjectDetail = async (projectId: number) => {
+  const response = await api.get(`/projects/${projectId}`);
+  return response.data;
+};
+
 export default api;
