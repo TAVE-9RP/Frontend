@@ -28,4 +28,13 @@ export const getMemberPermissions = () => api.get('/admin/members/permissions');
 export const updateMemberPermissions = (updates: any[]) =>
   api.patch('/admin/members/permissions', { updates });
 
+export const getProjects = async (keyword: string = '') => {
+  const response = await api.post('/projects', null, {
+    params: {
+      keyword,
+    },
+  });
+  return response.data;
+};
+
 export default api;

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import Header from '@/components/signup/Header';
 import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { postMemberSignup } from '@/apis/apiConnection';
 import defaultLogoImg from '@/assets/logoimg.png';
 
 // 부서 옵션 (표시명: 서버값)
@@ -22,6 +23,15 @@ const POSITION_OPTIONS = [
 
 export default function EmployeeRegisterFourthPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { companyId, userId, email, password } =
+    (location.state as {
+      companyId?: number;
+      userId?: string;
+      email?: string;
+      password?: string;
+    }) || {};
 
   const [formData, setFormData] = useState({
     department: '', // 서버에 보낼 값 (LOGISTICS, INVENTORY)
@@ -35,6 +45,7 @@ export default function EmployeeRegisterFourthPage() {
   });
 
   const [image, setImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -72,6 +83,51 @@ export default function EmployeeRegisterFourthPage() {
 
   const openFileDialog = () => {
     document.getElementById('imageUploadInput')?.click();
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.department || !formData.position) {
+      return;
+    }
+
+    if (!companyId || !userId || !email || !password) {
+      alert('필수 정보가 누락되었습니다. 이전 단계로 돌아가주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const requestData = {
+        loginId: userId,
+        password: password,
+        name: userId,
+        email: email,
+        department: formData.department as 'LOGISTICS' | 'INVENTORY',
+        position: formData.position as any,
+        companyId: String(companyId),
+      };
+
+      console.log('=== 사원 등록 API 요청 ===');
+      console.log('요청 데이터:', requestData);
+
+      const response = await postMemberSignup(requestData);
+
+      console.log('=== 사원 등록 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        alert('사원 등록이 완료되었습니다.');
+        navigate('/login');
+      } else {
+        alert(response.message || '사원 등록에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('사원 등록 실패:', error);
+      const errorMessage = error?.response?.data?.message || '사원 등록에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -149,11 +205,11 @@ export default function EmployeeRegisterFourthPage() {
           type="button"
           variant={formData.department && formData.position ? 'active' : 'secondary'}
           size="md"
-          disabled={!formData.department || !formData.position}
-          onClick={() => navigate('/employeesignup/step5')}
+          disabled={!formData.department || !formData.position || isLoading}
+          onClick={handleSubmit}
           className="h-[70px] w-[252px] rounded-[10px] px-[50px] py-[17px] text-black"
         >
-          다음
+          {isLoading ? '등록 중...' : '다음'}
         </Button>
       </div>
     </div>
