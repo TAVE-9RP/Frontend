@@ -1,9 +1,22 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { decodeAccessToken } from '@/utils/jwt';
 
 export default function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
+  const [departmentFromToken, setDepartmentFromToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+
+    const payload = decodeAccessToken(token);
+    if (payload?.department) {
+      setDepartmentFromToken(payload.department);
+    }
+  }, []);
 
   const menuSections = [
     {
@@ -78,45 +91,41 @@ export default function SideBar() {
         <img src="/src/assets/logo.png" alt="logo" width={129} height={36.47} />
       </button>
 
-      <button
-        onClick={() => navigate('/logistics')}
-        className="ml-[27px] mt-[32px] flex items-center gap-[10px]"
-      >
+      <div className="ml-[27px] mt-[32px] flex items-center gap-[10px]">
         <img src="/src/assets/logistics.png" alt="logistics" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
-          Logistics
+          {departmentFromToken ? ` ${departmentFromToken}` : ''}
         </span>
-      </button>
+      </div>
 
-      <button
-        onClick={() => navigate('/owner')}
-        className="ml-[27px] mt-[13px] flex items-center gap-[10px]"
-      >
+      <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
         <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
           Owner | 홍길동
         </span>
-      </button>
+      </div>
 
-      {menuSections.map((section) => (
-        <div key={section.title}>
-          <button
-            onClick={() => {
-              if (section.homePath) {
-                navigate(section.homePath);
-              }
-            }}
-            className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop}`}
-          >
-            <img src={section.icon} alt={section.title} width={20} height={20} />
-            <span className="font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey900">
-              {section.title}
-            </span>
-          </button>
+      {menuSections.map((section) => {
+        return (
+          <div key={section.title}>
+            <button
+              onClick={() => {
+                if (section.homePath) {
+                  navigate(section.homePath);
+                }
+              }}
+              className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop}`}
+            >
+              <img src={section.icon} alt={section.title} width={20} height={20} />
+              <span className="font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey900">
+                {section.title}
+              </span>
+            </button>
 
-          {renderSubMenus(section.subMenus)}
-        </div>
-      ))}
+            {renderSubMenus(section.subMenus)}
+          </div>
+        );
+      })}
     </aside>
   );
 }

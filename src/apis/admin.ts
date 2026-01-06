@@ -28,4 +28,19 @@ export const getMemberPermissions = () => api.get('/admin/members/permissions');
 export const updateMemberPermissions = (updates: any[]) =>
   api.patch('/admin/members/permissions', { updates });
 
+export const getProjects = async (keyword: string = '') => {
+  // GET 요청, keyword는 query parameter (빈 값이면 파라미터 자체를 보내지 않음)
+  const response = await api.get('/projects', {
+    params: { 
+      keyword: keyword 
+    },
+  });
+  return response.data;
+};
+
+export const getProjectDetail = async (projectId: number) => {
+  const response = await api.get(`/projects/${projectId}`);
+  return response.data;
+};
+
 export default api;

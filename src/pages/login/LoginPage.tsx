@@ -3,7 +3,8 @@ import Header from '@/components/signup/Header';
 import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate } from 'react-router-dom';
-import { postLogin } from '@/apis/apiConnection';
+import { postLogin } from '@/apis/member';
+import { decodeAccessToken } from '@/utils/jwt';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -78,12 +79,39 @@ export default function LoginPage() {
       console.log('로그인 성공:', response);
 
       if (response && response.result.accessToken) {
-        localStorage.setItem('accessToken', response.result.accessToken);
+        const accessToken = response.result.accessToken;
+        localStorage.setItem('accessToken', accessToken);
+
+        // Access Token 디코딩하여 department와 permissions 확인
+        const tokenPayload = decodeAccessToken(accessToken);
+
+        if (tokenPayload) {
+          const { department, permissions } = tokenPayload;
+
+          // 1. department: MANAGEMENT이고 permissions.management가 ALL이면 /project-management
+          if (department === 'MANAGEMENT' && permissions.management === 'ALL') {
+            navigate('/project-management');
+            return;
+          }
+
+          // 2. department: LOGISTICS이면 /logistics-outbound-task
+          if (department === 'LOGISTICS') {
+            navigate('/logistics-outbound-task');
+            return;
+          }
+
+          // 3. department: INVENTORY이면 /inventory-inbound-task
+          if (department === 'INVENTORY') {
+            navigate('/inventory-inbound-task');
+            return;
+          }
+        }
+
+        // 기본값: dashboard로 이동
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard');
       }
-      // Access Token은 메모리에 저장됨
-      // Refresh Token은 서버에서 HTTP Only Cookie로 자동 저장됨
-      // ----------------분기 필요----------------
-      navigate('/dashboard');
     } catch (error: any) {
       console.error('로그인 실패:', error);
 

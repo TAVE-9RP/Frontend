@@ -4,7 +4,7 @@ import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
 import addCircle from '@/assets/add-circle.png';
 import { useNavigate } from 'react-router-dom';
-import { postCompany } from '@/apis/apiConnection';
+import { postCompany } from '@/apis/company';
 
 export default function CompanyRegisterPage() {
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getCompanies } from '@/apis/apiConnection';
+import { getCompanies } from '@/apis/company';
 import type { Company } from '@/types/company';
 
 import searchIcon from '@/assets/search.png';

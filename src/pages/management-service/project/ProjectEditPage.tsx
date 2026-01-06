@@ -8,6 +8,7 @@ import DropdownInput, { DropdownOption } from '../../../components/common/Dropdo
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '@/components/modals/ProjectSuccessModal';
+import { getProjectDetail } from '@/apis/admin';
 
 const MOCK_PROJECT_LIST = [
   {
@@ -59,60 +60,117 @@ export default function ProjectEditPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    const fetchProjectDetail = async () => {
+      if (!id) return;
 
-    const projectId = Number(id);
-    const savedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+      setIsLoading(true);
+      try {
+        const projectId = Number(id);
+        const response = await getProjectDetail(projectId);
+        console.log('=== 프로젝트 상세 API 응답 ===');
+        console.log('응답:', response);
 
-    let foundProject = savedProjects.find((p: any) => p.id === projectId);
-    if (!foundProject) {
-      foundProject = MOCK_PROJECT_LIST.find((p) => p.id === projectId);
-    }
+        const project = response.result;
+        if (project) {
+          // 프로젝트 넘버 설정
+          setProjectNumber(project.projectNumber || '');
 
-    if (foundProject) {
-      setProjectNumber(foundProject.projectNumber || '');
+          // 날짜 분리 (expectedEndDate: "2025-11-02")
+          const dateParts = (project.expectedEndDate || '').split('-');
 
-      const dateParts = (foundProject.targetDate || '').split('-');
+          // 폼 데이터 설정
+          setFormData({
+            projectTitle: project.projectTitle || '',
+            projectDescription: project.description || '',
+            client: project.customer || '',
+            jobDescription: '', // API 응답에 없으므로 빈 문자열
+            targetYear: dateParts[0] || '',
+            targetMonth: dateParts[1] || '',
+            targetDay: dateParts[2] || '',
+          });
 
-      setFormData({
-        projectTitle: foundProject.title || foundProject.projectTitle || '',
-        projectDescription: foundProject.description || foundProject.projectDescription || '',
-        client: foundProject.client || '',
-        jobDescription: foundProject.jobDescription || '',
-        targetYear: dateParts[0] || '',
-        targetMonth: dateParts[1] || '',
-        targetDay: dateParts[2] || '',
-      });
+          // projectMembers를 기반으로 업무 할당 및 담당자 설정
+          const projectMembers = project.projectMembers || [];
+          
+          // department에 따라 업무 할당 결정 (INVENTORY -> inbound, LOGISTICS -> logistics)
+          let assignmentType: 'inbound' | 'logistics' = 'inbound';
+          const inventoryMembers: DropdownOption[] = [];
+          const logisticsMembers: DropdownOption[] = [];
 
-      const type = foundProject.type || 'inbound';
-      setActiveAssignment(type);
+          projectMembers.forEach((member: any) => {
+            const formattedMember: DropdownOption = {
+              id: member.memberId,
+              label: member.name,
+              subLabel: member.department || '',
+              team: member.department || '부서 미정',
+            };
 
-      const rawManager = foundProject.manager;
-      let formattedManager: DropdownOption[] = [];
+            if (member.department === 'LOGISTICS') {
+              assignmentType = 'logistics';
+              logisticsMembers.push(formattedMember);
+            } else {
+              // INVENTORY 또는 MANAGEMENT는 inbound로 처리
+              inventoryMembers.push(formattedMember);
+            }
+          });
 
-      if (Array.isArray(rawManager)) {
-        formattedManager = rawManager;
-      } else if (typeof rawManager === 'object' && rawManager !== null) {
-        formattedManager = [rawManager];
-      } else if (typeof rawManager === 'string') {
-        formattedManager = [
-          {
-            id: Date.now(),
-            label: rawManager,
-            subLabel: '기존 담당자',
-            team: '부서 미정',
-          },
-        ];
+          setActiveAssignment(assignmentType);
+          setInventoryManager(inventoryMembers);
+          setLogisticsManager(logisticsMembers);
+        }
+      } catch (error: any) {
+        console.error('프로젝트 상세 조회 실패:', error);
+        // 에러 발생 시 localStorage에서 찾기 (fallback)
+        const projectId = Number(id);
+        const savedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+        const foundProject = savedProjects.find((p: any) => p.id === projectId) || 
+                            MOCK_PROJECT_LIST.find((p) => p.id === projectId);
+
+        if (foundProject) {
+          setProjectNumber(foundProject.projectNumber || '');
+          const dateParts = (foundProject.targetDate || '').split('-');
+          setFormData({
+            projectTitle: foundProject.title || foundProject.projectTitle || '',
+            projectDescription: foundProject.description || foundProject.projectDescription || '',
+            client: foundProject.client || '',
+            jobDescription: foundProject.jobDescription || '',
+            targetYear: dateParts[0] || '',
+            targetMonth: dateParts[1] || '',
+            targetDay: dateParts[2] || '',
+          });
+          const type = foundProject.type || 'inbound';
+          setActiveAssignment(type);
+          const rawManager = foundProject.manager;
+          let formattedManager: DropdownOption[] = [];
+          if (Array.isArray(rawManager)) {
+            formattedManager = rawManager;
+          } else if (typeof rawManager === 'object' && rawManager !== null) {
+            formattedManager = [rawManager];
+          } else if (typeof rawManager === 'string') {
+            formattedManager = [
+              {
+                id: Date.now(),
+                label: rawManager,
+                subLabel: '기존 담당자',
+                team: '부서 미정',
+              },
+            ];
+          }
+          if (type === 'inbound') {
+            setInventoryManager(formattedManager);
+          } else {
+            setLogisticsManager(formattedManager);
+          }
+        }
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      if (type === 'inbound') {
-        setInventoryManager(formattedManager);
-      } else {
-        setLogisticsManager(formattedManager);
-      }
-    }
+    fetchProjectDetail();
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

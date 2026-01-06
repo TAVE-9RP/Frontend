@@ -4,6 +4,7 @@ import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import ProjectListTable from '../../../components/common/ProjectListTable';
 import { useNavigate } from 'react-router-dom';
+import { getProjects } from '@/apis/admin';
 
 interface Project {
   id: number;
@@ -79,40 +80,48 @@ const MOCK_PROJECT_LIST: Project[] = [
   },
 ];
 
-const getStatusCounts = () => ({
-  IN_PROGRESS: MOCK_PROJECT_LIST.filter((p) => p.status === 'IN_PROGRESS').length,
-  PENDING: MOCK_PROJECT_LIST.filter((p) => p.status === 'PENDING').length,
-  COMPLETED: MOCK_PROJECT_LIST.filter((p) => p.status === 'COMPLETED').length,
-});
-
-const statusCounts = getStatusCounts();
-
-const INITIAL_STATUS_DATA = [
-  { status: 'IN_PROGRESS', label: '진행중', count: statusCounts.IN_PROGRESS },
-  { status: 'PENDING', label: '미진행', count: statusCounts.PENDING },
-  { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
-];
-
 export default function ProjectManagementListPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeStatus, setActiveStatus] = useState<string>('IN_PROGRESS');
+  const [activeStatus, setActiveStatus] = useState<string>('PENDING'); // 기본값을 PENDING으로 변경 (NOT_STARTED -> PENDING)
   const [projectList, setProjectList] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]); // 전체 프로젝트 목록 저장
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // 상태별 카운트를 allProjects 기반으로 계산
+  const getStatusCounts = (projects: Project[]) => ({
+    IN_PROGRESS: projects.filter((p) => p.status === 'IN_PROGRESS').length,
+    PENDING: projects.filter((p) => p.status === 'PENDING').length,
+    COMPLETED: projects.filter((p) => p.status === 'COMPLETED').length,
+  });
+
+  const statusCounts = getStatusCounts(allProjects);
+
+  const statusData = [
+    { status: 'IN_PROGRESS', label: '진행중', count: statusCounts.IN_PROGRESS },
+    { status: 'PENDING', label: '미진행', count: statusCounts.PENDING },
+    { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
+  ];
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredProjectList = projectList.filter(
-    (project) =>
-      project.projectNumber.includes(searchTerm) || project.projectTitle.includes(searchTerm),
-  );
-
-  const fetchProjectsByStatus = (status: string) => {
+  const fetchProjectsByStatus = async (status: string, keyword: string = '') => {
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      // API 호출: keyword는 사용자가 입력한 검색어 (없으면 공백)
+      const response = await getProjects(keyword);
+      console.log('=== 프로젝트 목록 API 응답 ===');
+      console.log('응답:', response);
+
+      // API 응답에서 프로젝트 목록 추출
+      const apiProjects = response.result || response.data || [];
+      console.log('=== API 프로젝트 원본 데이터 ===');
+      console.log('apiProjects:', apiProjects);
+
+      // localStorage에서 저장된 프로젝트 가져오기
       const savedProjectsString = localStorage.getItem('projects');
       let savedProjects: any[] = [];
 
@@ -125,6 +134,46 @@ export default function ProjectManagementListPage() {
         }
       }
 
+      // API 프로젝트를 Project 인터페이스에 맞게 변환
+      const formattedApiProjects: Project[] = apiProjects.map((p: any) => {
+        // projectMembers를 manager로 매핑
+        let managerDisplay = '미정';
+        if (p.projectMembers) {
+          managerDisplay = String(p.projectMembers);
+        }
+
+        // 날짜 형식 변환 (ISO 형식에서 YYYY-MM-DD로)
+        let creationDate = '';
+        if (p.projectCreateDate) {
+          const date = new Date(p.projectCreateDate);
+          creationDate = date.toISOString().split('T')[0];
+        } else {
+          creationDate = new Date().toISOString().split('T')[0];
+        }
+
+        // status 매핑 (NOT_STARTED -> PENDING, IN_PROGRESS -> IN_PROGRESS, COMPLETED -> COMPLETED)
+        let mappedStatus: 'IN_PROGRESS' | 'PENDING' | 'COMPLETED' = 'IN_PROGRESS';
+        if (p.status === 'NOT_STARTED' || p.status === 'PENDING' || p.status === '미진행') {
+          mappedStatus = 'PENDING';
+        } else if (p.status === 'IN_PROGRESS' || p.status === '진행중') {
+          mappedStatus = 'IN_PROGRESS';
+        } else if (p.status === 'COMPLETED' || p.status === '완료') {
+          mappedStatus = 'COMPLETED';
+        }
+
+        return {
+          id: p.projectId || p.id || Date.now(),
+          projectNumber: p.projectNumber || 'NEW-PROJ',
+          projectTitle: p.projectTitle || '제목 없음',
+          projectDescription: p.projectDescription || '',
+          client: p.projectCustomer || p.client || '',
+          creationDate: creationDate,
+          manager: managerDisplay,
+          status: mappedStatus,
+        };
+      });
+
+      // localStorage에 저장된 프로젝트도 변환
       const formattedSavedProjects: Project[] = savedProjects.map((p: any) => {
         let managerDisplay = '미정';
 
@@ -162,12 +211,28 @@ export default function ProjectManagementListPage() {
         };
       });
 
-      const allProjects = [...formattedSavedProjects.reverse(), ...MOCK_PROJECT_LIST];
-      const filteredList = allProjects.filter((project) => project.status === status);
+      // API 프로젝트와 localStorage 프로젝트 합치기
+      const allProjectsList = [...formattedApiProjects, ...formattedSavedProjects.reverse()];
+      console.log('=== 변환된 전체 프로젝트 ===');
+      console.log('allProjects:', allProjectsList);
+      console.log('현재 필터링할 status:', status);
+      
+      // 전체 프로젝트 목록 저장 (카운트 계산용)
+      setAllProjects(allProjectsList);
+      
+      const filteredList = allProjectsList.filter((project) => project.status === status);
+      console.log('=== 필터링된 프로젝트 ===');
+      console.log('filteredList:', filteredList);
 
       setProjectList(filteredList);
+    } catch (error: any) {
+      console.error('프로젝트 목록 조회 실패:', error);
+      // 에러 발생 시 빈 배열 설정
+      setProjectList([]);
+      setAllProjects([]);
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
   };
 
   const handleStatusClick = (status: string) => {
@@ -179,9 +244,19 @@ export default function ProjectManagementListPage() {
     navigate('/project-create');
   };
 
+  // 상태 변경 시 프로젝트 조회
   useEffect(() => {
-    fetchProjectsByStatus(activeStatus);
+    fetchProjectsByStatus(activeStatus, searchTerm);
   }, [activeStatus]);
+
+  // 검색어 변경 시 프로젝트 조회 (debounce 적용)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchProjectsByStatus(activeStatus, searchTerm);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -207,7 +282,7 @@ export default function ProjectManagementListPage() {
 
           <div className="mb-[27px] flex items-center">
             <div className="flex gap-[10px]">
-              {INITIAL_STATUS_DATA.map((item) => (
+              {statusData.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
@@ -229,7 +304,7 @@ export default function ProjectManagementListPage() {
         </div>
 
         <div className="pl-[70px] pr-10">
-          <ProjectListTable data={filteredProjectList} isLoading={isLoading} />
+          <ProjectListTable data={projectList} isLoading={isLoading} />
         </div>
       </main>
     </div>

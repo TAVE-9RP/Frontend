@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/signup/Header';
+import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { postMemberSignup } from '@/apis/apiConnection';
+import { postMemberSignup } from '@/apis/member';
 import defaultLogoImg from '@/assets/logoimg.png';
 
+// 부서 옵션 (표시명: 서버값)
 const DEPARTMENT_OPTIONS = [
   { label: '물류 부서', value: 'LOGISTICS' },
   { label: '재고 부서', value: 'INVENTORY' },
 ] as const;
 
+// 직급 옵션 (표시명: 서버값)
 const POSITION_OPTIONS = [
   { label: '인턴', value: 'INTERN' },
   { label: '주임', value: 'ASSISTANT_MANAGER' },
@@ -30,19 +33,12 @@ export default function EmployeeRegisterFourthPage() {
       password?: string;
     }) || {};
 
-  useEffect(() => {
-    console.log('=== EmployeeRegisterFourthPage에서 받은 데이터 ===');
-    console.log('companyId:', companyId);
-    console.log('userId:', userId);
-    console.log('email:', email);
-    console.log('password:', password);
-  }, [companyId, userId, email, password]);
-
   const [formData, setFormData] = useState({
-    department: '',
-    position: '',
+    department: '', // 서버에 보낼 값 (LOGISTICS, INVENTORY)
+    position: '', // 서버에 보낼 값 (INTERN, ASSISTANT_MANAGER, etc.)
   });
 
+  // 표시용 값 (한글)
   const [displayValues, setDisplayValues] = useState({
     department: '',
     position: '',
@@ -89,9 +85,8 @@ export default function EmployeeRegisterFourthPage() {
     document.getElementById('imageUploadInput')?.click();
   };
 
-  const handleSignup = async () => {
+  const handleSubmit = async () => {
     if (!formData.department || !formData.position) {
-      alert('부서와 직급을 선택해주세요.');
       return;
     }
 
@@ -108,35 +103,27 @@ export default function EmployeeRegisterFourthPage() {
         name: userId,
         email: email,
         department: formData.department as 'LOGISTICS' | 'INVENTORY',
-        position: formData.position as
-          | 'INTERN'
-          | 'ASSISTANT_MANAGER'
-          | 'MANAGER'
-          | 'SENIOR_MANAGER'
-          | 'DEPARTMENT_HEAD',
+        position: formData.position as any,
         companyId: String(companyId),
       };
 
-      console.log('=== 회원가입 API 요청 ===');
+      console.log('=== 사원 등록 API 요청 ===');
       console.log('요청 데이터:', requestData);
 
       const response = await postMemberSignup(requestData);
 
-      console.log('=== 회원가입 API 응답 ===');
+      console.log('=== 사원 등록 API 응답 ===');
       console.log('응답:', response);
 
       if (response.isSuccess) {
-        navigate('/signupsuccess', {
-          state: {
-            name: userId,
-          },
-        });
+        alert('사원 등록이 완료되었습니다.');
+        navigate('/login');
       } else {
-        alert(response.message || '가입 요청에 실패했습니다.');
+        alert(response.message || '사원 등록에 실패했습니다.');
       }
     } catch (error: any) {
-      console.error('가입 요청 실패:', error);
-      const errorMessage = error?.response?.data?.message || '가입 요청에 실패했습니다.';
+      console.error('사원 등록 실패:', error);
+      const errorMessage = error?.response?.data?.message || '사원 등록에 실패했습니다.';
       alert(errorMessage);
     } finally {
       setIsLoading(false);
@@ -166,13 +153,14 @@ export default function EmployeeRegisterFourthPage() {
       </div>
 
       <div className="mt-[49px] flex w-full flex-col gap-[20px]">
+        {/* 부서 드롭다운 */}
         <div className="flex w-full flex-col">
-          <label className="mb-2 font-pretendard text-[19px] font-bold text-black">부서</label>
+          <label className="mb-2 text-[19px] font-bold text-black">부서</label>
           <select
             name="department"
             value={formData.department}
             onChange={handleDepartmentChange}
-            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] font-pretendard text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
+            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
           >
             <option value="">부서를 선택하세요.</option>
             {DEPARTMENT_OPTIONS.map((option) => (
@@ -183,13 +171,14 @@ export default function EmployeeRegisterFourthPage() {
           </select>
         </div>
 
+        {/* 직급 드롭다운 */}
         <div className="flex w-full flex-col">
-          <label className="mb-2 font-pretendard text-[19px] font-bold text-black">직급</label>
+          <label className="mb-2 text-[19px] font-bold text-black">직급</label>
           <select
             name="position"
             value={formData.position}
             onChange={handlePositionChange}
-            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] font-pretendard text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
+            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
           >
             <option value="">직급을 선택하세요.</option>
             {POSITION_OPTIONS.map((option) => (
@@ -217,10 +206,10 @@ export default function EmployeeRegisterFourthPage() {
           variant={formData.department && formData.position ? 'active' : 'secondary'}
           size="md"
           disabled={!formData.department || !formData.position || isLoading}
-          onClick={handleSignup}
+          onClick={handleSubmit}
           className="h-[70px] w-[252px] rounded-[10px] px-[50px] py-[17px] text-black"
         >
-          {isLoading ? '요청 중...' : '가입 요청'}
+          {isLoading ? '등록 중...' : '다음'}
         </Button>
       </div>
     </div>
