@@ -13,6 +13,7 @@ export const postLogin = async (payload: LoginRequest): Promise<LoginResponse> =
     headers: {
       'Content-Type': 'application/json',
     },
+    withCredentials: true,
   });
 
   return response.data;
@@ -41,6 +42,7 @@ export const postMemberSignup = async (payload: MemberSignupRequest): Promise<Me
     headers: {
       'Content-Type': 'application/json',
     },
+    withCredentials: true,
   });
 
   return response.data;
