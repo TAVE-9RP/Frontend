@@ -3,7 +3,7 @@ import Header from '@/components/signup/Header';
 import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate } from 'react-router-dom';
-import { postLogin } from '@/apis/apiConnection';
+import { postLogin } from '@/apis/member';
 import { decodeAccessToken } from '@/utils/jwt';
 
 export default function LoginPage() {

@@ -3,7 +3,7 @@ import { InputField } from '@/components/signup/InputField';
 import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { postMemberSignup } from '@/apis/apiConnection';
+import { postMemberSignup } from '@/apis/member';
 
 export default function CompanyRegisterSecondPage() {
   const navigate = useNavigate();

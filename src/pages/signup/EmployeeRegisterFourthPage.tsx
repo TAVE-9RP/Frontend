@@ -3,7 +3,7 @@ import Header from '@/components/signup/Header';
 import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { postMemberSignup } from '@/apis/apiConnection';
+import { postMemberSignup } from '@/apis/member';
 import defaultLogoImg from '@/assets/logoimg.png';
 
 // 부서 옵션 (표시명: 서버값)
