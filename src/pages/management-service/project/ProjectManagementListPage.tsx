@@ -80,26 +80,28 @@ const MOCK_PROJECT_LIST: Project[] = [
   },
 ];
 
-const getStatusCounts = () => ({
-  IN_PROGRESS: MOCK_PROJECT_LIST.filter((p) => p.status === 'IN_PROGRESS').length,
-  PENDING: MOCK_PROJECT_LIST.filter((p) => p.status === 'PENDING').length,
-  COMPLETED: MOCK_PROJECT_LIST.filter((p) => p.status === 'COMPLETED').length,
-});
-
-const statusCounts = getStatusCounts();
-
-const INITIAL_STATUS_DATA = [
-  { status: 'IN_PROGRESS', label: '진행중', count: statusCounts.IN_PROGRESS },
-  { status: 'PENDING', label: '미진행', count: statusCounts.PENDING },
-  { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
-];
-
 export default function ProjectManagementListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStatus, setActiveStatus] = useState<string>('PENDING'); // 기본값을 PENDING으로 변경 (NOT_STARTED -> PENDING)
   const [projectList, setProjectList] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]); // 전체 프로젝트 목록 저장
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // 상태별 카운트를 allProjects 기반으로 계산
+  const getStatusCounts = (projects: Project[]) => ({
+    IN_PROGRESS: projects.filter((p) => p.status === 'IN_PROGRESS').length,
+    PENDING: projects.filter((p) => p.status === 'PENDING').length,
+    COMPLETED: projects.filter((p) => p.status === 'COMPLETED').length,
+  });
+
+  const statusCounts = getStatusCounts(allProjects);
+
+  const statusData = [
+    { status: 'IN_PROGRESS', label: '진행중', count: statusCounts.IN_PROGRESS },
+    { status: 'PENDING', label: '미진행', count: statusCounts.PENDING },
+    { status: 'COMPLETED', label: '완료', count: statusCounts.COMPLETED },
+  ];
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -215,12 +217,15 @@ export default function ProjectManagementListPage() {
       });
 
       // API 프로젝트와 localStorage 프로젝트 합치기
-      const allProjects = [...formattedApiProjects, ...formattedSavedProjects.reverse()];
+      const allProjectsList = [...formattedApiProjects, ...formattedSavedProjects.reverse()];
       console.log('=== 변환된 전체 프로젝트 ===');
-      console.log('allProjects:', allProjects);
+      console.log('allProjects:', allProjectsList);
       console.log('현재 필터링할 status:', status);
       
-      const filteredList = allProjects.filter((project) => project.status === status);
+      // 전체 프로젝트 목록 저장 (카운트 계산용)
+      setAllProjects(allProjectsList);
+      
+      const filteredList = allProjectsList.filter((project) => project.status === status);
       console.log('=== 필터링된 프로젝트 ===');
       console.log('filteredList:', filteredList);
 
@@ -229,6 +234,7 @@ export default function ProjectManagementListPage() {
       console.error('프로젝트 목록 조회 실패:', error);
       // 에러 발생 시 빈 배열 설정
       setProjectList([]);
+      setAllProjects([]);
     } finally {
       setIsLoading(false);
     }
@@ -271,7 +277,7 @@ export default function ProjectManagementListPage() {
 
           <div className="mb-[27px] flex items-center">
             <div className="flex gap-[10px]">
-              {INITIAL_STATUS_DATA.map((item) => (
+              {statusData.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
