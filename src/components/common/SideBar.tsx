@@ -106,10 +106,6 @@ export default function SideBar() {
       </div>
 
       {menuSections.map((section) => {
-        // 물류 서비스 섹션에 department 표시
-        const showDepartment = section.title === '물류 서비스' && departmentFromToken;
-        const displayTitle = showDepartment ? `${section.title} (${departmentFromToken})` : section.title;
-
         return (
           <div key={section.title}>
             <button
@@ -122,7 +118,7 @@ export default function SideBar() {
             >
               <img src={section.icon} alt={section.title} width={20} height={20} />
               <span className="font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey900">
-                {displayTitle}
+                {section.title}
               </span>
             </button>
 
