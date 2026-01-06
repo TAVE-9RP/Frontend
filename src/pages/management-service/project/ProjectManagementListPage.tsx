@@ -4,6 +4,7 @@ import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import ProjectListTable from '../../../components/common/ProjectListTable';
 import { useNavigate } from 'react-router-dom';
+import { getProjects } from '@/apis/admin';
 
 interface Project {
   id: number;
@@ -95,7 +96,7 @@ const INITIAL_STATUS_DATA = [
 
 export default function ProjectManagementListPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeStatus, setActiveStatus] = useState<string>('IN_PROGRESS');
+  const [activeStatus, setActiveStatus] = useState<string>('PENDING'); // 기본값을 PENDING으로 변경 (NOT_STARTED -> PENDING)
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -109,10 +110,21 @@ export default function ProjectManagementListPage() {
       project.projectNumber.includes(searchTerm) || project.projectTitle.includes(searchTerm),
   );
 
-  const fetchProjectsByStatus = (status: string) => {
+  const fetchProjectsByStatus = async (status: string) => {
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      // API 호출: keyword는 공백으로 설정
+      const response = await getProjects('');
+      console.log('=== 프로젝트 목록 API 응답 ===');
+      console.log('응답:', response);
+
+      // API 응답에서 프로젝트 목록 추출
+      const apiProjects = response.result || response.data || [];
+      console.log('=== API 프로젝트 원본 데이터 ===');
+      console.log('apiProjects:', apiProjects);
+
+      // localStorage에서 저장된 프로젝트 가져오기
       const savedProjectsString = localStorage.getItem('projects');
       let savedProjects: any[] = [];
 
@@ -125,6 +137,46 @@ export default function ProjectManagementListPage() {
         }
       }
 
+      // API 프로젝트를 Project 인터페이스에 맞게 변환
+      const formattedApiProjects: Project[] = apiProjects.map((p: any) => {
+        // projectMembers를 manager로 매핑
+        let managerDisplay = '미정';
+        if (p.projectMembers) {
+          managerDisplay = String(p.projectMembers);
+        }
+
+        // 날짜 형식 변환 (ISO 형식에서 YYYY-MM-DD로)
+        let creationDate = '';
+        if (p.projectCreateDate) {
+          const date = new Date(p.projectCreateDate);
+          creationDate = date.toISOString().split('T')[0];
+        } else {
+          creationDate = new Date().toISOString().split('T')[0];
+        }
+
+        // status 매핑 (NOT_STARTED -> PENDING, IN_PROGRESS -> IN_PROGRESS, COMPLETED -> COMPLETED)
+        let mappedStatus: 'IN_PROGRESS' | 'PENDING' | 'COMPLETED' = 'IN_PROGRESS';
+        if (p.status === 'NOT_STARTED' || p.status === 'PENDING' || p.status === '미진행') {
+          mappedStatus = 'PENDING';
+        } else if (p.status === 'IN_PROGRESS' || p.status === '진행중') {
+          mappedStatus = 'IN_PROGRESS';
+        } else if (p.status === 'COMPLETED' || p.status === '완료') {
+          mappedStatus = 'COMPLETED';
+        }
+
+        return {
+          id: p.projectId || p.id || Date.now(),
+          projectNumber: p.projectNumber || 'NEW-PROJ',
+          projectTitle: p.projectTitle || '제목 없음',
+          projectDescription: p.projectDescription || '',
+          client: p.projectCustomer || p.client || '',
+          creationDate: creationDate,
+          manager: managerDisplay,
+          status: mappedStatus,
+        };
+      });
+
+      // localStorage에 저장된 프로젝트도 변환
       const formattedSavedProjects: Project[] = savedProjects.map((p: any) => {
         let managerDisplay = '미정';
 
@@ -162,12 +214,24 @@ export default function ProjectManagementListPage() {
         };
       });
 
-      const allProjects = [...formattedSavedProjects.reverse(), ...MOCK_PROJECT_LIST];
+      // API 프로젝트와 localStorage 프로젝트 합치기
+      const allProjects = [...formattedApiProjects, ...formattedSavedProjects.reverse()];
+      console.log('=== 변환된 전체 프로젝트 ===');
+      console.log('allProjects:', allProjects);
+      console.log('현재 필터링할 status:', status);
+      
       const filteredList = allProjects.filter((project) => project.status === status);
+      console.log('=== 필터링된 프로젝트 ===');
+      console.log('filteredList:', filteredList);
 
       setProjectList(filteredList);
+    } catch (error: any) {
+      console.error('프로젝트 목록 조회 실패:', error);
+      // 에러 발생 시 빈 배열 설정
+      setProjectList([]);
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
   };
 
   const handleStatusClick = (status: string) => {

@@ -29,9 +29,10 @@ export const updateMemberPermissions = (updates: any[]) =>
   api.patch('/admin/members/permissions', { updates });
 
 export const getProjects = async (keyword: string = '') => {
-  const response = await api.post('/projects', null, {
-    params: {
-      keyword,
+  // GET 요청, keyword는 query parameter (빈 값이면 파라미터 자체를 보내지 않음)
+  const response = await api.get('/projects', {
+    params: { 
+      keyword: keyword 
     },
   });
   return response.data;
