@@ -107,17 +107,12 @@ export default function ProjectManagementListPage() {
     setSearchTerm(event.target.value);
   };
 
-  const filteredProjectList = projectList.filter(
-    (project) =>
-      project.projectNumber.includes(searchTerm) || project.projectTitle.includes(searchTerm),
-  );
-
-  const fetchProjectsByStatus = async (status: string) => {
+  const fetchProjectsByStatus = async (status: string, keyword: string = '') => {
     setIsLoading(true);
 
     try {
-      // API 호출: keyword는 공백으로 설정
-      const response = await getProjects('');
+      // API 호출: keyword는 사용자가 입력한 검색어 (없으면 공백)
+      const response = await getProjects(keyword);
       console.log('=== 프로젝트 목록 API 응답 ===');
       console.log('응답:', response);
 
@@ -249,9 +244,19 @@ export default function ProjectManagementListPage() {
     navigate('/project-create');
   };
 
+  // 상태 변경 시 프로젝트 조회
   useEffect(() => {
-    fetchProjectsByStatus(activeStatus);
+    fetchProjectsByStatus(activeStatus, searchTerm);
   }, [activeStatus]);
+
+  // 검색어 변경 시 프로젝트 조회 (debounce 적용)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchProjectsByStatus(activeStatus, searchTerm);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -299,7 +304,7 @@ export default function ProjectManagementListPage() {
         </div>
 
         <div className="pl-[70px] pr-10">
-          <ProjectListTable data={filteredProjectList} isLoading={isLoading} />
+          <ProjectListTable data={projectList} isLoading={isLoading} />
         </div>
       </main>
     </div>
