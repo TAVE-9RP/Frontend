@@ -8,7 +8,7 @@ import DropdownInput, { DropdownOption } from '../../../components/common/Dropdo
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
-import { getProjectSerialNumber, getAssignMembers } from '../../../apis/admin';
+import { getProjectSerialNumber, getAssignMembers, createProject } from '../../../apis/admin';
 
 interface FormGroupProps {
   label: string;
@@ -47,6 +47,7 @@ export default function ProjectCreatePage() {
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     const fetchProjectSerialNumber = async () => {
@@ -130,11 +131,11 @@ export default function ProjectCreatePage() {
       formData.projectTitle.trim() !== '' &&
       formData.projectDescription.trim() !== '' &&
       formData.client.trim() !== '' &&
-      formData.jobDescription.trim() !== '' &&
       formData.targetYear.trim() !== '' &&
       formData.targetMonth.trim() !== '' &&
       formData.targetDay.trim() !== '';
 
+    // 담당자는 무조건 1명 이상이어야 함
     const managerValid =
       (activeAssignment === 'inbound' && inventoryManager.length > 0) ||
       (activeAssignment === 'logistics' && logisticsManager.length > 0);
@@ -148,29 +149,45 @@ export default function ProjectCreatePage() {
     }
   };
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = async () => {
     setIsConfirmModalOpen(false);
+    setIsCreating(true);
 
-    const newProject = {
-      id: Date.now(),
-      projectNumber: projectNumber,
-      title: formData.projectTitle,
-      projectTitle: formData.projectTitle,
-      description: formData.projectDescription,
-      projectDescription: formData.projectDescription,
-      client: formData.client,
-      jobDescription: formData.jobDescription,
-      targetDate: `${formData.targetYear}-${formData.targetMonth}-${formData.targetDay}`,
-      type: activeAssignment,
-      manager: activeAssignment === 'inbound' ? inventoryManager : logisticsManager,
-      status: '진행중',
-      creationDate: new Date().toISOString().split('T')[0],
-    };
+    try {
+      // 담당자 ID 리스트 추출
+      const assigneeIds =
+        activeAssignment === 'inbound'
+          ? inventoryManager.map((manager) => manager.id)
+          : logisticsManager.map((manager) => manager.id);
 
-    const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]');
-    localStorage.setItem('projects', JSON.stringify([...existingProjects, newProject]));
+      // 날짜 형식 변환 (YYYY-MM-DD)
+      const formattedDate = `${formData.targetYear}-${String(formData.targetMonth).padStart(2, '0')}-${String(formData.targetDay).padStart(2, '0')}`;
 
-    setIsSuccessModalOpen(true);
+      // API 요청 데이터 구성
+      const requestData = {
+        projectNumber: projectNumber,
+        projectName: formData.projectTitle,
+        projectDescription: formData.projectDescription,
+        projectCustomer: formData.client,
+        projectExpectedEndDate: formattedDate,
+        assigneeIds: assigneeIds,
+      };
+
+      // API 호출
+      const response = await createProject(requestData);
+
+      if (response.isSuccess) {
+        setIsSuccessModalOpen(true);
+      } else {
+        alert(response.message || '프로젝트 생성에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('프로젝트 생성 실패:', error);
+      const errorMessage = error?.response?.data?.message || '프로젝트 생성에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleConfirmModalClose = () => setIsConfirmModalOpen(false);

@@ -53,4 +53,18 @@ export const getAssignMembers = async () => {
   return response.data;
 };
 
+export interface CreateProjectRequest {
+  projectNumber: string;
+  projectName: string;
+  projectDescription: string;
+  projectCustomer: string;
+  projectExpectedEndDate: string;
+  assigneeIds: number[];
+}
+
+export const createProject = async (data: CreateProjectRequest) => {
+  const response = await api.post('/projects', data);
+  return response.data;
+};
+
 export default api;
