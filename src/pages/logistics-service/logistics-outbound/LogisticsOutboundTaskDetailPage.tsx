@@ -195,9 +195,9 @@ export default function LogisticsOutboundTaskDetailPage() {
     try {
       const updatePayload: UpdateLogisticsCommonRequest = {
         logisticsTitle: taskDetail.logisticsTitle,
-        logisticsDescription: taskDetail.logisticsDescription,
-        logisticsCarrier: taskDetail.logisticsCarrier || '',
-        logisticsCarrierCompany: taskDetail.logisticsCarrierCompany || '',
+        logisticsDescription: taskDetail.logisticsDescription ?? '',
+        logisticsCarrier: taskDetail.logisticsCarrier ?? '',
+        logisticsCarrierCompany: taskDetail.logisticsCarrierCompany ?? '',
       };
 
       const updateRes = await patchUpdateLogisticsCommon(Number(logisticsId), updatePayload);
@@ -234,8 +234,8 @@ export default function LogisticsOutboundTaskDetailPage() {
 
     try {
       const payload: UpdateLogisticsCommonRequest = {
-        logisticsTitle: taskDetail.logisticsTitle,
-        logisticsDescription: taskDetail.logisticsDescription,
+        logisticsTitle: taskDetail.logisticsTitle ?? '',
+        logisticsDescription: taskDetail.logisticsDescription ?? '',
         logisticsCarrier: taskDetail.logisticsCarrier ?? '',
         logisticsCarrierCompany: taskDetail.logisticsCarrierCompany ?? '',
       };
@@ -265,8 +265,8 @@ export default function LogisticsOutboundTaskDetailPage() {
 
     try {
       const updatePayload: UpdateLogisticsCommonRequest = {
-        logisticsTitle: taskDetail.logisticsTitle,
-        logisticsDescription: taskDetail.logisticsDescription,
+        logisticsTitle: taskDetail.logisticsTitle ?? '',
+        logisticsDescription: taskDetail.logisticsDescription ?? '',
         logisticsCarrier: taskDetail.logisticsCarrier || '',
         logisticsCarrierCompany: taskDetail.logisticsCarrierCompany || '',
       };
