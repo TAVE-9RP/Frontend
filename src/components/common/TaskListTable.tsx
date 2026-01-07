@@ -31,8 +31,8 @@ export default function TaskListTable({
   const taskLabel = isOutbound ? '출하' : '입고';
   const finalPath = externalPath || (isOutbound ? '/outbound-task' : '/inbound-task');
 
-  const handleRowClick = (projectNumber: string) => {
-    navigate(`${finalPath}/${projectNumber}`);
+  const handleRowClick = (id: number) => {
+    navigate(`${finalPath}/${id}`);
   };
 
   const commonCellClasses =
@@ -106,7 +106,7 @@ export default function TaskListTable({
                 return (
                   <tr
                     key={task.id}
-                    onClick={() => handleRowClick(task.projectNumber)}
+                    onClick={() => handleRowClick(task.id)}
                     className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
                   >
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>

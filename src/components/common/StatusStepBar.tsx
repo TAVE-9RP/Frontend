@@ -32,6 +32,15 @@ interface StatusStepBarProps {
 export default function StatusStepBar({ currentStatus, type = 'inbound' }: StatusStepBarProps) {
   const finalLabel = type === 'outbound' ? '출하 완료' : '입고 완료';
 
+  const statusMap: Record<string, string> = {
+    ASSIGNED: 'TASK_ASSIGNMENT',
+    PENDING: 'APPROVAL_PENDING',
+    IN_PROGRESS: 'IN_PROGRESS',
+    COMPLETED: 'COMPLETED',
+  };
+
+  const normalizedStatus = statusMap[currentStatus] || currentStatus;
+
   const STATUS_STEPS = [
     { id: 'TASK_ASSIGNMENT', label: '업무 할당' },
     { id: 'APPROVAL_PENDING', label: '승인 대기' },
@@ -43,7 +52,7 @@ export default function StatusStepBar({ currentStatus, type = 'inbound' }: Statu
     <div className="flex items-center gap-[4px]">
       {STATUS_STEPS.map((step, index) => (
         <React.Fragment key={step.id}>
-          <StatusChip label={step.label} isActive={currentStatus === step.id} />
+          <StatusChip label={step.label} isActive={normalizedStatus === step.id} />
           {index < STATUS_STEPS.length - 1 && (
             <img src={nextIcon} alt="next" className="h-[23px] w-[15px] object-contain" />
           )}

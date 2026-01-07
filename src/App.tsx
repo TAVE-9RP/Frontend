@@ -57,10 +57,7 @@ function App() {
           element={<InventoryInboundTaskDetailPage />}
         />
         <Route path="/logistics-outbound-task" element={<LogisticsOutboundTaskListPage />} />
-        <Route
-          path="/logistics-outbound-task/:projectNumber"
-          element={<LogisticsOutboundTaskDetailPage />}
-        />
+        <Route path="/logistics-outbound-task/:id" element={<LogisticsOutboundTaskDetailPage />} />
         <Route path="inventory-stock" element={<InventoryStockListPage />} />
         <Route path="/inventory-stock/:inventoryNumber" element={<InventoryDetailPage />} />
 
