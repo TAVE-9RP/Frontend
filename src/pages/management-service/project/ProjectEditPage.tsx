@@ -331,21 +331,37 @@ export default function ProjectEditPage() {
             <div className="mb-[80px] mt-[80px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="입고 업무 담당자">
-                  <DropdownInput
-                    initialSelected={inventoryManager}
-                    onChange={setInventoryManager}
-                    disabled={true}
-                  />
+                  {inventoryManager.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={inventoryManager}
+                      onChange={setInventoryManager}
+                      disabled={true}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
 
               <div className="w-[390px]">
                 <FormGroup label="물류 업무 담당자">
-                  <DropdownInput
-                    initialSelected={logisticsManager}
-                    onChange={setLogisticsManager}
-                    disabled={true}
-                  />
+                  {logisticsManager.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={logisticsManager}
+                      onChange={setLogisticsManager}
+                      disabled={true}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
             </div>
