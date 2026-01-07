@@ -57,7 +57,6 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
         const isCompleted = item.logisticsProcessingStatus === 'COMPLETED';
         const isProcessing = item.logisticsProcessingStatus === 'IN_PROGRESS';
 
-        // 데이터 방어 로직: null이나 undefined일 경우 0으로 처리
         const processedQty = item.processedQuantity ?? 0;
         const targetedQty = item.targetedQuantity ?? 0;
         const price = item.itemPrice ?? 0;
@@ -70,7 +69,6 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               isSelected ? 'bg-mainColor-blue050' : 'bg-white'
             }`}
           >
-            {/* 선택 체크박스 */}
             <div className="flex h-full w-[40px] items-center justify-center border-r-[2px] border-greyColor-grey200">
               {showHyphenInSelect || isProcessing ? (
                 <span className="font-pretendard text-[14px] text-greyColor-grey300">-</span>
@@ -90,46 +88,38 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               )}
             </div>
 
-            {/* 재고 번호 */}
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {item.logisticsItemId}
             </div>
 
-            {/* 물품명 */}
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {item.itemName || '-'}
             </div>
 
-            {/* 출하 수량 (현재 처리된 수량) */}
             <div
               className={`flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] ${processedQty === 0 ? 'text-greyColor-grey300' : 'text-black'}`}
             >
               {processedQty === 0 ? '-' : processedQty}
             </div>
 
-            {/* 잔여 수량 (목표 - 현재) */}
             <div
               className={`flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] ${targetedQty - processedQty === 0 ? 'text-greyColor-grey300' : 'text-black'}`}
             >
               {targetedQty - processedQty === 0 ? '-' : targetedQty - processedQty}
             </div>
 
-            {/* 목표 출하 수량 */}
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {targetedQty}
             </div>
 
-            {/* 판매액 (toLocaleString 호출 전 0 체크) */}
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {price.toLocaleString()}
             </div>
 
-            {/* 총 판매액 */}
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {totalPrice.toLocaleString()}
             </div>
 
-            {/* 처리 상태 */}
             <div className="flex h-full w-[97px] items-center justify-center font-pretendard text-[14px]">
               <div
                 className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] py-[8px] ${

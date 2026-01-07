@@ -3,14 +3,13 @@ import checkboxImg from '@/assets/checkbox.png';
 import checkboxCheckImg from '@/assets/checkbox_check.png';
 import axios from 'axios';
 
-// 포스트맨 결과 데이터 구조 반영
 export interface InventoryItem {
   itemId: number;
-  code: string; // itemCode -> code
-  name: string; // itemName -> name
-  quantity: number; // itemQuantity -> quantity
-  price: number; // itemPrice -> price
-  location: string; // itemLocation -> location
+  code: string;
+  name: string;
+  quantity: number;
+  price: number;
+  location: string;
 }
 
 interface InventorySearchModalProps {
@@ -44,13 +43,11 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
     try {
       const token = localStorage.getItem('accessToken');
 
-      // 포스트맨에서 성공한 정확한 주소로 변경
       const response = await axios.get('https://nexerp.site/items', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.data && response.data.isSuccess) {
-        // result 배열 그대로 사용 (필드명이 인터페이스와 일치함)
         setInventory(response.data.result);
       }
     } catch (error) {
@@ -60,7 +57,6 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
     }
   };
 
-  // 실시간 검색 필터링 (기존 디자인 유지)
   const filteredInventory = inventory.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

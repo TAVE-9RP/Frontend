@@ -42,7 +42,6 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?
 export default function LogisticsOutboundTaskDetailPage() {
   const { id: logisticsId } = useParams<{ id: string }>();
 
-  // null 에러 해결을 위해 초기값과 타입을 string으로 강제하거나 기본값 처리
   const [taskDetail, setTaskDetail] = useState<LogisticsDetail>({
     projectNumber: '',
     logisticsAssignees: [],
@@ -88,12 +87,10 @@ export default function LogisticsOutboundTaskDetailPage() {
       const detailRes = await getLogisticsDetail(numericId);
 
       if (detailRes.isSuccess && detailRes.result) {
-        console.log('상세 정보 수신 성공:', detailRes.result); // ✅ 콘솔 확인용
+        console.log('상세 정보 수신 성공:', detailRes.result);
 
-        // 배열인지 객체인지 확인 후 처리
         const resultData = Array.isArray(detailRes.result) ? detailRes.result[0] : detailRes.result;
 
-        // null 값에 대한 방어 로직 (데이터가 null이면 빈 문자열이나 빈 배열로 변환)
         const resolvedAssignees = resultData.logisticsAssignees
           ? resultData.logisticsAssignees
           : resultData.assigneeSummary
@@ -115,17 +112,15 @@ export default function LogisticsOutboundTaskDetailPage() {
       console.error('상세 정보 로딩 실패:', error);
     }
 
-    // 2️⃣ 품목 목록 가져오기 (독립 실행 - 여기가 에러나도 위에는 표시됨)
     try {
       const itemsRes = await getLogisticsItems(numericId);
 
       if (itemsRes.isSuccess && itemsRes.result) {
-        console.log('품목 리스트 수신 성공:', itemsRes.result); // ✅ 콘솔 확인용
+        console.log('품목 리스트 수신 성공:', itemsRes.result);
         setItems(itemsRes.result);
       }
     } catch (error) {
       console.warn('품목 리스트 로딩 실패 (데이터가 없거나 API 오류):', error);
-      // 품목 로딩 실패시 빈 배열 유지 (화면은 안 꺼짐)
       setItems([]);
     }
   };
@@ -182,19 +177,15 @@ export default function LogisticsOutboundTaskDetailPage() {
     }
   };
 
-  // LogisticsOutboundTaskDetailPage.tsx 내의 handleApprovalConfirm 수정
-
   const handleApprovalConfirm = async () => {
     if (!logisticsId) return;
 
-    // 1. 필수값 유효성 검사 (입력창이 비어있으면 중단)
     if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
       alert('출하 업무명과 업무 설명은 필수입니다. 내용을 입력해주세요.');
       setIsApprovalModalOpen(false);
       return;
     }
 
-    // 2. 물품 추가 여부 확인
     if (items.length === 0) {
       alert('출하 물품 목록을 추가해야 승인 요청이 가능합니다.');
       setIsApprovalModalOpen(false);
@@ -202,7 +193,6 @@ export default function LogisticsOutboundTaskDetailPage() {
     }
 
     try {
-      // Step 1: 현재 입력된 정보들(제목, 설명, 운송수단 등)을 먼저 저장(PATCH)
       const updatePayload: UpdateLogisticsCommonRequest = {
         logisticsTitle: taskDetail.logisticsTitle,
         logisticsDescription: taskDetail.logisticsDescription,
@@ -216,17 +206,16 @@ export default function LogisticsOutboundTaskDetailPage() {
         throw new Error('정보 저장 중 오류가 발생했습니다.');
       }
 
-      // Step 2: 정보 저장에 성공하면 바로 승인 요청(PATCH)을 날림
       const approvalRes = await patchRequestApproval(Number(logisticsId));
 
       if (approvalRes.isSuccess) {
-        setIsApprovalModalOpen(false); // 모달 닫기
+        setIsApprovalModalOpen(false);
         setSuccessText({
           title: '승인 요청 완료',
           description: '입력된 정보가 저장되고 관리자에게 승인 요청되었습니다.',
         });
         setIsSuccessModalOpen(true);
-        fetchData(); // 상태 변경(ASSIGNED -> PENDING) 반영을 위해 데이터 다시 읽기
+        fetchData();
       }
     } catch (error: any) {
       console.error('승인 요청 프로세스 오류:', error);
@@ -238,7 +227,6 @@ export default function LogisticsOutboundTaskDetailPage() {
   const handleEditConfirm = async () => {
     if (!logisticsId) return;
 
-    // 1. 필수값 유효성 검사 (API 명세서 조건: Title, Description 필수)
     if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
       alert('출하 업무명과 업무 설명은 필수 입력 사항입니다.');
       return;
@@ -261,14 +249,12 @@ export default function LogisticsOutboundTaskDetailPage() {
           description: '출하 공통 정보가 성공적으로 저장되었습니다.',
         });
         setIsSuccessModalOpen(true);
-        fetchData(); // 수정 후 최신 데이터 다시 불러오기
+        fetchData();
       } else {
-        // 서버에서 실패 응답을 보낸 경우 (예: 권한 없음, 상태 부적절 등)
         alert(res.message || '정보 저장에 실패했습니다.');
       }
     } catch (error: any) {
       console.error('수정 중 오류 발생:', error);
-      // 백엔드 에러 메시지가 있다면 표시
       const errorMsg = error.response?.data?.message || '수정 중 오류가 발생했습니다.';
       alert(errorMsg);
     }
@@ -278,7 +264,6 @@ export default function LogisticsOutboundTaskDetailPage() {
     if (!logisticsId) return;
 
     try {
-      // 1. [추가] 현재 입력창에 있는 텍스트 정보들을 먼저 서버에 저장 (Common Update)
       const updatePayload: UpdateLogisticsCommonRequest = {
         logisticsTitle: taskDetail.logisticsTitle,
         logisticsDescription: taskDetail.logisticsDescription,
@@ -286,10 +271,8 @@ export default function LogisticsOutboundTaskDetailPage() {
         logisticsCarrierCompany: taskDetail.logisticsCarrierCompany || '',
       };
 
-      // 재고 추가 전에 정보를 먼저 백엔드에 보냅니다.
       await patchUpdateLogisticsCommon(Number(logisticsId), updatePayload);
 
-      // 2. 기존 재고 추가 로직 실행
       const payload = {
         itemIds: selectedItems.map((item) => Number(item.itemId)),
       };
@@ -298,7 +281,6 @@ export default function LogisticsOutboundTaskDetailPage() {
 
       if (res.isSuccess) {
         setIsInventoryModalOpen(false);
-        // 이제 fetchData를 해도 서버에 방금 저장한 텍스트가 있으므로 사라지지 않습니다!
         fetchData();
       } else {
         alert(res.message || '품목 추가에 실패했습니다.');
@@ -400,7 +382,7 @@ export default function LogisticsOutboundTaskDetailPage() {
                 {!isInProgress && !isCompleted && (
                   <button
                     onClick={() => setIsInventoryModalOpen(true)}
-                    className="disabled={isReadOnlyStatus} flex h-[37px] w-[88px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 hover:bg-greyColor-grey200"
+                    className="flex h-[37px] w-[88px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 hover:bg-greyColor-grey200"
                   >
                     재고 추가
                   </button>
@@ -416,10 +398,8 @@ export default function LogisticsOutboundTaskDetailPage() {
           </div>
 
           <div className="mt-auto flex justify-end pt-10">
-            {/* 1. 승인 완료 후: 진행 중(IN_PROGRESS) 상태 */}
             {isInProgress ? (
               <div className="flex gap-3">
-                {/* 출하 처리 버튼: 모든 품목이 완료되지 않았을 때만 노출 */}
                 {!isAllItemsCompleted && (
                   <button
                     disabled={!isAnythingSelected}
@@ -434,7 +414,6 @@ export default function LogisticsOutboundTaskDetailPage() {
                   </button>
                 )}
 
-                {/* 출하 완료 버튼: 항상 띄워두되, 모든 품목 완료시에만 활성화 */}
                 <button
                   disabled={!isAllItemsCompleted}
                   onClick={() => setIsFinalCompleteModalOpen(true)}
@@ -447,16 +426,14 @@ export default function LogisticsOutboundTaskDetailPage() {
                   출하 완료
                 </button>
               </div>
-            ) : /* 2. 승인 요청 후: 승인 대기(PENDING) 상태 */
-            isApprovalPending ? (
+            ) : isApprovalPending ? (
               <button
                 disabled
                 className="h-[50px] w-[113px] cursor-not-allowed rounded-[10px] bg-greyColor-grey300 font-pretendard text-[19px] font-bold text-white"
               >
                 승인요청
               </button>
-            ) : /* 3. 업무 시작 전: 할당됨(ASSIGNED) 또는 반려(REJECT) 상태 */
-            !isCompleted &&
+            ) : !isCompleted &&
               (taskDetail.logisticsStatus === 'ASSIGNED' ||
                 taskDetail.logisticsStatus === 'REJECT') ? (
               <button
@@ -466,7 +443,6 @@ export default function LogisticsOutboundTaskDetailPage() {
                 승인요청
               </button>
             ) : (
-              /* 4. 최종 완료(COMPLETED) 상태 */
               isCompleted && (
                 <button
                   disabled

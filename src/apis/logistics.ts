@@ -93,7 +93,6 @@ export const patchUpdateTargetQuantity = async (
 };
 
 export const getInventoryItems = async () => {
-  //재고 검색 api
   const response = await axios.get('/items');
   return response.data;
 };
