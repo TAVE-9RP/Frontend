@@ -4,6 +4,9 @@ import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import TaskListTable from '../../../components/common/TaskListTable';
 import TaskToggleButton from '@/components/common/TaskToggleButton';
+import { getInventoryList } from '../../../apis/inventory';
+
+type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'REJECT' | 'IN_PROGRESS' | 'COMPLETED';
 
 interface InboundTask {
   id: number;
@@ -13,7 +16,7 @@ interface InboundTask {
   location: string;
   requestDate: string;
   manager: string;
-  status: 'ALL' | 'TASK_ASSIGNMENT' | 'APPROVAL_PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: 'ALL' | InventoryStatus;
 }
 
 const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
@@ -89,76 +92,121 @@ const MOCK_INBOUND_TASK_LIST: InboundTask[] = [
   },
 ];
 
-const MY_NAME = '박하은';
-
-const INITIAL_STATUS_DATA = [
-  { status: 'ALL', label: '전체', count: MOCK_INBOUND_TASK_LIST.length },
-  {
-    status: 'TASK_ASSIGNMENT',
-    label: '업무 할당',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'TASK_ASSIGNMENT').length,
-  },
-  {
-    status: 'APPROVAL_PENDING',
-    label: '승인 대기',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'APPROVAL_PENDING').length,
-  },
-  {
-    status: 'IN_PROGRESS',
-    label: '진행중',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'IN_PROGRESS').length,
-  },
-  {
-    status: 'COMPLETED',
-    label: '완료',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'COMPLETED').length,
-  },
-];
+// 상태별 카운트 계산 함수
+const calculateStatusCounts = (tasks: InboundTask[], viewMode: 'ALL' | 'MY', myName?: string) => {
+  let filteredTasks = tasks;
+  
+  if (viewMode === 'MY' && myName) {
+    filteredTasks = tasks.filter((task) => task.manager.includes(myName));
+  }
+  
+  return [
+    { status: 'ALL' as const, label: '전체', count: filteredTasks.length },
+    {
+      status: 'ASSIGNED' as const,
+      label: '업무 할당',
+      count: filteredTasks.filter((t) => t.status === 'ASSIGNED').length,
+    },
+    {
+      status: 'PENDING' as const,
+      label: '승인 대기',
+      count: filteredTasks.filter((t) => t.status === 'PENDING').length,
+    },
+    {
+      status: 'IN_PROGRESS' as const,
+      label: '진행중',
+      count: filteredTasks.filter((t) => t.status === 'IN_PROGRESS').length,
+    },
+    {
+      status: 'COMPLETED' as const,
+      label: '완료',
+      count: filteredTasks.filter((t) => t.status === 'COMPLETED').length,
+    },
+  ];
+};
 
 export default function InventoryInboundTaskListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStatus, setActiveStatus] = useState<InboundTask['status']>('ALL');
   const [taskList, setTaskList] = useState<InboundTask[]>([]);
+  const [allTasks, setAllTasks] = useState<InboundTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'ALL' | 'MY'>('ALL');
+  const [myName, setMyName] = useState<string>('');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const fetchTasksByStatus = (status: InboundTask['status'], currentViewMode: 'ALL' | 'MY') => {
-    setIsLoading(true);
-
-    setTimeout(() => {
-      let filteredList = MOCK_INBOUND_TASK_LIST;
-
-      if (status !== 'ALL') {
-        filteredList = filteredList.filter((task) => task.status === status);
-      }
-
-      if (currentViewMode === 'MY') {
-        filteredList = filteredList.filter((task) => task.manager === MY_NAME);
-      }
-
-      const finalFilteredList = filteredList.filter(
-        (task) =>
-          task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-
-      setTaskList(finalFilteredList);
-      setIsLoading(false);
-    }, 300);
+  // null 값을 "-"로 변환하는 헬퍼 함수
+  const formatNullValue = (value: string | null | undefined): string => {
+    return value ?? '-';
   };
+
+  // API에서 데이터 가져오기
+  useEffect(() => {
+    const fetchInventoryList = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getInventoryList();
+        if (response.isSuccess && response.result) {
+          // API 응답을 InboundTask 형식으로 변환
+          const mappedTasks: InboundTask[] = response.result.map((item: any) => ({
+            id: item.inventoryId,
+            projectNumber: formatNullValue(item.projectNumber),
+            taskName: formatNullValue(item.inventoryTitle),
+            items: formatNullValue(item.itemSummary),
+            location: '-', // API 응답에 없으므로 "-"
+            requestDate: formatNullValue(item.requestedAt),
+            manager: formatNullValue(item.assigneeSummary),
+            status: item.inventoryStatus as InventoryStatus, // API 응답의 status를 그대로 사용
+          }));
+
+          setAllTasks(mappedTasks);
+        }
+      } catch (error) {
+        console.error('입고 업무 목록 가져오기 실패:', error);
+        // 에러 발생 시 빈 배열 설정
+        setAllTasks([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInventoryList();
+  }, []);
+
+  // 상태 및 검색어, viewMode에 따라 필터링
+  useEffect(() => {
+    let filteredList: InboundTask[];
+
+    if (activeStatus === 'ALL') {
+      filteredList = allTasks;
+    } else {
+      filteredList = allTasks.filter((task) => task.status === activeStatus);
+    }
+
+    // viewMode 필터링
+    if (viewMode === 'MY' && myName) {
+      filteredList = filteredList.filter((task) => task.manager.includes(myName));
+    }
+
+    // 검색어 필터링
+    const finalFilteredList = filteredList.filter(
+      (task) =>
+        task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+
+    setTaskList(finalFilteredList);
+  }, [activeStatus, searchTerm, allTasks, viewMode, myName]);
 
   const handleStatusClick = (status: InboundTask['status']) => {
     if (activeStatus === status) return;
     setActiveStatus(status);
   };
 
-  useEffect(() => {
-    fetchTasksByStatus(activeStatus, viewMode);
-  }, [activeStatus, searchTerm, viewMode]);
+  const statusData = calculateStatusCounts(allTasks, viewMode, myName);
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -176,21 +224,13 @@ export default function InventoryInboundTaskListPage() {
 
           <div className="mt-[43px] flex items-center">
             <div className="flex gap-[8px]">
-              {INITIAL_STATUS_DATA.map((item) => (
+              {statusData.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
-                  count={
-                    viewMode === 'MY'
-                      ? MOCK_INBOUND_TASK_LIST.filter(
-                          (t) =>
-                            (item.status === 'ALL' || t.status === item.status) &&
-                            t.manager === MY_NAME,
-                        ).length
-                      : item.count
-                  }
+                  count={item.count}
                   isActive={activeStatus === item.status}
-                  onClick={() => handleStatusClick(item.status as InboundTask['status'])}
+                  onClick={() => handleStatusClick(item.status)}
                 />
               ))}
             </div>
