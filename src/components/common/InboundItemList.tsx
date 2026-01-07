@@ -54,7 +54,8 @@ interface InboundItemListProps {
 
 const InboundItemList: React.FC<InboundItemListProps> = ({ status }) => {
   const isTaskAssignment = status === 'TASK_ASSIGNMENT';
-  const displayItems = isTaskAssignment ? [] : ITEM_MOCK_DATA;
+  // status가 빈 문자열이거나 유효하지 않으면 샘플 데이터를 표시하지 않음
+  const displayItems = !status || status === '' || isTaskAssignment ? [] : ITEM_MOCK_DATA;
 
   type ItemKey = keyof (typeof ITEM_MOCK_DATA)[0];
 

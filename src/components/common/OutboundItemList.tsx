@@ -25,7 +25,8 @@ interface OutboundItemListProps {
 
 const OutboundItemList: React.FC<OutboundItemListProps> = ({ status }) => {
   const isTaskAssignment = status === 'TASK_ASSIGNMENT';
-  const displayItems = isTaskAssignment ? [] : OUTBOUND_ITEM_MOCK_DATA;
+  // status가 빈 문자열이거나 유효하지 않으면 샘플 데이터를 표시하지 않음
+  const displayItems = !status || status === '' || isTaskAssignment ? [] : OUTBOUND_ITEM_MOCK_DATA;
 
   // 총 판매액 계산? 아님 API로 받아오는지
   const totalSalesAmount = displayItems.reduce((acc, cur) => acc + cur.currQty * cur.unitPrice, 0);
