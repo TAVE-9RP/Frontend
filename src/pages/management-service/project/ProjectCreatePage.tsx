@@ -39,7 +39,10 @@ export default function ProjectCreatePage() {
   const [projectNumber, setProjectNumber] = useState<string>('');
   const [isLoadingProjectNumber, setIsLoadingProjectNumber] = useState(true);
 
-  const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics' | null>(null);
+  const [activeAssignment, setActiveAssignment] = useState<{
+    inbound: boolean;
+    logistics: boolean;
+  }>({ inbound: false, logistics: false });
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
   const [inventoryOptions, setInventoryOptions] = useState<DropdownOption[]>([]);
@@ -101,29 +104,29 @@ export default function ProjectCreatePage() {
   };
 
   const handleInventoryManagerOpen = () => {
-    // 입고 업무 담당자 드롭다운이 열릴 때 입고 업무로 설정
-    setActiveAssignment('inbound');
-    setLogisticsManager([]);
+    // 드롭다운만 열고 선택하지 않으면 활성화하지 않음
   };
 
   const handleInventoryManagerChange = (selected: DropdownOption[]) => {
     setInventoryManager(selected);
-    if (selected.length === 0 && logisticsManager.length === 0) {
-      setActiveAssignment(null);
-    }
+    // 담당자가 선택되면 해당 업무 활성화, 모두 해제되면 비활성화
+    setActiveAssignment((prev) => ({
+      ...prev,
+      inbound: selected.length > 0,
+    }));
   };
 
   const handleLogisticsManagerOpen = () => {
-    // 물류 업무 담당자 드롭다운이 열릴 때 물류 업무로 설정
-    setActiveAssignment('logistics');
-    setInventoryManager([]);
+    // 드롭다운만 열고 선택하지 않으면 활성화하지 않음
   };
 
   const handleLogisticsManagerChange = (selected: DropdownOption[]) => {
     setLogisticsManager(selected);
-    if (selected.length === 0 && inventoryManager.length === 0) {
-      setActiveAssignment(null);
-    }
+    // 담당자가 선택되면 해당 업무 활성화, 모두 해제되면 비활성화
+    setActiveAssignment((prev) => ({
+      ...prev,
+      logistics: selected.length > 0,
+    }));
   };
 
   const isFormValid = useMemo(() => {
@@ -135,10 +138,8 @@ export default function ProjectCreatePage() {
       formData.targetMonth.trim() !== '' &&
       formData.targetDay.trim() !== '';
 
-    // 담당자는 무조건 1명 이상이어야 함
-    const managerValid =
-      (activeAssignment === 'inbound' && inventoryManager.length > 0) ||
-      (activeAssignment === 'logistics' && logisticsManager.length > 0);
+    // 담당자는 무조건 1명 이상이어야 함 (입고 또는 물류 중 하나 이상)
+    const managerValid = inventoryManager.length > 0 || logisticsManager.length > 0;
 
     return baseValid && managerValid;
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
@@ -154,11 +155,11 @@ export default function ProjectCreatePage() {
     setIsCreating(true);
 
     try {
-      // 담당자 ID 리스트 추출
-      const assigneeIds =
-        activeAssignment === 'inbound'
-          ? inventoryManager.map((manager) => manager.id)
-          : logisticsManager.map((manager) => manager.id);
+      // 담당자 ID 리스트 추출 (입고와 물류 모두 포함)
+      const assigneeIds = [
+        ...inventoryManager.map((manager) => manager.id),
+        ...logisticsManager.map((manager) => manager.id),
+      ];
 
       // 날짜 형식 변환 (YYYY-MM-DD)
       const formattedDate = `${formData.targetYear}-${String(formData.targetMonth).padStart(2, '0')}-${String(formData.targetDay).padStart(2, '0')}`;
@@ -262,14 +263,14 @@ export default function ProjectCreatePage() {
                 <div className="flex gap-[20px]">
                   <AssignmentChip
                     label="입고 업무"
-                    isActive={activeAssignment === 'inbound'}
+                    isActive={activeAssignment.inbound}
                     onClick={() => {}}
                     disabled={true}
                   />
 
                   <AssignmentChip
                     label="물류 업무"
-                    isActive={activeAssignment === 'logistics'}
+                    isActive={activeAssignment.logistics}
                     onClick={() => {}}
                     disabled={true}
                   />
@@ -285,7 +286,6 @@ export default function ProjectCreatePage() {
                       initialSelected={inventoryManager}
                       onChange={handleInventoryManagerChange}
                       onOpen={handleInventoryManagerOpen}
-                      disabled={activeAssignment === 'logistics'}
                       options={inventoryOptions}
                     />
                   ) : (
@@ -305,7 +305,6 @@ export default function ProjectCreatePage() {
                       initialSelected={logisticsManager}
                       onChange={handleLogisticsManagerChange}
                       onOpen={handleLogisticsManagerOpen}
-                      disabled={activeAssignment === 'inbound'}
                       options={logisticsOptions}
                     />
                   ) : (
