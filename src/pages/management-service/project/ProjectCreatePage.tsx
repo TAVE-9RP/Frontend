@@ -39,7 +39,7 @@ export default function ProjectCreatePage() {
   const [projectNumber, setProjectNumber] = useState<string>('');
   const [isLoadingProjectNumber, setIsLoadingProjectNumber] = useState(true);
 
-  const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
+  const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics' | null>(null);
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
 
@@ -69,13 +69,29 @@ export default function ProjectCreatePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleChipClick = (type: 'inbound' | 'logistics') => {
-    setActiveAssignment(type);
+  const handleInventoryManagerOpen = () => {
+    // 입고 업무 담당자 드롭다운이 열릴 때 입고 업무로 설정
+    setActiveAssignment('inbound');
+    setLogisticsManager([]);
+  };
 
-    if (type === 'inbound') {
-      setLogisticsManager([]);
-    } else {
-      setInventoryManager([]);
+  const handleInventoryManagerChange = (selected: DropdownOption[]) => {
+    setInventoryManager(selected);
+    if (selected.length === 0 && logisticsManager.length === 0) {
+      setActiveAssignment(null);
+    }
+  };
+
+  const handleLogisticsManagerOpen = () => {
+    // 물류 업무 담당자 드롭다운이 열릴 때 물류 업무로 설정
+    setActiveAssignment('logistics');
+    setInventoryManager([]);
+  };
+
+  const handleLogisticsManagerChange = (selected: DropdownOption[]) => {
+    setLogisticsManager(selected);
+    if (selected.length === 0 && inventoryManager.length === 0) {
+      setActiveAssignment(null);
     }
   };
 
@@ -90,7 +106,8 @@ export default function ProjectCreatePage() {
       formData.targetDay.trim() !== '';
 
     const managerValid =
-      activeAssignment === 'inbound' ? inventoryManager.length > 0 : logisticsManager.length > 0;
+      (activeAssignment === 'inbound' && inventoryManager.length > 0) ||
+      (activeAssignment === 'logistics' && logisticsManager.length > 0);
 
     return baseValid && managerValid;
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
@@ -199,13 +216,15 @@ export default function ProjectCreatePage() {
                   <AssignmentChip
                     label="입고 업무"
                     isActive={activeAssignment === 'inbound'}
-                    onClick={() => handleChipClick('inbound')}
+                    onClick={() => {}}
+                    disabled={true}
                   />
 
                   <AssignmentChip
                     label="물류 업무"
                     isActive={activeAssignment === 'logistics'}
-                    onClick={() => handleChipClick('logistics')}
+                    onClick={() => {}}
+                    disabled={true}
                   />
                 </div>
               </div>
@@ -216,8 +235,9 @@ export default function ProjectCreatePage() {
                 <FormGroup label="입고 업무 담당자">
                   <DropdownInput
                     initialSelected={inventoryManager}
-                    onChange={setInventoryManager}
-                    disabled={activeAssignment !== 'inbound'}
+                    onChange={handleInventoryManagerChange}
+                    onOpen={handleInventoryManagerOpen}
+                    disabled={activeAssignment === 'logistics'}
                   />
                 </FormGroup>
               </div>
@@ -226,8 +246,9 @@ export default function ProjectCreatePage() {
                 <FormGroup label="물류 업무 담당자">
                   <DropdownInput
                     initialSelected={logisticsManager}
-                    onChange={setLogisticsManager}
-                    disabled={activeAssignment !== 'logistics'}
+                    onChange={handleLogisticsManagerChange}
+                    onOpen={handleLogisticsManagerOpen}
+                    disabled={activeAssignment === 'inbound'}
                   />
                 </FormGroup>
               </div>

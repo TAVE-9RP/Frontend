@@ -4,9 +4,10 @@ interface AssignmentChipProps {
   label: string;
   isActive: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-const AssignmentChip: React.FC<AssignmentChipProps> = ({ label, isActive, onClick }) => {
+const AssignmentChip: React.FC<AssignmentChipProps> = ({ label, isActive, onClick, disabled = false }) => {
   const activeStyle = {
     border: '1px solid var(--mainColor-blue700, #106CE1)',
     background: 'var(--mainColor-blue050, #E2F1FF)',
@@ -28,15 +29,17 @@ const AssignmentChip: React.FC<AssignmentChipProps> = ({ label, isActive, onClic
     alignItems: 'center',
     gap: '8px',
     borderRadius: '50px',
-    cursor: 'pointer',
+    cursor: disabled ? 'not-allowed' : 'pointer',
     fontFamily: 'Pretendard',
     fontSize: '15px',
     fontWeight: 500,
+    opacity: disabled ? 0.5 : 1,
   };
 
   return (
     <button
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
       style={{ ...baseStyle, ...(isActive ? activeStyle : inactiveStyle) }}
       className="transition-colors duration-150"
     >
