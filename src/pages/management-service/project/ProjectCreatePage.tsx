@@ -263,25 +263,41 @@ export default function ProjectCreatePage() {
             <div className="mb-[80px] mt-[80px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="입고 업무 담당자">
-                  <DropdownInput
-                    initialSelected={inventoryManager}
-                    onChange={handleInventoryManagerChange}
-                    onOpen={handleInventoryManagerOpen}
-                    disabled={activeAssignment === 'logistics'}
-                    options={inventoryOptions}
-                  />
+                  {inventoryOptions.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={inventoryManager}
+                      onChange={handleInventoryManagerChange}
+                      onOpen={handleInventoryManagerOpen}
+                      disabled={activeAssignment === 'logistics'}
+                      options={inventoryOptions}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        입고 부서 직원 없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
 
               <div className="w-[390px]">
                 <FormGroup label="물류 업무 담당자">
-                  <DropdownInput
-                    initialSelected={logisticsManager}
-                    onChange={handleLogisticsManagerChange}
-                    onOpen={handleLogisticsManagerOpen}
-                    disabled={activeAssignment === 'inbound'}
-                    options={logisticsOptions}
-                  />
+                  {logisticsOptions.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={logisticsManager}
+                      onChange={handleLogisticsManagerChange}
+                      onOpen={handleLogisticsManagerOpen}
+                      disabled={activeAssignment === 'inbound'}
+                      options={logisticsOptions}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        물류 부서 직원 없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
             </div>
