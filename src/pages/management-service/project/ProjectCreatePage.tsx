@@ -306,8 +306,11 @@ export default function ProjectCreatePage() {
               <FormGroup label="업무 설명">
                 <LargeInput
                   name="jobDescription"
-                  value={formData.jobDescription}
-                  onChange={handleInputChange}
+                  value="업무 담당자가 작성하는 란입니다."
+                  onChange={() => {}}
+                  disabled={true}
+                  readOnly
+                  className="cursor-not-allowed"
                 />
               </FormGroup>
             </div>
