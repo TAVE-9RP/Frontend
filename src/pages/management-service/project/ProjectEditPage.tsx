@@ -254,7 +254,7 @@ export default function ProjectEditPage() {
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
         <div className="flex min-h-[1300px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
           <h1 className="font-pretendard text-2xl font-bold text-black">
-            프로젝트 상세 및 수정하기
+            프로젝트 상세 {/* 및 수정하기 */}
           </h1>
 
           <div className="mt-[80px] flex-1">
@@ -278,6 +278,7 @@ export default function ProjectEditPage() {
                     name="projectTitle"
                     value={formData.projectTitle}
                     onChange={handleInputChange}
+                    disabled={true}
                   />
                 </FormGroup>
               </div>
@@ -289,6 +290,7 @@ export default function ProjectEditPage() {
                   name="projectDescription"
                   value={formData.projectDescription}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
               </FormGroup>
             </div>
@@ -301,6 +303,7 @@ export default function ProjectEditPage() {
                     name="client"
                     value={formData.client}
                     onChange={handleInputChange}
+                    disabled={true}
                   />
                 </FormGroup>
               </div>
@@ -313,11 +316,13 @@ export default function ProjectEditPage() {
                     label="입고 업무"
                     isActive={activeAssignment === 'inbound'}
                     onClick={() => handleChipClick('inbound')}
+                    disabled={true}
                   />
                   <AssignmentChip
                     label="물류 업무"
                     isActive={activeAssignment === 'logistics'}
                     onClick={() => handleChipClick('logistics')}
+                    disabled={true}
                   />
                 </div>
               </div>
@@ -329,7 +334,7 @@ export default function ProjectEditPage() {
                   <DropdownInput
                     initialSelected={inventoryManager}
                     onChange={setInventoryManager}
-                    disabled={activeAssignment !== 'inbound'}
+                    disabled={true}
                   />
                 </FormGroup>
               </div>
@@ -339,7 +344,7 @@ export default function ProjectEditPage() {
                   <DropdownInput
                     initialSelected={logisticsManager}
                     onChange={setLogisticsManager}
-                    disabled={activeAssignment !== 'logistics'}
+                    disabled={true}
                   />
                 </FormGroup>
               </div>
@@ -351,6 +356,7 @@ export default function ProjectEditPage() {
                   name="jobDescription"
                   value={formData.jobDescription}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
               </FormGroup>
             </div>
@@ -368,6 +374,7 @@ export default function ProjectEditPage() {
                   name="targetYear"
                   value={formData.targetYear}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
                 <DateInput
                   placeholder="08"
@@ -376,6 +383,7 @@ export default function ProjectEditPage() {
                   name="targetMonth"
                   value={formData.targetMonth}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
                 <DateInput
                   placeholder="10"
@@ -384,12 +392,13 @@ export default function ProjectEditPage() {
                   name="targetDay"
                   value={formData.targetDay}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
               </div>
             </div>
           </div>
 
-          <div className="mt-auto flex justify-end">
+          {/* <div className="mt-auto flex justify-end">
             <button
               onClick={handleCreateProject}
               disabled={!isFormValid}
@@ -401,7 +410,7 @@ export default function ProjectEditPage() {
             >
               수정하기
             </button>
-          </div>
+          </div> */}
         </div>
       </main>
 

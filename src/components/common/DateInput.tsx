@@ -7,6 +7,7 @@ interface DateInputProps {
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const DateInput: React.FC<DateInputProps> = ({
@@ -16,13 +17,16 @@ const DateInput: React.FC<DateInputProps> = ({
   name,
   value,
   onChange,
+  disabled = false,
 }) => {
   const defaultPlaceholder = `(예)${placeholder}`;
   const isFilled = value.length > 0;
 
-  const colorClasses = isFilled
-    ? 'bg-mainColor-blue050 border-mainColor-blue600 text-greyColor-grey900'
-    : 'bg-white border-greyColor-grey400 text-greyColor-grey500';
+  const colorClasses = disabled
+    ? 'bg-greyColor-grey100 border-greyColor-grey400 text-greyColor-grey400 cursor-not-allowed'
+    : isFilled
+      ? 'bg-mainColor-blue050 border-mainColor-blue600 text-greyColor-grey900'
+      : 'bg-white border-greyColor-grey400 text-greyColor-grey500';
 
   return (
     <div className="flex items-center gap-[6px]">
@@ -32,6 +36,7 @@ const DateInput: React.FC<DateInputProps> = ({
         placeholder={isFilled ? '' : defaultPlaceholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={`h-[50px] rounded-[10px] border text-center text-[19px] font-light transition-colors duration-150 focus:outline-none ${colorClasses}`}
         style={{ width }}
       />
