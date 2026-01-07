@@ -48,7 +48,7 @@ function App() {
         <Route path="/project-create" element={<ProjectCreatePage />} />
         <Route path="/project/:id" element={<ProjectEditPage />} />
         <Route path="/inbound-task" element={<InboundTaskListPage />} />
-        <Route path="/inbound-task/:projectNumber" element={<InboundTaskDetailPage />} />
+        <Route path="/inbound-task/:inventoryId" element={<InboundTaskDetailPage />} />
         <Route path="/outbound-task" element={<OutBoundTaskListPage />} />
         <Route path="/outbound-task/:projectNumber" element={<OutboundTaskDetailPage />} />
         <Route path="/inventory-inbound-task" element={<InventoryInboundTaskListPage />} />

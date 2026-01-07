@@ -91,7 +91,13 @@ const InboundItemList: React.FC<InboundItemListProps> = ({ status }) => {
         })}
       </div>
 
+      {!isTaskAssignment && displayItems.length === 0 && (
+        <div className="flex h-[40px] items-center justify-center bg-white">
+          <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+        </div>
+      )}
       {!isTaskAssignment &&
+        displayItems.length > 0 &&
         displayItems.map((item) => (
           <div
             key={item.id}

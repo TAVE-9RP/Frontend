@@ -21,5 +21,10 @@ export const getInventoryList = async () => {
   return response.data;
 };
 
+export const getInventoryDetail = async (inventoryId: string | number) => {
+  const response = await api.get(`/inventory/${inventoryId}`);
+  return response.data;
+};
+
 export default api;
 

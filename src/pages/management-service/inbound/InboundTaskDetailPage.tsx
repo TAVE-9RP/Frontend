@@ -8,6 +8,7 @@ import ManagerChip from '@/components/common/ManagerChip';
 import InboundItemList from '@/components/common/InboundItemList';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
+import { getInventoryDetail } from '../../../apis/inventory';
 
 const MOCK_DATA = [
   {
@@ -73,14 +74,44 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?
   </div>
 );
 
+// null 값을 "-"로 변환하는 헬퍼 함수
+const formatNullValue = (value: string | null | undefined): string => {
+  return value ?? '-';
+};
+
+// API 응답의 inventoryAssignees 배열을 문자열로 변환
+const formatAssignees = (assignees: string[] | null | undefined): string => {
+  if (!assignees || assignees.length === 0) return '-';
+  if (assignees.length === 1) return assignees[0];
+  return `${assignees[0]} 외 ${assignees.length - 1}명`;
+};
+
+// API 응답의 inventoryStatus를 StatusStepBar가 기대하는 형식으로 매핑
+const mapStatusForStepBar = (status: string): string => {
+  switch (status) {
+    case 'ASSIGNED':
+      return 'TASK_ASSIGNMENT';
+    case 'PENDING':
+      return 'APPROVAL_PENDING';
+    case 'REJECT':
+      return 'APPROVAL_PENDING'; // REJECT는 StatusStepBar에 없으므로 APPROVAL_PENDING으로 매핑
+    case 'IN_PROGRESS':
+      return 'IN_PROGRESS';
+    case 'COMPLETED':
+      return 'COMPLETED';
+    default:
+      return 'TASK_ASSIGNMENT';
+  }
+};
+
 export default function InboundTaskDetailPage() {
-  const { projectNumber } = useParams<{ projectNumber: string }>();
+  const { inventoryId } = useParams<{ inventoryId: string }>();
   const navigate = useNavigate(); //승인 처리 후 자동으로 목록 페이지로 이동?
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -92,9 +123,42 @@ export default function InboundTaskDetailPage() {
   });
 
   useEffect(() => {
-    const found = MOCK_DATA.find((item) => item.projectNumber === projectNumber);
-    if (found) setTaskDetail(found);
-  }, [projectNumber]);
+    const fetchInventoryDetail = async () => {
+      if (!inventoryId) return;
+
+      setIsLoading(true);
+      try {
+        console.log('=== 입고 업무 상세 API 호출 ===');
+        console.log('inventoryId:', inventoryId);
+        const response = await getInventoryDetail(inventoryId);
+        console.log('=== 입고 업무 상세 API 응답 ===');
+        console.log('응답:', response);
+        
+        if (response.isSuccess && response.result) {
+          const result = response.result;
+          console.log('=== 응답 result ===');
+          console.log('result:', result);
+          setTaskDetail({
+            projectNumber: formatNullValue(result.projectNumber),
+            taskName: formatNullValue(result.inventoryTitle),
+            manager: formatAssignees(result.inventoryAssignees),
+            requestDate: formatNullValue(result.inventoryRequestedAt),
+            description: formatNullValue(result.inventoryDescription),
+            status: mapStatusForStepBar(result.inventoryStatus),
+          });
+        }
+      } catch (error: any) {
+        console.error('입고 업무 상세 정보 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInventoryDetail();
+  }, [inventoryId]);
 
   const handleConfirmApproval = () => {
     setIsModalOpen(false);
@@ -128,7 +192,7 @@ export default function InboundTaskDetailPage() {
             입고 업무 상세
           </h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate.replace(/-/g, '.')}
+            요청일: {taskDetail.requestDate !== '-' ? taskDetail.requestDate.replace(/-/g, '.') : '-'}
           </p>
 
           <div className="mt-[70px] flex-1">
@@ -139,16 +203,22 @@ export default function InboundTaskDetailPage() {
 
               <FormGroup label="프로젝트 넘버" className="w-[390px]">
                 <BasicInput
-                  value={taskDetail.projectNumber}
+                  value={taskDetail.projectNumber || '-'}
                   disabled={true}
                   readOnly
+                  placeholder=""
                   className="text-greyColor-grey400"
                 />
               </FormGroup>
             </div>
             <div className="mb-[64px] flex justify-between">
               <FormGroup label="입고 업무명" className="w-[390px]">
-                <BasicInput value={taskDetail.taskName} disabled={true} readOnly />
+                <BasicInput 
+                  value={taskDetail.taskName || '-'} 
+                  disabled={true} 
+                  readOnly 
+                  placeholder=""
+                />
               </FormGroup>
 
               <FormGroup label="입고 업무 담당자" className="w-[390px]">
@@ -164,16 +234,45 @@ export default function InboundTaskDetailPage() {
             <div className="mb-[40px]">
               <FormGroup label="업무 설명">
                 <LargeInput
-                  value={taskDetail.description}
+                  value={taskDetail.description || '-'}
                   disabled={true}
                   readOnly
+                  placeholder=""
                   className="h-[240px]"
                 />
               </FormGroup>
             </div>
             <div className="mb-[40px] mt-[80px]">
               <FormGroup label="입고 물품 목록">
-                <InboundItemList status={taskDetail.status} />
+                {taskDetail.status === 'TASK_ASSIGNMENT' ? (
+                  <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+                    <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
+                      <div className="w-[112px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                        재고 번호
+                      </div>
+                      <div className="w-[130px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                        물품명
+                      </div>
+                      <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                        입고 요청 수량
+                      </div>
+                      <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                        현재 입고 수량
+                      </div>
+                      <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                        목표 입고 수량
+                      </div>
+                      <div className="w-[150px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
+                        처리 상태
+                      </div>
+                    </div>
+                    <div className="flex h-[40px] items-center justify-center bg-white">
+                      <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+                    </div>
+                  </div>
+                ) : (
+                  <InboundItemList status={taskDetail.status} />
+                )}
               </FormGroup>
             </div>
           </div>
