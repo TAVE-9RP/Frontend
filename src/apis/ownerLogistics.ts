@@ -21,5 +21,10 @@ export const getLogisticsList = async () => {
   return response.data;
 };
 
+export const getLogisticsDetail = async (logisticsId: string | number) => {
+  const response = await api.get(`/logistics/${logisticsId}`);
+  return response.data;
+};
+
 export default api;
 
