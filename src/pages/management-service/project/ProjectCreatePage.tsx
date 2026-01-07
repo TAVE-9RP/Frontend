@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
@@ -8,6 +8,7 @@ import DropdownInput, { DropdownOption } from '../../../components/common/Dropdo
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
+import { getProjectSerialNumber } from '../../../apis/admin';
 
 interface FormGroupProps {
   label: string;
@@ -35,12 +36,33 @@ export default function ProjectCreatePage() {
     targetDay: '',
   });
 
+  const [projectNumber, setProjectNumber] = useState<string>('');
+  const [isLoadingProjectNumber, setIsLoadingProjectNumber] = useState(true);
+
   const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchProjectSerialNumber = async () => {
+      try {
+        setIsLoadingProjectNumber(true);
+        const response = await getProjectSerialNumber();
+        if (response.isSuccess && response.result) {
+          setProjectNumber(response.result);
+        }
+      } catch (error) {
+        console.error('프로젝트 넘버 가져오기 실패:', error);
+      } finally {
+        setIsLoadingProjectNumber(false);
+      }
+    };
+
+    fetchProjectSerialNumber();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -84,7 +106,7 @@ export default function ProjectCreatePage() {
 
     const newProject = {
       id: Date.now(),
-      projectNumber: 'SYS-01-001',
+      projectNumber: projectNumber,
       title: formData.projectTitle,
       projectTitle: formData.projectTitle,
       description: formData.projectDescription,
@@ -127,8 +149,8 @@ export default function ProjectCreatePage() {
               <div className="w-[390px]">
                 <FormGroup label="프로젝트 넘버">
                   <BasicInput
-                    placeholder="SYS-01-001"
-                    value="SYS-01-001"
+                    placeholder={isLoadingProjectNumber ? '로딩 중...' : 'SYS-01-001'}
+                    value={projectNumber || ''}
                     disabled={true}
                     readOnly
                     className="text-greyColor-grey400"

@@ -43,4 +43,9 @@ export const getProjectDetail = async (projectId: number) => {
   return response.data;
 };
 
+export const getProjectSerialNumber = async () => {
+  const response = await api.get('/projects/serial-num');
+  return response.data;
+};
+
 export default api;
