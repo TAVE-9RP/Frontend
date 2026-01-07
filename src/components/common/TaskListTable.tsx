@@ -91,7 +91,7 @@ export default function TaskListTable({
             <tr>
               <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
               <th className={`${tableHeaderClasses} w-[170px]`}>{taskLabel} 업무명</th>
-              <th className={`${tableHeaderClasses} w-[200px]`}>{taskLabel} 품목</th>
+              <th className={`${tableHeaderClasses} w-[200px]`}>{isOutbound ? '거래처' : `${taskLabel} 품목`}</th>
               <th className={`${tableHeaderClasses} w-[180px]`}>요청일</th>
               <th className={`${tableHeaderClasses} w-[170px]`}>담당자</th>
               <th className={`${tableHeaderClasses} w-[140px]`}>진행 상태</th>
