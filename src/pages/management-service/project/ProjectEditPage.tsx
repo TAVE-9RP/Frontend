@@ -54,7 +54,10 @@ export default function ProjectEditPage() {
     targetDay: '',
   });
 
-  const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
+  const [activeAssignment, setActiveAssignment] = useState<{
+    inbound: boolean;
+    logistics: boolean;
+  }>({ inbound: false, logistics: false });
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
 
@@ -95,8 +98,6 @@ export default function ProjectEditPage() {
           // projectMembers를 기반으로 업무 할당 및 담당자 설정
           const projectMembers = project.projectMembers || [];
           
-          // department에 따라 업무 할당 결정 (INVENTORY -> inbound, LOGISTICS -> logistics)
-          let assignmentType: 'inbound' | 'logistics' = 'inbound';
           const inventoryMembers: DropdownOption[] = [];
           const logisticsMembers: DropdownOption[] = [];
 
@@ -108,16 +109,21 @@ export default function ProjectEditPage() {
               team: member.department || '부서 미정',
             };
 
-            if (member.department === 'LOGISTICS') {
-              assignmentType = 'logistics';
+            if (member.department === 'LOGISTICS' || member.department === 'logistics') {
               logisticsMembers.push(formattedMember);
-            } else {
+            } else if (member.department === 'INVENTORY' || member.department === 'inventory' || member.department === 'MANAGEMENT' || member.department === 'management') {
               // INVENTORY 또는 MANAGEMENT는 inbound로 처리
               inventoryMembers.push(formattedMember);
             }
           });
 
-          setActiveAssignment(assignmentType);
+          // 담당자가 있으면 해당 업무 활성화
+          console.log('입고 담당자:', inventoryMembers);
+          console.log('물류 담당자:', logisticsMembers);
+          setActiveAssignment({
+            inbound: inventoryMembers.length > 0,
+            logistics: logisticsMembers.length > 0,
+          });
           setInventoryManager(inventoryMembers);
           setLogisticsManager(logisticsMembers);
         }
@@ -142,7 +148,6 @@ export default function ProjectEditPage() {
             targetDay: dateParts[2] || '',
           });
           const type = foundProject.type || 'inbound';
-          setActiveAssignment(type);
           const rawManager = foundProject.manager;
           let formattedManager: DropdownOption[] = [];
           if (Array.isArray(rawManager)) {
@@ -161,8 +166,16 @@ export default function ProjectEditPage() {
           }
           if (type === 'inbound') {
             setInventoryManager(formattedManager);
+            setActiveAssignment({
+              inbound: formattedManager.length > 0,
+              logistics: false,
+            });
           } else {
             setLogisticsManager(formattedManager);
+            setActiveAssignment({
+              inbound: false,
+              logistics: formattedManager.length > 0,
+            });
           }
         }
       } finally {
@@ -179,7 +192,7 @@ export default function ProjectEditPage() {
   };
 
   const handleChipClick = (type: 'inbound' | 'logistics') => {
-    setActiveAssignment(type);
+    // 읽기 전용이므로 클릭해도 변경되지 않음
   };
 
   const isFormValid = useMemo(() => {
@@ -192,8 +205,7 @@ export default function ProjectEditPage() {
       formData.targetMonth.trim() !== '' &&
       formData.targetDay.trim() !== '';
 
-    const managerValid =
-      activeAssignment === 'inbound' ? inventoryManager.length > 0 : logisticsManager.length > 0;
+    const managerValid = inventoryManager.length > 0 || logisticsManager.length > 0;
 
     return baseValid && managerValid;
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
@@ -218,8 +230,8 @@ export default function ProjectEditPage() {
       client: formData.client,
       jobDescription: formData.jobDescription,
       targetDate: `${formData.targetYear}-${formData.targetMonth}-${formData.targetDay}`,
-      type: activeAssignment,
-      manager: activeAssignment === 'inbound' ? inventoryManager : logisticsManager,
+      type: activeAssignment.inbound ? 'inbound' : 'logistics',
+      manager: activeAssignment.inbound ? inventoryManager : logisticsManager,
       status: 'IN_PROGRESS',
       creationDate: new Date().toISOString().split('T')[0],
     };
@@ -314,13 +326,13 @@ export default function ProjectEditPage() {
                 <div className="flex gap-[20px]">
                   <AssignmentChip
                     label="입고 업무"
-                    isActive={activeAssignment === 'inbound'}
+                    isActive={activeAssignment.inbound}
                     onClick={() => handleChipClick('inbound')}
                     disabled={true}
                   />
                   <AssignmentChip
                     label="물류 업무"
-                    isActive={activeAssignment === 'logistics'}
+                    isActive={activeAssignment.logistics}
                     onClick={() => handleChipClick('logistics')}
                     disabled={true}
                   />
