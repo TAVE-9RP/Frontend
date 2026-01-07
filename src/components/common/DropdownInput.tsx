@@ -16,9 +16,10 @@ interface DropdownInputProps {
   initialSelected?: DropdownOption[];
   disabled?: boolean;
   onOpen?: () => void;
+  options?: DropdownOption[];
 }
 
-const options: DropdownOption[] = [
+const defaultOptions: DropdownOption[] = [
   { id: 1, label: '홍길동', subLabel: '물류 1팀', team: '물류' },
   { id: 2, label: '김철수', subLabel: '물류 2팀', team: '물류' },
   { id: 3, label: '이영희', subLabel: '입고 2팀', team: '입고' },
@@ -32,6 +33,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   initialSelected = [],
   disabled = false,
   onOpen,
+  options = defaultOptions,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);

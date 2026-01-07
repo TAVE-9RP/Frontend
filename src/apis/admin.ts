@@ -48,4 +48,9 @@ export const getProjectSerialNumber = async () => {
   return response.data;
 };
 
+export const getAssignMembers = async () => {
+  const response = await api.get('/projects/assign-members');
+  return response.data;
+};
+
 export default api;

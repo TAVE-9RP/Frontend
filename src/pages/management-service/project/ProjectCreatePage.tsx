@@ -8,7 +8,7 @@ import DropdownInput, { DropdownOption } from '../../../components/common/Dropdo
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
-import { getProjectSerialNumber } from '../../../apis/admin';
+import { getProjectSerialNumber, getAssignMembers } from '../../../apis/admin';
 
 interface FormGroupProps {
   label: string;
@@ -42,6 +42,8 @@ export default function ProjectCreatePage() {
   const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics' | null>(null);
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
+  const [inventoryOptions, setInventoryOptions] = useState<DropdownOption[]>([]);
+  const [logisticsOptions, setLogisticsOptions] = useState<DropdownOption[]>([]);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -62,6 +64,34 @@ export default function ProjectCreatePage() {
     };
 
     fetchProjectSerialNumber();
+  }, []);
+
+  useEffect(() => {
+    const fetchAssignMembers = async () => {
+      try {
+        const response = await getAssignMembers();
+        if (response.isSuccess && response.result) {
+          // API 응답을 DropdownOption 형식으로 변환
+          const allMembers: DropdownOption[] = response.result.map((member: any) => ({
+            id: member.memberId,
+            label: member.name,
+            subLabel: member.department === 'LOGISTICS' ? '물류' : member.department === 'INVENTORY' ? '입고' : '',
+            team: member.department === 'LOGISTICS' ? '물류' : member.department === 'INVENTORY' ? '입고' : '',
+          }));
+
+          // department에 따라 필터링
+          const inventoryMembers = allMembers.filter((member) => member.team === '입고');
+          const logisticsMembers = allMembers.filter((member) => member.team === '물류');
+
+          setInventoryOptions(inventoryMembers);
+          setLogisticsOptions(logisticsMembers);
+        }
+      } catch (error) {
+        console.error('담당자 목록 가져오기 실패:', error);
+      }
+    };
+
+    fetchAssignMembers();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -238,6 +268,7 @@ export default function ProjectCreatePage() {
                     onChange={handleInventoryManagerChange}
                     onOpen={handleInventoryManagerOpen}
                     disabled={activeAssignment === 'logistics'}
+                    options={inventoryOptions}
                   />
                 </FormGroup>
               </div>
@@ -249,6 +280,7 @@ export default function ProjectCreatePage() {
                     onChange={handleLogisticsManagerChange}
                     onOpen={handleLogisticsManagerOpen}
                     disabled={activeAssignment === 'inbound'}
+                    options={logisticsOptions}
                   />
                 </FormGroup>
               </div>
