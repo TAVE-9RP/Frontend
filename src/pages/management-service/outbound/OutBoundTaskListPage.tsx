@@ -3,6 +3,9 @@ import SearchBar from '../../../components/common/SearchBar';
 import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import TaskListTable from '../../../components/common/TaskListTable';
+import { getLogisticsList } from '../../../apis/ownerLogistics';
+
+type LogisticsStatus = 'ASSIGNED' | 'PENDING' | 'REJECT' | 'IN_PROGRESS' | 'COMPLETED';
 
 interface OutboundTask {
   id: number;
@@ -12,7 +15,7 @@ interface OutboundTask {
   location: string;
   requestDate: string;
   manager: string;
-  status: 'ALL' | 'TASK_ASSIGNMENT' | 'APPROVAL_PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: 'ALL' | LogisticsStatus;
 }
 
 const MOCK_INBOUND_TASK_LIST: OutboundTask[] = [
@@ -24,7 +27,7 @@ const MOCK_INBOUND_TASK_LIST: OutboundTask[] = [
     location: '위치입니다.',
     requestDate: '2025-10-25',
     manager: '강아껌',
-    status: 'APPROVAL_PENDING',
+    status: 'PENDING',
   },
   {
     id: 2,
@@ -34,7 +37,7 @@ const MOCK_INBOUND_TASK_LIST: OutboundTask[] = [
     location: '위치입니다.',
     requestDate: '2025-10-25',
     manager: '홍길동',
-    status: 'APPROVAL_PENDING',
+    status: 'PENDING',
   },
   {
     id: 3,
@@ -64,7 +67,7 @@ const MOCK_INBOUND_TASK_LIST: OutboundTask[] = [
     location: '위치입니다.',
     requestDate: '2025-10-25',
     manager: '망고짱',
-    status: 'TASK_ASSIGNMENT',
+    status: 'ASSIGNED',
   },
   {
     id: 6,
@@ -94,72 +97,112 @@ const MOCK_INBOUND_TASK_LIST: OutboundTask[] = [
     location: '위치입니다.',
     requestDate: '2025-10-25',
     manager: '피자최고',
-    status: 'TASK_ASSIGNMENT',
+    status: 'ASSIGNED',
   },
 ];
 
-const INITIAL_STATUS_DATA = [
-  { status: 'ALL', label: '전체', count: MOCK_INBOUND_TASK_LIST.length },
-  {
-    status: 'TASK_ASSIGNMENT',
-    label: '업무 할당',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'TASK_ASSIGNMENT').length,
-  },
-  {
-    status: 'APPROVAL_PENDING',
-    label: '승인 대기',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'APPROVAL_PENDING').length,
-  },
-  {
-    status: 'IN_PROGRESS',
-    label: '진행중',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'IN_PROGRESS').length,
-  },
-  {
-    status: 'COMPLETED',
-    label: '완료',
-    count: MOCK_INBOUND_TASK_LIST.filter((t) => t.status === 'COMPLETED').length,
-  },
-];
+// 상태별 카운트 계산 함수
+const calculateStatusCounts = (tasks: OutboundTask[]) => {
+  return [
+    { status: 'ALL' as const, label: '전체', count: tasks.length },
+    {
+      status: 'ASSIGNED' as const,
+      label: '업무 할당',
+      count: tasks.filter((t) => t.status === 'ASSIGNED').length,
+    },
+    {
+      status: 'PENDING' as const,
+      label: '승인 대기',
+      count: tasks.filter((t) => t.status === 'PENDING').length,
+    },
+    {
+      status: 'IN_PROGRESS' as const,
+      label: '진행중',
+      count: tasks.filter((t) => t.status === 'IN_PROGRESS').length,
+    },
+    {
+      status: 'COMPLETED' as const,
+      label: '완료',
+      count: tasks.filter((t) => t.status === 'COMPLETED').length,
+    },
+  ];
+};
 
 export default function OutboundTaskListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStatus, setActiveStatus] = useState<OutboundTask['status']>('ALL');
   const [taskList, setTaskList] = useState<OutboundTask[]>([]);
+  const [allTasks, setAllTasks] = useState<OutboundTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const fetchTasksByStatus = (status: OutboundTask['status']) => {
-    setIsLoading(true);
-
-    setTimeout(() => {
-      let filteredList: OutboundTask[];
-      if (status === 'ALL') {
-        filteredList = MOCK_INBOUND_TASK_LIST;
-      } else {
-        filteredList = MOCK_INBOUND_TASK_LIST.filter((task) => task.status === status);
-      }
-
-      const finalFilteredList = filteredList.filter(
-        (task) => task.projectNumber.includes(searchTerm) || task.taskName.includes(searchTerm),
-      );
-
-      setTaskList(finalFilteredList);
-      setIsLoading(false);
-    }, 300);
+  // null 값을 "-"로 변환하는 헬퍼 함수
+  const formatNullValue = (value: string | null | undefined): string => {
+    return value ?? '-';
   };
+
+  // API에서 데이터 가져오기
+  useEffect(() => {
+    const fetchLogisticsList = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getLogisticsList();
+        if (response.isSuccess && response.result) {
+          // API 응답을 OutboundTask 형식으로 변환
+          const mappedTasks: OutboundTask[] = response.result.map((item: any) => ({
+            id: item.logisticsId,
+            projectNumber: formatNullValue(item.projectNumber),
+            taskName: formatNullValue(item.logisticsTitle),
+            items: formatNullValue(item.customer), // 거래처
+            location: '-', // API 응답에 없으므로 "-"
+            requestDate: formatNullValue(item.requestedAt),
+            manager: formatNullValue(item.assigneeSummary),
+            status: item.logisticsStatus as LogisticsStatus, // API 응답의 status를 그대로 사용
+          }));
+
+          setAllTasks(mappedTasks);
+        }
+      } catch (error) {
+        console.error('출하 업무 목록 가져오기 실패:', error);
+        // 에러 발생 시 빈 배열 설정
+        setAllTasks([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLogisticsList();
+  }, []);
+
+  // 상태 및 검색어에 따라 필터링
+  useEffect(() => {
+    let filteredList: OutboundTask[];
+
+    if (activeStatus === 'ALL') {
+      filteredList = allTasks;
+    } else {
+      filteredList = allTasks.filter((task) => task.status === activeStatus);
+    }
+
+    // 검색어 필터링
+    const finalFilteredList = filteredList.filter(
+      (task) =>
+        task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+
+    setTaskList(finalFilteredList);
+  }, [activeStatus, searchTerm, allTasks]);
 
   const handleStatusClick = (status: OutboundTask['status']) => {
     if (activeStatus === status) return;
     setActiveStatus(status);
   };
 
-  useEffect(() => {
-    fetchTasksByStatus(activeStatus);
-  }, [activeStatus, searchTerm]);
+  const statusData = calculateStatusCounts(allTasks);
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -173,13 +216,13 @@ export default function OutboundTaskListPage() {
 
           <div className="mt-[67px] flex items-center">
             <div className="flex gap-[8px]">
-              {INITIAL_STATUS_DATA.map((item) => (
+              {statusData.map((item) => (
                 <ProjectStatusButton
                   key={item.status}
                   label={item.label}
                   count={item.count}
                   isActive={activeStatus === item.status}
-                  onClick={() => handleStatusClick(item.status as OutboundTask['status'])}
+                  onClick={() => handleStatusClick(item.status)}
                 />
               ))}
             </div>

@@ -15,9 +15,11 @@ interface DropdownInputProps {
   onChange?: (selected: DropdownOption[]) => void;
   initialSelected?: DropdownOption[];
   disabled?: boolean;
+  onOpen?: () => void;
+  options?: DropdownOption[];
 }
 
-const options: DropdownOption[] = [
+const defaultOptions: DropdownOption[] = [
   { id: 1, label: '홍길동', subLabel: '물류 1팀', team: '물류' },
   { id: 2, label: '김철수', subLabel: '물류 2팀', team: '물류' },
   { id: 3, label: '이영희', subLabel: '입고 2팀', team: '입고' },
@@ -30,6 +32,8 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   onChange,
   initialSelected = [],
   disabled = false,
+  onOpen,
+  options = defaultOptions,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -52,9 +56,20 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   }, []);
 
   const handleInputClick = () => {
-    if (disabled) return;
+    if (disabled) {
+      // disabled 상태에서도 onOpen 콜백 호출 (업무 할당 변경을 위해)
+      if (onOpen) {
+        onOpen();
+      }
+      return;
+    }
+    const wasClosed = !isOpen;
     setIsOpen((prev) => !prev);
     setIsFocused(true);
+    // 드롭다운이 열릴 때 onOpen 콜백 호출
+    if (wasClosed && onOpen) {
+      onOpen();
+    }
   };
 
   const handleOptionSelect = (option: DropdownOption) => {

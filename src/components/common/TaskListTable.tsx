@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'REJECT' | 'IN_PROGRESS' | 'COMPLETED';
+
 interface TaskData {
   id: number;
   projectNumber: string;
@@ -9,7 +11,7 @@ interface TaskData {
   location: string;
   requestDate: string;
   manager: string;
-  status: 'ALL' | 'TASK_ASSIGNMENT' | 'APPROVAL_PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: 'ALL' | InventoryStatus;
 }
 
 interface TaskListTableProps {
@@ -31,8 +33,8 @@ export default function TaskListTable({
   const taskLabel = isOutbound ? '출하' : '입고';
   const finalPath = externalPath || (isOutbound ? '/outbound-task' : '/inbound-task');
 
-  const handleRowClick = (projectNumber: string) => {
-    navigate(`${finalPath}/${projectNumber}`);
+  const handleRowClick = (id: number) => {
+    navigate(`${finalPath}/${id}`);
   };
 
   const commonCellClasses =
@@ -46,11 +48,13 @@ export default function TaskListTable({
     const baseChipStyle = 'px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap';
 
     switch (status) {
-      case 'TASK_ASSIGNMENT':
+      case 'ASSIGNED':
         return `${baseChipStyle} bg-greyColor-grey200 text-greyColor-grey600`;
-      case 'APPROVAL_PENDING':
+      case 'PENDING':
       case 'IN_PROGRESS':
         return `${baseChipStyle} bg-subColor-orange100 text-subColor-orange800`;
+      case 'REJECT':
+        return `${baseChipStyle} bg-red-100 text-red-600`;
       case 'COMPLETED':
         return `${baseChipStyle} bg-mainColor-blue050 text-mainColor-blue600`;
       default:
@@ -60,10 +64,12 @@ export default function TaskListTable({
 
   const getStatusText = (status: TaskData['status']) => {
     switch (status) {
-      case 'TASK_ASSIGNMENT':
+      case 'ASSIGNED':
         return '업무 할당';
-      case 'APPROVAL_PENDING':
+      case 'PENDING':
         return '승인 대기';
+      case 'REJECT':
+        return '반려';
       case 'IN_PROGRESS':
         return '진행 중';
       case 'COMPLETED':
@@ -85,7 +91,7 @@ export default function TaskListTable({
             <tr>
               <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
               <th className={`${tableHeaderClasses} w-[170px]`}>{taskLabel} 업무명</th>
-              <th className={`${tableHeaderClasses} w-[200px]`}>{taskLabel} 품목</th>
+              <th className={`${tableHeaderClasses} w-[200px]`}>{isOutbound ? '거래처' : `${taskLabel} 품목`}</th>
               <th className={`${tableHeaderClasses} w-[180px]`}>요청일</th>
               <th className={`${tableHeaderClasses} w-[170px]`}>담당자</th>
               <th className={`${tableHeaderClasses} w-[140px]`}>진행 상태</th>
@@ -106,7 +112,7 @@ export default function TaskListTable({
                 return (
                   <tr
                     key={task.id}
-                    onClick={() => handleRowClick(task.projectNumber)}
+                    onClick={() => handleRowClick(task.id)}
                     className="cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
                   >
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>

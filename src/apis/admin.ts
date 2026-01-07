@@ -43,4 +43,28 @@ export const getProjectDetail = async (projectId: number) => {
   return response.data;
 };
 
+export const getProjectSerialNumber = async () => {
+  const response = await api.get('/projects/serial-num');
+  return response.data;
+};
+
+export const getAssignMembers = async () => {
+  const response = await api.get('/projects/assign-members');
+  return response.data;
+};
+
+export interface CreateProjectRequest {
+  projectNumber: string;
+  projectName: string;
+  projectDescription: string;
+  projectCustomer: string;
+  projectExpectedEndDate: string;
+  assigneeIds: number[];
+}
+
+export const createProject = async (data: CreateProjectRequest) => {
+  const response = await api.post('/projects', data);
+  return response.data;
+};
+
 export default api;

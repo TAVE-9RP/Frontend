@@ -54,7 +54,10 @@ export default function ProjectEditPage() {
     targetDay: '',
   });
 
-  const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
+  const [activeAssignment, setActiveAssignment] = useState<{
+    inbound: boolean;
+    logistics: boolean;
+  }>({ inbound: false, logistics: false });
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
 
@@ -95,8 +98,6 @@ export default function ProjectEditPage() {
           // projectMembers를 기반으로 업무 할당 및 담당자 설정
           const projectMembers = project.projectMembers || [];
           
-          // department에 따라 업무 할당 결정 (INVENTORY -> inbound, LOGISTICS -> logistics)
-          let assignmentType: 'inbound' | 'logistics' = 'inbound';
           const inventoryMembers: DropdownOption[] = [];
           const logisticsMembers: DropdownOption[] = [];
 
@@ -108,16 +109,21 @@ export default function ProjectEditPage() {
               team: member.department || '부서 미정',
             };
 
-            if (member.department === 'LOGISTICS') {
-              assignmentType = 'logistics';
+            if (member.department === 'LOGISTICS' || member.department === 'logistics') {
               logisticsMembers.push(formattedMember);
-            } else {
+            } else if (member.department === 'INVENTORY' || member.department === 'inventory' || member.department === 'MANAGEMENT' || member.department === 'management') {
               // INVENTORY 또는 MANAGEMENT는 inbound로 처리
               inventoryMembers.push(formattedMember);
             }
           });
 
-          setActiveAssignment(assignmentType);
+          // 담당자가 있으면 해당 업무 활성화
+          console.log('입고 담당자:', inventoryMembers);
+          console.log('물류 담당자:', logisticsMembers);
+          setActiveAssignment({
+            inbound: inventoryMembers.length > 0,
+            logistics: logisticsMembers.length > 0,
+          });
           setInventoryManager(inventoryMembers);
           setLogisticsManager(logisticsMembers);
         }
@@ -142,7 +148,6 @@ export default function ProjectEditPage() {
             targetDay: dateParts[2] || '',
           });
           const type = foundProject.type || 'inbound';
-          setActiveAssignment(type);
           const rawManager = foundProject.manager;
           let formattedManager: DropdownOption[] = [];
           if (Array.isArray(rawManager)) {
@@ -161,8 +166,16 @@ export default function ProjectEditPage() {
           }
           if (type === 'inbound') {
             setInventoryManager(formattedManager);
+            setActiveAssignment({
+              inbound: formattedManager.length > 0,
+              logistics: false,
+            });
           } else {
             setLogisticsManager(formattedManager);
+            setActiveAssignment({
+              inbound: false,
+              logistics: formattedManager.length > 0,
+            });
           }
         }
       } finally {
@@ -179,7 +192,7 @@ export default function ProjectEditPage() {
   };
 
   const handleChipClick = (type: 'inbound' | 'logistics') => {
-    setActiveAssignment(type);
+    // 읽기 전용이므로 클릭해도 변경되지 않음
   };
 
   const isFormValid = useMemo(() => {
@@ -192,8 +205,7 @@ export default function ProjectEditPage() {
       formData.targetMonth.trim() !== '' &&
       formData.targetDay.trim() !== '';
 
-    const managerValid =
-      activeAssignment === 'inbound' ? inventoryManager.length > 0 : logisticsManager.length > 0;
+    const managerValid = inventoryManager.length > 0 || logisticsManager.length > 0;
 
     return baseValid && managerValid;
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
@@ -218,8 +230,8 @@ export default function ProjectEditPage() {
       client: formData.client,
       jobDescription: formData.jobDescription,
       targetDate: `${formData.targetYear}-${formData.targetMonth}-${formData.targetDay}`,
-      type: activeAssignment,
-      manager: activeAssignment === 'inbound' ? inventoryManager : logisticsManager,
+      type: activeAssignment.inbound ? 'inbound' : 'logistics',
+      manager: activeAssignment.inbound ? inventoryManager : logisticsManager,
       status: 'IN_PROGRESS',
       creationDate: new Date().toISOString().split('T')[0],
     };
@@ -254,7 +266,7 @@ export default function ProjectEditPage() {
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
         <div className="flex min-h-[1300px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
           <h1 className="font-pretendard text-2xl font-bold text-black">
-            프로젝트 상세 및 수정하기
+            프로젝트 상세 {/* 및 수정하기 */}
           </h1>
 
           <div className="mt-[80px] flex-1">
@@ -278,6 +290,7 @@ export default function ProjectEditPage() {
                     name="projectTitle"
                     value={formData.projectTitle}
                     onChange={handleInputChange}
+                    disabled={true}
                   />
                 </FormGroup>
               </div>
@@ -289,6 +302,7 @@ export default function ProjectEditPage() {
                   name="projectDescription"
                   value={formData.projectDescription}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
               </FormGroup>
             </div>
@@ -301,6 +315,7 @@ export default function ProjectEditPage() {
                     name="client"
                     value={formData.client}
                     onChange={handleInputChange}
+                    disabled={true}
                   />
                 </FormGroup>
               </div>
@@ -311,13 +326,15 @@ export default function ProjectEditPage() {
                 <div className="flex gap-[20px]">
                   <AssignmentChip
                     label="입고 업무"
-                    isActive={activeAssignment === 'inbound'}
+                    isActive={activeAssignment.inbound}
                     onClick={() => handleChipClick('inbound')}
+                    disabled={true}
                   />
                   <AssignmentChip
                     label="물류 업무"
-                    isActive={activeAssignment === 'logistics'}
+                    isActive={activeAssignment.logistics}
                     onClick={() => handleChipClick('logistics')}
+                    disabled={true}
                   />
                 </div>
               </div>
@@ -326,21 +343,37 @@ export default function ProjectEditPage() {
             <div className="mb-[80px] mt-[80px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="입고 업무 담당자">
-                  <DropdownInput
-                    initialSelected={inventoryManager}
-                    onChange={setInventoryManager}
-                    disabled={activeAssignment !== 'inbound'}
-                  />
+                  {inventoryManager.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={inventoryManager}
+                      onChange={setInventoryManager}
+                      disabled={true}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
 
               <div className="w-[390px]">
                 <FormGroup label="물류 업무 담당자">
-                  <DropdownInput
-                    initialSelected={logisticsManager}
-                    onChange={setLogisticsManager}
-                    disabled={activeAssignment !== 'logistics'}
-                  />
+                  {logisticsManager.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={logisticsManager}
+                      onChange={setLogisticsManager}
+                      disabled={true}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
             </div>
@@ -351,6 +384,7 @@ export default function ProjectEditPage() {
                   name="jobDescription"
                   value={formData.jobDescription}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
               </FormGroup>
             </div>
@@ -368,6 +402,7 @@ export default function ProjectEditPage() {
                   name="targetYear"
                   value={formData.targetYear}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
                 <DateInput
                   placeholder="08"
@@ -376,6 +411,7 @@ export default function ProjectEditPage() {
                   name="targetMonth"
                   value={formData.targetMonth}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
                 <DateInput
                   placeholder="10"
@@ -384,12 +420,13 @@ export default function ProjectEditPage() {
                   name="targetDay"
                   value={formData.targetDay}
                   onChange={handleInputChange}
+                  disabled={true}
                 />
               </div>
             </div>
           </div>
 
-          <div className="mt-auto flex justify-end">
+          {/* <div className="mt-auto flex justify-end">
             <button
               onClick={handleCreateProject}
               disabled={!isFormValid}
@@ -401,7 +438,7 @@ export default function ProjectEditPage() {
             >
               수정하기
             </button>
-          </div>
+          </div> */}
         </div>
       </main>
 
