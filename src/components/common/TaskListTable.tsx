@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'REJECT' | 'IN_PROGRESS' | 'COMPLETED';
+
 interface TaskData {
   id: number;
   projectNumber: string;
@@ -9,7 +11,7 @@ interface TaskData {
   location: string;
   requestDate: string;
   manager: string;
-  status: 'ALL' | 'TASK_ASSIGNMENT' | 'APPROVAL_PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: 'ALL' | InventoryStatus;
 }
 
 interface TaskListTableProps {
@@ -46,11 +48,13 @@ export default function TaskListTable({
     const baseChipStyle = 'px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap';
 
     switch (status) {
-      case 'TASK_ASSIGNMENT':
+      case 'ASSIGNED':
         return `${baseChipStyle} bg-greyColor-grey200 text-greyColor-grey600`;
-      case 'APPROVAL_PENDING':
+      case 'PENDING':
       case 'IN_PROGRESS':
         return `${baseChipStyle} bg-subColor-orange100 text-subColor-orange800`;
+      case 'REJECT':
+        return `${baseChipStyle} bg-red-100 text-red-600`;
       case 'COMPLETED':
         return `${baseChipStyle} bg-mainColor-blue050 text-mainColor-blue600`;
       default:
@@ -60,10 +64,12 @@ export default function TaskListTable({
 
   const getStatusText = (status: TaskData['status']) => {
     switch (status) {
-      case 'TASK_ASSIGNMENT':
+      case 'ASSIGNED':
         return '업무 할당';
-      case 'APPROVAL_PENDING':
+      case 'PENDING':
         return '승인 대기';
+      case 'REJECT':
+        return '반려';
       case 'IN_PROGRESS':
         return '진행 중';
       case 'COMPLETED':
