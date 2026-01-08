@@ -25,5 +25,15 @@ export const getItems = async (keyword: string = '') => {
   return response.data;
 };
 
+export const createItem = async (data: {
+  code: string;
+  name: string;
+  location: string;
+  price: number;
+}) => {
+  const response = await api.post('/items', data);
+  return response.data;
+};
+
 export default api;
 

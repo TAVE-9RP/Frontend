@@ -209,9 +209,8 @@ export default function InventoryInboundTaskDetailPage() {
   }, [projectNumber, refreshItems]);
 
   const handleAddNewInventory = (newItem: InboundItem) => {
-    // API 연동 예정 - 현재는 모달만 닫고 API 데이터만 표시
-    setIsNewModalOpen(false);
-    // TODO: 신규 재고 추가 API 호출 후 setRefreshItems((prev) => prev + 1)로 목록 새로고침
+    // NewInventoryModal에서 API 호출 완료 후 모달이 닫히면 목록 새로고침
+    setRefreshItems((prev) => prev + 1);
   };
 
   const handleFinalConfirm = () => {
@@ -399,7 +398,11 @@ export default function InventoryInboundTaskDetailPage() {
 
           <NewInventoryModal
             isOpen={isNewModalOpen}
-            onClose={() => setIsNewModalOpen(false)}
+            onClose={() => {
+              setIsNewModalOpen(false);
+              // 모달이 닫힌 후 목록 새로고침
+              setRefreshItems((prev) => prev + 1);
+            }}
             onAdd={handleAddNewInventory}
           />
 
