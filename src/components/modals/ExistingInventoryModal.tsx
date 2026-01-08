@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '@/components/common/SearchBar';
+import { getItems } from '@/apis/item';
 
 interface InventoryItem {
   id: string;
@@ -15,14 +16,15 @@ interface ExistingInventoryModalProps {
   onAdd: (selectedItems: InventoryItem[]) => void;
 }
 
-const MOCK_INVENTORY_DATA: InventoryItem[] = [];
-
 export default function ExistingInventoryModal({
   isOpen,
   onClose,
   onAdd,
 }: ExistingInventoryModalProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     if (isOpen) {
@@ -33,6 +35,53 @@ export default function ExistingInventoryModal({
     return () => {
       document.body.style.overflow = 'unset';
     };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      if (!isOpen) return;
+
+      setIsLoading(true);
+      try {
+        console.log('=== 기존 재고 목록 API 호출 ===');
+        console.log('keyword:', searchTerm);
+        const response = await getItems(searchTerm);
+        console.log('=== 기존 재고 목록 API 응답 ===');
+        console.log('응답:', response);
+
+        if (response.isSuccess && response.result) {
+          const mappedData: InventoryItem[] = response.result.map((item: any) => ({
+            id: item.code, // 재고 번호를 id로 사용
+            name: item.name,
+            quantity: item.quantity,
+            location: item.location,
+            price: item.price,
+          }));
+          setInventoryData(mappedData);
+          console.log('=== 매핑된 데이터 ===');
+          console.log('mappedData:', mappedData);
+        } else {
+          setInventoryData([]);
+        }
+      } catch (error: any) {
+        console.error('기존 재고 목록 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+        setInventoryData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, [isOpen, searchTerm]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchTerm('');
+      setSelectedIds([]);
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -59,116 +108,113 @@ export default function ExistingInventoryModal({
         </div>
 
         <div className="mt-[32px]">
-          <SearchBar placeholder="이름, 부서, 직급 검색" className="h-[50px] w-[520px]" />
+          <SearchBar
+            placeholder="재고 번호 또는 물품명을 입력하세요"
+            className="h-[50px] w-[520px]"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
-        <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto overflow-x-hidden">
-          {MOCK_INVENTORY_DATA.length === 0 ? (
-            <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
-              <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-                <div className="w-[40px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  선택
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  재고 번호
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  물품명
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  수량
-                </div>
-                <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  위치
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
-                  물품 가격
-                </div>
-              </div>
-              <div className="flex h-[40px] items-center justify-center bg-white">
-                <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
-              </div>
+        <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto overflow-x-hidden border-2 border-greyColor-grey200">
+          {isLoading ? (
+            <div className="flex h-[200px] items-center justify-center">
+              <span className="font-pretendard text-[15px] text-greyColor-grey500">
+                재고 목록을 불러오는 중...
+              </span>
             </div>
           ) : (
-            <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
-              <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-                <div className="w-[40px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  선택
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  재고 번호
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  물품명
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  수량
-                </div>
-                <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                  위치
-                </div>
-                <div className="w-[160px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
-                  물품 가격
-                </div>
-              </div>
-              <div className="w-full bg-white">
-                {MOCK_INVENTORY_DATA.map((item, index) => {
-                  const isSelected = selectedIds.includes(item.id);
-                  const isLastRow = index === MOCK_INVENTORY_DATA.length - 1;
+            <table className="w-full border-collapse font-pretendard">
+              <thead className="sticky top-0 z-10 bg-greyColor-grey100">
+                <tr className="h-[40px] text-[15px] font-bold text-black">
+                  <th className="w-[40px] border-b-2 border-r-2 border-greyColor-grey200 text-center">
+                    선택
+                  </th>
+                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                    재고 번호
+                  </th>
+                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                    물품명
+                  </th>
+                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                    수량
+                  </th>
+                  <th className="w-[140px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                    위치
+                  </th>
+                  <th className="w-[160px] border-b-2 border-greyColor-grey200 px-4 text-left">
+                    물품 가격
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white text-[15px] font-normal text-black">
+                {inventoryData.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="h-[40px] border-b-2 border-greyColor-grey200 text-center">
+                      <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+                    </td>
+                  </tr>
+                ) : (
+                  inventoryData.map((item, index) => {
+                    const isSelected = selectedIds.includes(item.id);
+                    const isLastRow = index === inventoryData.length - 1;
 
-                  return (
-                    <div
-                      key={item.id}
-                      className={`flex h-[40px] items-center transition-colors ${isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'}`}
-                    >
-                      <div
-                        className={`w-[40px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                    return (
+                      <tr
+                        key={item.id}
+                        className={`h-[40px] transition-colors ${isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'}`}
                       >
-                        <button
-                          onClick={() => handleCheckboxChange(item.id)}
-                          className="flex h-10 w-10 items-center justify-center"
+                        <td
+                          className={`w-[40px] border-r-2 border-greyColor-grey200 text-center ${!isLastRow ? 'border-b-2' : ''}`}
                         >
-                          <img
-                            src={
-                              isSelected
-                                ? '/src/assets/checkbox_check.png'
-                                : '/src/assets/checkbox.png'
-                            }
-                            alt="checkbox"
-                            className="h-5 w-5 object-contain"
-                          />
-                        </button>
-                      </div>
-                      <div
-                        className={`w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
-                      >
-                        {item.id}
-                      </div>
-                      <div
-                        className={`w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
-                      >
-                        {item.name}
-                      </div>
-                      <div
-                        className={`w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
-                      >
-                        {item.quantity}
-                      </div>
-                      <div
-                        className={`w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
-                      >
-                        {item.location}
-                      </div>
-                      <div
-                        className={`w-[160px] flex h-full items-center justify-center font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
-                      >
-                        {item.price.toLocaleString()}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+                          <div className="flex justify-center">
+                            <button
+                              onClick={() => handleCheckboxChange(item.id)}
+                              className="flex h-10 w-10 items-center justify-center"
+                            >
+                              <img
+                                src={
+                                  isSelected
+                                    ? '/src/assets/checkbox_check.png'
+                                    : '/src/assets/checkbox.png'
+                                }
+                                alt="checkbox"
+                                className="h-5 w-5 object-contain"
+                              />
+                            </button>
+                          </div>
+                        </td>
+                        <td
+                          className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                        >
+                          {item.id}
+                        </td>
+                        <td
+                          className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                        >
+                          {item.name}
+                        </td>
+                        <td
+                          className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                        >
+                          {item.quantity}
+                        </td>
+                        <td
+                          className={`w-[140px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                        >
+                          {item.location}
+                        </td>
+                        <td
+                          className={`w-[160px] border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                        >
+                          {item.price.toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           )}
         </div>
 
@@ -177,7 +223,7 @@ export default function ExistingInventoryModal({
         <div className="mt-[40px] flex justify-end">
           <button
             onClick={() => {
-              const selectedItems = MOCK_INVENTORY_DATA.filter((item) =>
+              const selectedItems = inventoryData.filter((item) =>
                 selectedIds.includes(item.id),
               );
 
@@ -185,9 +231,9 @@ export default function ExistingInventoryModal({
 
               setSelectedIds([]);
             }}
-            disabled={MOCK_INVENTORY_DATA.length === 0 || selectedIds.length === 0}
+            disabled={inventoryData.length === 0 || selectedIds.length === 0}
             className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-all ${
-              MOCK_INVENTORY_DATA.length === 0 || selectedIds.length === 0
+              inventoryData.length === 0 || selectedIds.length === 0
                 ? 'cursor-not-allowed bg-greyColor-grey300'
                 : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
             }`}
