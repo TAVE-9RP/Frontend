@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -95,6 +95,20 @@ const mapStatusForStepBar = (status: string): string => {
   }
 };
 
+// API 응답의 inventoryProcessingStatus를 한글로 매핑
+const mapProcessingStatus = (status: string): string => {
+  switch (status) {
+    case 'NOT_STARTED':
+      return '미진행';
+    case 'IN_PROGRESS':
+      return '진행중';
+    case 'COMPLETED':
+      return '완료';
+    default:
+      return '미진행';
+  }
+};
+
 export default function InventoryInboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
   const navigate = useNavigate();
@@ -153,7 +167,43 @@ export default function InventoryInboundTaskDetailPage() {
       }
     };
 
+    const fetchInventoryItems = async () => {
+      if (!projectNumber) return;
+
+      try {
+        console.log('=== 입고 물품 목록 API 호출 ===');
+        console.log('projectNumber:', projectNumber);
+        const response = await getInventoryItems(projectNumber);
+        console.log('=== 입고 물품 목록 API 응답 ===');
+        console.log('응답:', response);
+
+        if (response.isSuccess && response.result) {
+          const mappedItems: InboundItem[] = response.result.map((item: any) => ({
+            id: item.itemCode, // 재고 번호
+            name: item.itemName, // 물품명
+            price: item.itemPrice, // 물품 가격
+            inboundQty: item.processedQuantity || '-', // 입고 수량
+            currentQty: '-', // 현재 입고 수량 (API 응답에 없음)
+            targetQty: item.targetQuantity || '-', // 목표 입고 수량
+            status: mapProcessingStatus(item.inventoryProcessingStatus), // 처리 상태
+          }));
+          console.log('=== 매핑된 입고 물품 목록 ===');
+          console.log('mappedItems:', mappedItems);
+          setItems(mappedItems);
+        } else {
+          setItems([]);
+        }
+      } catch (error: any) {
+        console.error('입고 물품 목록 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+        setItems([]);
+      }
+    };
+
     fetchInventoryDetail();
+    fetchInventoryItems();
   }, [projectNumber]);
 
   const handleAddNewInventory = (newItem: InboundItem) => {
