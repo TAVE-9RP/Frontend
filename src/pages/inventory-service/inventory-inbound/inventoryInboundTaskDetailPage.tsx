@@ -421,9 +421,9 @@ export default function InventoryInboundTaskDetailPage() {
                 </button>
               ) : (
                 <button
-                  disabled={isPending}
+                  disabled={isPending || items.length === 0}
                   className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
-                    isPending
+                    isPending || items.length === 0
                       ? 'cursor-not-allowed bg-greyColor-grey300'
                       : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
                   }`}
