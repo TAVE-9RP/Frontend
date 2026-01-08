@@ -345,7 +345,11 @@ export default function InventoryInboundTaskDetailPage() {
                   </button>
                   <ExistingInventoryModal
                     isOpen={isInventoryModalOpen}
-                    onClose={() => setIsInventoryModalOpen(false)}
+                    onClose={() => {
+                      setIsInventoryModalOpen(false);
+                      // 모달이 닫힌 후 목록 새로고침
+                      setRefreshItems((prev) => prev + 1);
+                    }}
                     onAdd={() => {}}
                     inventoryId={projectNumber}
                   />
