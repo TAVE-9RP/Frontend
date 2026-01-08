@@ -52,26 +52,7 @@ const MOCK_INBOUND_TASK_LIST = [
   },
 ];
 
-const MOCK_ITEMS: InboundItem[] = [
-  {
-    id: 'INV-2025-001',
-    name: '카피바라',
-    price: 15000,
-    inboundQty: '-',
-    currentQty: '-',
-    targetQty: 100,
-    status: '미진행',
-  },
-  {
-    id: 'INV-2025-002',
-    name: '꿀수박',
-    price: 20000,
-    inboundQty: '-',
-    currentQty: '-',
-    targetQty: 50,
-    status: '미진행',
-  },
-];
+const MOCK_ITEMS: InboundItem[] = [];
 
 const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?: string }> = ({
   label,
@@ -127,7 +108,7 @@ export default function InventoryInboundTaskDetailPage() {
     description: '',
     status: '',
   });
-  const [items, setItems] = useState<InboundItem[]>(MOCK_ITEMS);
+  const [items, setItems] = useState<InboundItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
@@ -340,13 +321,41 @@ export default function InventoryInboundTaskDetailPage() {
                   </button>
                 </div>
               </div>
-              <InboundItemTable
-                items={items}
-                isLoading={isLoading}
-                isProgress={isInProgress}
-                selectedItemIds={selectedItemIds}
-                onSelect={handleItemSelect}
-              />
+              {items.length === 0 ? (
+                <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+                  <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
+                    <div className="w-[112px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      재고 번호
+                    </div>
+                    <div className="w-[130px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      물품명
+                    </div>
+                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      입고 요청 수량
+                    </div>
+                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      현재 입고 수량
+                    </div>
+                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      목표 입고 수량
+                    </div>
+                    <div className="w-[150px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
+                      처리 상태
+                    </div>
+                  </div>
+                  <div className="flex h-[40px] items-center justify-center bg-white">
+                    <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+                  </div>
+                </div>
+              ) : (
+                <InboundItemTable
+                  items={items}
+                  isLoading={isLoading}
+                  isProgress={isInProgress}
+                  selectedItemIds={selectedItemIds}
+                  onSelect={handleItemSelect}
+                />
+              )}
             </div>
           </div>
 
