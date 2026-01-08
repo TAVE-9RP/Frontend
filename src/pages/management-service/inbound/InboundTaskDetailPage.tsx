@@ -164,22 +164,12 @@ export default function InboundTaskDetailPage() {
     setIsModalOpen(false);
     setStatusType('approve');
     setIsStatusModalOpen(true);
-
-    setTaskDetail((prev) => ({
-      ...prev,
-      status: 'IN_PROGRESS',
-    }));
   };
 
   const handleRejectApproval = () => {
     setIsModalOpen(false);
     setStatusType('cancel');
     setIsStatusModalOpen(true);
-
-    setTaskDetail((prev) => ({
-      ...prev,
-      status: 'TASK_ASSIGNMENT',
-    }));
   };
 
   return (
