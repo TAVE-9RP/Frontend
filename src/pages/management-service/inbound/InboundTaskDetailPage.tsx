@@ -9,6 +9,7 @@ import InboundItemList from '@/components/common/InboundItemList';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
 import { getInventoryDetail } from '../../../apis/inventory';
+import { approveInventory } from '../../../apis/admin';
 
 const MOCK_DATA = [
   {
@@ -79,6 +80,18 @@ const formatNullValue = (value: string | null | undefined): string => {
   return value ?? '-';
 };
 
+// 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
+const formatDate = (dateString: string | null | undefined): string => {
+  if (!dateString || dateString === '-') return '-';
+  
+  // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+  const datePart = dateString.split('T')[0];
+  if (!datePart) return '-';
+  
+  // '-'를 '.'로 변환
+  return datePart.replace(/-/g, '.');
+};
+
 // API 응답의 inventoryAssignees 배열을 문자열로 변환
 const formatAssignees = (assignees: string[] | null | undefined): string => {
   if (!assignees || assignees.length === 0) return '-';
@@ -112,6 +125,7 @@ export default function InboundTaskDetailPage() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshItems, setRefreshItems] = useState(0);
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -142,7 +156,7 @@ export default function InboundTaskDetailPage() {
             projectNumber: formatNullValue(result.projectNumber),
             taskName: formatNullValue(result.inventoryTitle),
             manager: formatAssignees(result.inventoryAssignees),
-            requestDate: formatNullValue(result.inventoryRequestedAt),
+            requestDate: formatDate(result.inventoryRequestedAt),
             description: formatNullValue(result.inventoryDescription),
             status: mapStatusForStepBar(result.inventoryStatus),
           });
@@ -158,28 +172,42 @@ export default function InboundTaskDetailPage() {
     };
 
     fetchInventoryDetail();
-  }, [inventoryId]);
+  }, [inventoryId, refreshItems]);
 
-  const handleConfirmApproval = () => {
-    setIsModalOpen(false);
-    setStatusType('approve');
-    setIsStatusModalOpen(true);
+  const handleConfirmApproval = async () => {
+    if (!inventoryId) return;
 
-    setTaskDetail((prev) => ({
-      ...prev,
-      status: 'IN_PROGRESS',
-    }));
+    try {
+      console.log('=== 입고 승인 API 호출 ===');
+      console.log('inventoryId:', inventoryId);
+      const response = await approveInventory(inventoryId);
+      console.log('=== 입고 승인 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        setIsModalOpen(false);
+        setStatusType('approve');
+        setIsStatusModalOpen(true);
+        // 페이지 새로고침하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+      } else {
+        alert('승인 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('승인 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `승인 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
   };
 
   const handleRejectApproval = () => {
     setIsModalOpen(false);
     setStatusType('cancel');
     setIsStatusModalOpen(true);
-
-    setTaskDetail((prev) => ({
-      ...prev,
-      status: 'TASK_ASSIGNMENT',
-    }));
   };
 
   return (
@@ -192,7 +220,7 @@ export default function InboundTaskDetailPage() {
             입고 업무 상세
           </h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate !== '-' ? taskDetail.requestDate.replace(/-/g, '.') : '-'}
+            요청일: {taskDetail.requestDate}
           </p>
 
           <div className="mt-[70px] flex-1">
@@ -295,8 +323,10 @@ export default function InboundTaskDetailPage() {
       </main>
       <ManagerApprovalModal
         isOpen={isModalOpen}
-        onClose={handleRejectApproval}
+        onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmApproval}
+        onReject={handleRejectApproval}
+        closeOnBackdropClick={true}
       />
       <ApproveModal
         isOpen={isStatusModalOpen}

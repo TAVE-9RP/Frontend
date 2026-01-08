@@ -144,6 +144,18 @@ export default function OutboundTaskListPage() {
     return value ?? '-';
   };
 
+  // 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString || dateString === '-') return '-';
+    
+    // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+    const datePart = dateString.split('T')[0];
+    if (!datePart) return '-';
+    
+    // '-'를 '.'로 변환
+    return datePart.replace(/-/g, '.');
+  };
+
   // API에서 데이터 가져오기
   useEffect(() => {
     const fetchLogisticsList = async () => {
@@ -158,7 +170,7 @@ export default function OutboundTaskListPage() {
             taskName: formatNullValue(item.logisticsTitle),
             items: formatNullValue(item.customer), // 거래처
             location: '-', // API 응답에 없으므로 "-"
-            requestDate: formatNullValue(item.requestedAt),
+            requestDate: formatDate(item.requestedAt),
             manager: formatNullValue(item.assigneeSummary),
             status: item.logisticsStatus as LogisticsStatus, // API 응답의 status를 그대로 사용
           }));

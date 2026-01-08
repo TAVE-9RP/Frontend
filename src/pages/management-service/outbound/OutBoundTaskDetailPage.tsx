@@ -111,6 +111,18 @@ const formatNullValue = (value: string | null | undefined): string => {
   return value ?? '-';
 };
 
+// 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
+const formatDate = (dateString: string | null | undefined): string => {
+  if (!dateString || dateString === '-') return '-';
+  
+  // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+  const datePart = dateString.split('T')[0];
+  if (!datePart) return '-';
+  
+  // '-'를 '.'로 변환
+  return datePart.replace(/-/g, '.');
+};
+
 
 // API 응답의 logisticsStatus를 StatusStepBar가 기대하는 형식으로 매핑
 const mapStatusForStepBar = (status: string): string => {
@@ -170,7 +182,7 @@ export default function OutboundTaskDetailPage() {
             projectNumber: formatNullValue(result.projectNumber),
             taskName: formatNullValue(result.logisticsTitle),
             assignees: result.logisticsAssignees || [],
-            requestDate: formatNullValue(result.logisticsRequestedAt),
+            requestDate: formatDate(result.logisticsRequestedAt),
             vehicle: formatNullValue(result.logisticsCarrier),
             carrier: formatNullValue(result.logisticsCarrierCompany),
             description: formatNullValue(result.logisticsDescription),
@@ -222,7 +234,7 @@ export default function OutboundTaskDetailPage() {
             출하 업무 상세
           </h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate !== '-' ? taskDetail.requestDate.replace(/-/g, '.') : '-'}
+            요청일: {taskDetail.requestDate}
           </p>
 
           <div className="mt-[70px] flex-1">
