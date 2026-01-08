@@ -11,6 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
+import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -51,26 +52,7 @@ const MOCK_INBOUND_TASK_LIST = [
   },
 ];
 
-const MOCK_ITEMS: InboundItem[] = [
-  {
-    id: 'INV-2025-001',
-    name: '카피바라',
-    price: 15000,
-    inboundQty: '-',
-    currentQty: '-',
-    targetQty: 100,
-    status: '미진행',
-  },
-  {
-    id: 'INV-2025-002',
-    name: '꿀수박',
-    price: 20000,
-    inboundQty: '-',
-    currentQty: '-',
-    targetQty: 50,
-    status: '미진행',
-  },
-];
+const MOCK_ITEMS: InboundItem[] = [];
 
 const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?: string }> = ({
   label,
@@ -82,6 +64,62 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?
     <div className="mt-4">{children}</div>
   </div>
 );
+
+// null 값을 "-"로 변환하는 헬퍼 함수
+const formatNullValue = (value: string | null | undefined): string => {
+  return value ?? '-';
+};
+
+// 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
+const formatDate = (dateString: string | null | undefined): string => {
+  if (!dateString || dateString === '-') return '-';
+  
+  // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+  const datePart = dateString.split('T')[0];
+  if (!datePart) return '-';
+  
+  // '-'를 '.'로 변환
+  return datePart.replace(/-/g, '.');
+};
+
+// API 응답의 inventoryAssignees 배열을 문자열로 변환
+const formatAssignees = (assignees: string[] | null | undefined): string => {
+  if (!assignees || assignees.length === 0) return '-';
+  if (assignees.length === 1) return assignees[0];
+  return `${assignees[0]} 외 ${assignees.length - 1}명`;
+};
+
+// API 응답의 inventoryStatus를 StatusStepBar가 기대하는 형식으로 매핑
+const mapStatusForStepBar = (status: string): string => {
+  switch (status) {
+    case 'ASSIGNED':
+      return 'TASK_ASSIGNMENT';
+    case 'PENDING':
+      return 'APPROVAL_PENDING';
+    case 'REJECT':
+      return 'APPROVAL_PENDING'; // REJECT는 StatusStepBar에 없으므로 APPROVAL_PENDING으로 매핑
+    case 'IN_PROGRESS':
+      return 'IN_PROGRESS';
+    case 'COMPLETED':
+      return 'COMPLETED';
+    default:
+      return 'TASK_ASSIGNMENT';
+  }
+};
+
+// API 응답의 inventoryProcessingStatus를 한글로 매핑
+const mapProcessingStatus = (status: string): string => {
+  switch (status) {
+    case 'NOT_STARTED':
+      return '미진행';
+    case 'IN_PROGRESS':
+      return '진행중';
+    case 'COMPLETED':
+      return '완료';
+    default:
+      return '미진행';
+  }
+};
 
 export default function InventoryInboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
@@ -96,8 +134,9 @@ export default function InventoryInboundTaskDetailPage() {
     description: '',
     status: '',
   });
-  const [items, setItems] = useState<InboundItem[]>(MOCK_ITEMS);
+  const [items, setItems] = useState<InboundItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshItems, setRefreshItems] = useState(0);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -107,22 +146,134 @@ export default function InventoryInboundTaskDetailPage() {
   const [isFinalInbound, setIsFinalInbound] = useState(false);
 
   useEffect(() => {
-    const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
-    if (foundData) setTaskDetail(foundData);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, [projectNumber]);
+    const fetchInventoryDetail = async () => {
+      if (!projectNumber) return;
+
+      setIsLoading(true);
+      try {
+        console.log('=== 입고 업무 상세 API 호출 ===');
+        console.log('projectNumber:', projectNumber);
+        const response = await getInventoryDetail(projectNumber);
+        console.log('=== 입고 업무 상세 API 응답 ===');
+        console.log('응답:', response);
+        
+        if (response.isSuccess && response.result) {
+          const result = response.result;
+          console.log('=== 응답 result ===');
+          console.log('result:', result);
+          setTaskDetail({
+            projectNumber: formatNullValue(result.projectNumber),
+            taskName: result.inventoryTitle || '',
+            manager: formatAssignees(result.inventoryAssignees),
+            requestDate: formatDate(result.inventoryRequestedAt),
+            description: result.inventoryDescription || '',
+            status: mapStatusForStepBar(result.inventoryStatus),
+          });
+        }
+      } catch (error: any) {
+        console.error('입고 업무 상세 정보 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const fetchInventoryItems = async () => {
+      if (!projectNumber) return;
+
+      try {
+        console.log('=== 입고 물품 목록 API 호출 ===');
+        console.log('projectNumber:', projectNumber);
+        const response = await getInventoryItems(projectNumber);
+        console.log('=== 입고 물품 목록 API 응답 ===');
+        console.log('응답:', response);
+
+        if (response.isSuccess && response.result) {
+          const mappedItems: InboundItem[] = response.result.map((item: any) => ({
+            id: item.itemCode, // 재고 번호
+            name: item.itemName, // 물품명
+            price: item.itemPrice, // 물품 가격
+            inboundQty: item.processedQuantity || '-', // 입고 수량
+            currentQty: '-', // 현재 입고 수량 (API 응답에 없음)
+            targetQty: item.targetQuantity || '-', // 목표 입고 수량
+            status: mapProcessingStatus(item.inventoryProcessingStatus), // 처리 상태
+          }));
+          console.log('=== 매핑된 입고 물품 목록 ===');
+          console.log('mappedItems:', mappedItems);
+          setItems(mappedItems);
+        } else {
+          setItems([]);
+        }
+      } catch (error: any) {
+        console.error('입고 물품 목록 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+        setItems([]);
+      }
+    };
+
+
+    fetchInventoryDetail();
+    fetchInventoryItems();
+  }, [projectNumber, refreshItems]);
 
   const handleAddNewInventory = (newItem: InboundItem) => {
-    setItems((prev) => [...prev, newItem]);
-    setIsNewModalOpen(false);
+    // NewInventoryModal에서 API 호출 완료 후 모달이 닫히면 목록 새로고침
+    setRefreshItems((prev) => prev + 1);
   };
 
-  const handleFinalConfirm = () => {
-    setIsApprovalModalOpen(false);
-    setIsSuccessModalOpen(true);
+  const handleFinalConfirm = async () => {
+    if (!projectNumber) return;
+
+    try {
+      // 1. 입고 업무명과 업무 설명 업데이트
+      console.log('=== 입고 정보 업데이트 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      console.log('요청 데이터:', {
+        inventoryTitle: taskDetail.taskName,
+        inventoryDescription: taskDetail.description,
+      });
+      
+      const updateResponse = await updateInventory(projectNumber, {
+        inventoryTitle: taskDetail.taskName,
+        inventoryDescription: taskDetail.description,
+      });
+      
+      console.log('=== 입고 정보 업데이트 API 응답 ===');
+      console.log('응답:', updateResponse);
+
+      if (!updateResponse.isSuccess) {
+        alert('입고 정보 업데이트에 실패했습니다.');
+        return;
+      }
+
+      // 2. 승인 요청 API 호출
+      console.log('=== 승인 요청 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      const approvalResponse = await requestApproval(projectNumber);
+      console.log('=== 승인 요청 API 응답 ===');
+      console.log('응답:', approvalResponse);
+
+      if (approvalResponse.isSuccess) {
+        setIsApprovalModalOpen(false);
+        setIsSuccessModalOpen(true);
+        // 페이지 새로고침하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+      } else {
+        alert('승인 요청에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
   };
 
   const handleInboundProcess = () => {
@@ -141,15 +292,16 @@ export default function InventoryInboundTaskDetailPage() {
   };
 
   const handleInboundConfirm = () => {
-    const nextItems = items.map((item) =>
-      selectedItemIds.includes(item.id) ? { ...item, status: '완료' } : item,
-    );
-
-    setItems(nextItems);
+    // API 연동 예정 - 입고 처리 API 호출 후 목록 새로고침
     setSelectedItemIds([]);
     setIsInboundConfirmModalOpen(false);
-
-    const isTaskFullyCompleted = nextItems.every((item) => item.status === '완료');
+    
+    // TODO: 입고 처리 API 호출 후 setRefreshItems((prev) => prev + 1)로 목록 새로고침
+    // 임시로 API 데이터 새로고침
+    setRefreshItems((prev) => prev + 1);
+    
+    // 상태 확인은 API 응답에서 가져와야 함
+    const isTaskFullyCompleted = false; // TODO: API 응답에서 확인
 
     if (isTaskFullyCompleted) {
       setTaskDetail((prev) => ({ ...prev, status: 'COMPLETED' }));
@@ -160,23 +312,6 @@ export default function InventoryInboundTaskDetailPage() {
 
   const isFullyDone = taskDetail.status === 'COMPLETED';
 
-  const handleAddInventoryItems = (selectedItems: any[]) => {
-    const newItems: InboundItem[] = selectedItems.map((item) => ({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      inboundQty: 0,
-      currentQty: item.quantity,
-      targetQty: 0,
-      status: '미진행',
-    }));
-    setItems((prev) => {
-      const existingIds = new Set(prev.map((i) => i.id));
-      const filteredNewItems = newItems.filter((i) => !existingIds.has(i.id));
-      return [...prev, ...filteredNewItems];
-    });
-    setIsInventoryModalOpen(false);
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -203,7 +338,7 @@ export default function InventoryInboundTaskDetailPage() {
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <h1 className="font-pretendard text-[24px] font-bold text-black">입고 업무 상세</h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate.replace(/-/g, '.')}
+            요청일: {taskDetail.requestDate}
           </p>
 
           <div className="mt-[70px]">
@@ -213,7 +348,7 @@ export default function InventoryInboundTaskDetailPage() {
               </FormGroup>
               <FormGroup label="프로젝트 넘버" className="w-[390px]">
                 <BasicInput
-                  value={taskDetail.projectNumber}
+                  value={taskDetail.projectNumber || '-'}
                   readOnly
                   disabled
                   className="bg-greyColor-grey100 text-greyColor-grey400"
@@ -225,7 +360,7 @@ export default function InventoryInboundTaskDetailPage() {
               <FormGroup label="입고 업무명" className="w-[390px]">
                 <BasicInput
                   name="taskName"
-                  value={taskDetail.taskName}
+                  value={taskDetail.taskName || ''}
                   onChange={handleInputChange}
                   placeholder="업무명을 입력해주세요"
                   readOnly={isDisabled}
@@ -246,7 +381,7 @@ export default function InventoryInboundTaskDetailPage() {
             <FormGroup label="업무 설명" className="mb-[40px]">
               <LargeInput
                 name="description"
-                value={taskDetail.description}
+                value={taskDetail.description || ''}
                 onChange={handleInputChange}
                 className="h-[160px]"
                 placeholder="상세 설명을 입력해주세요"
@@ -268,8 +403,13 @@ export default function InventoryInboundTaskDetailPage() {
                   </button>
                   <ExistingInventoryModal
                     isOpen={isInventoryModalOpen}
-                    onClose={() => setIsInventoryModalOpen(false)}
-                    onAdd={handleAddInventoryItems}
+                    onClose={() => {
+                      setIsInventoryModalOpen(false);
+                      // 모달이 닫힌 후 목록 새로고침
+                      setRefreshItems((prev) => prev + 1);
+                    }}
+                    onAdd={() => {}}
+                    inventoryId={projectNumber}
                   />
                   <button
                     disabled={isPending}
@@ -280,19 +420,51 @@ export default function InventoryInboundTaskDetailPage() {
                   </button>
                 </div>
               </div>
-              <InboundItemTable
-                items={items}
-                isLoading={isLoading}
-                isProgress={isInProgress}
-                selectedItemIds={selectedItemIds}
-                onSelect={handleItemSelect}
-              />
+              {items.length === 0 ? (
+                <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+                  <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
+                    <div className="w-[112px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      재고 번호
+                    </div>
+                    <div className="w-[130px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      물품명
+                    </div>
+                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      입고 요청 수량
+                    </div>
+                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      현재 입고 수량
+                    </div>
+                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      목표 입고 수량
+                    </div>
+                    <div className="w-[150px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
+                      처리 상태
+                    </div>
+                  </div>
+                  <div className="flex h-[40px] items-center justify-center bg-white">
+                    <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+                  </div>
+                </div>
+              ) : (
+                <InboundItemTable
+                  items={items}
+                  isLoading={isLoading}
+                  isProgress={isInProgress}
+                  selectedItemIds={selectedItemIds}
+                  onSelect={handleItemSelect}
+                />
+              )}
             </div>
           </div>
 
           <NewInventoryModal
             isOpen={isNewModalOpen}
-            onClose={() => setIsNewModalOpen(false)}
+            onClose={() => {
+              setIsNewModalOpen(false);
+              // 모달이 닫힌 후 목록 새로고침
+              setRefreshItems((prev) => prev + 1);
+            }}
             onAdd={handleAddNewInventory}
           />
 
@@ -307,9 +479,9 @@ export default function InventoryInboundTaskDetailPage() {
                 </button>
               ) : (
                 <button
-                  disabled={isPending}
+                  disabled={isPending || items.length === 0}
                   className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
-                    isPending
+                    isPending || items.length === 0
                       ? 'cursor-not-allowed bg-greyColor-grey300'
                       : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
                   }`}

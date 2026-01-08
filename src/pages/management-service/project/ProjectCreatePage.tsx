@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
@@ -8,6 +8,7 @@ import DropdownInput, { DropdownOption } from '../../../components/common/Dropdo
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
+import { getProjectSerialNumber, getAssignMembers, createProject } from '../../../apis/admin';
 
 interface FormGroupProps {
   label: string;
@@ -35,26 +36,97 @@ export default function ProjectCreatePage() {
     targetDay: '',
   });
 
-  const [activeAssignment, setActiveAssignment] = useState<'inbound' | 'logistics'>('inbound');
+  const [projectNumber, setProjectNumber] = useState<string>('');
+  const [isLoadingProjectNumber, setIsLoadingProjectNumber] = useState(true);
+
+  const [activeAssignment, setActiveAssignment] = useState<{
+    inbound: boolean;
+    logistics: boolean;
+  }>({ inbound: false, logistics: false });
   const [inventoryManager, setInventoryManager] = useState<DropdownOption[]>([]);
   const [logisticsManager, setLogisticsManager] = useState<DropdownOption[]>([]);
+  const [inventoryOptions, setInventoryOptions] = useState<DropdownOption[]>([]);
+  const [logisticsOptions, setLogisticsOptions] = useState<DropdownOption[]>([]);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    const fetchProjectSerialNumber = async () => {
+      try {
+        setIsLoadingProjectNumber(true);
+        const response = await getProjectSerialNumber();
+        if (response.isSuccess && response.result) {
+          setProjectNumber(response.result);
+        }
+      } catch (error) {
+        console.error('프로젝트 넘버 가져오기 실패:', error);
+      } finally {
+        setIsLoadingProjectNumber(false);
+      }
+    };
+
+    fetchProjectSerialNumber();
+  }, []);
+
+  useEffect(() => {
+    const fetchAssignMembers = async () => {
+      try {
+        const response = await getAssignMembers();
+        if (response.isSuccess && response.result) {
+          // API 응답을 DropdownOption 형식으로 변환
+          const allMembers: DropdownOption[] = response.result.map((member: any) => ({
+            id: member.memberId,
+            label: member.name,
+            subLabel: member.department === 'LOGISTICS' ? '물류' : member.department === 'INVENTORY' ? '입고' : '',
+            team: member.department === 'LOGISTICS' ? '물류' : member.department === 'INVENTORY' ? '입고' : '',
+          }));
+
+          // department에 따라 필터링
+          const inventoryMembers = allMembers.filter((member) => member.team === '입고');
+          const logisticsMembers = allMembers.filter((member) => member.team === '물류');
+
+          setInventoryOptions(inventoryMembers);
+          setLogisticsOptions(logisticsMembers);
+        }
+      } catch (error) {
+        console.error('담당자 목록 가져오기 실패:', error);
+      }
+    };
+
+    fetchAssignMembers();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleChipClick = (type: 'inbound' | 'logistics') => {
-    setActiveAssignment(type);
+  const handleInventoryManagerOpen = () => {
+    // 드롭다운만 열고 선택하지 않으면 활성화하지 않음
+  };
 
-    if (type === 'inbound') {
-      setLogisticsManager([]);
-    } else {
-      setInventoryManager([]);
-    }
+  const handleInventoryManagerChange = (selected: DropdownOption[]) => {
+    setInventoryManager(selected);
+    // 담당자가 선택되면 해당 업무 활성화, 모두 해제되면 비활성화
+    setActiveAssignment((prev) => ({
+      ...prev,
+      inbound: selected.length > 0,
+    }));
+  };
+
+  const handleLogisticsManagerOpen = () => {
+    // 드롭다운만 열고 선택하지 않으면 활성화하지 않음
+  };
+
+  const handleLogisticsManagerChange = (selected: DropdownOption[]) => {
+    setLogisticsManager(selected);
+    // 담당자가 선택되면 해당 업무 활성화, 모두 해제되면 비활성화
+    setActiveAssignment((prev) => ({
+      ...prev,
+      logistics: selected.length > 0,
+    }));
   };
 
   const isFormValid = useMemo(() => {
@@ -62,13 +134,12 @@ export default function ProjectCreatePage() {
       formData.projectTitle.trim() !== '' &&
       formData.projectDescription.trim() !== '' &&
       formData.client.trim() !== '' &&
-      formData.jobDescription.trim() !== '' &&
       formData.targetYear.trim() !== '' &&
       formData.targetMonth.trim() !== '' &&
       formData.targetDay.trim() !== '';
 
-    const managerValid =
-      activeAssignment === 'inbound' ? inventoryManager.length > 0 : logisticsManager.length > 0;
+    // 담당자는 무조건 1명 이상이어야 함 (입고 또는 물류 중 하나 이상)
+    const managerValid = inventoryManager.length > 0 || logisticsManager.length > 0;
 
     return baseValid && managerValid;
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
@@ -79,29 +150,45 @@ export default function ProjectCreatePage() {
     }
   };
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = async () => {
     setIsConfirmModalOpen(false);
+    setIsCreating(true);
 
-    const newProject = {
-      id: Date.now(),
-      projectNumber: 'SYS-01-001',
-      title: formData.projectTitle,
-      projectTitle: formData.projectTitle,
-      description: formData.projectDescription,
-      projectDescription: formData.projectDescription,
-      client: formData.client,
-      jobDescription: formData.jobDescription,
-      targetDate: `${formData.targetYear}-${formData.targetMonth}-${formData.targetDay}`,
-      type: activeAssignment,
-      manager: activeAssignment === 'inbound' ? inventoryManager : logisticsManager,
-      status: '진행중',
-      creationDate: new Date().toISOString().split('T')[0],
-    };
+    try {
+      // 담당자 ID 리스트 추출 (입고와 물류 모두 포함)
+      const assigneeIds = [
+        ...inventoryManager.map((manager) => manager.id),
+        ...logisticsManager.map((manager) => manager.id),
+      ];
 
-    const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]');
-    localStorage.setItem('projects', JSON.stringify([...existingProjects, newProject]));
+      // 날짜 형식 변환 (YYYY-MM-DD)
+      const formattedDate = `${formData.targetYear}-${String(formData.targetMonth).padStart(2, '0')}-${String(formData.targetDay).padStart(2, '0')}`;
 
-    setIsSuccessModalOpen(true);
+      // API 요청 데이터 구성
+      const requestData = {
+        projectNumber: projectNumber,
+        projectName: formData.projectTitle,
+        projectDescription: formData.projectDescription,
+        projectCustomer: formData.client,
+        projectExpectedEndDate: formattedDate,
+        assigneeIds: assigneeIds,
+      };
+
+      // API 호출
+      const response = await createProject(requestData);
+
+      if (response.isSuccess) {
+        setIsSuccessModalOpen(true);
+      } else {
+        alert(response.message || '프로젝트 생성에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('프로젝트 생성 실패:', error);
+      const errorMessage = error?.response?.data?.message || '프로젝트 생성에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleConfirmModalClose = () => setIsConfirmModalOpen(false);
@@ -127,8 +214,8 @@ export default function ProjectCreatePage() {
               <div className="w-[390px]">
                 <FormGroup label="프로젝트 넘버">
                   <BasicInput
-                    placeholder="SYS-01-001"
-                    value="SYS-01-001"
+                    placeholder={isLoadingProjectNumber ? '로딩 중...' : 'SYS-01-001'}
+                    value={projectNumber || ''}
                     disabled={true}
                     readOnly
                     className="text-greyColor-grey400"
@@ -176,14 +263,16 @@ export default function ProjectCreatePage() {
                 <div className="flex gap-[20px]">
                   <AssignmentChip
                     label="입고 업무"
-                    isActive={activeAssignment === 'inbound'}
-                    onClick={() => handleChipClick('inbound')}
+                    isActive={activeAssignment.inbound}
+                    onClick={() => {}}
+                    disabled={true}
                   />
 
                   <AssignmentChip
                     label="물류 업무"
-                    isActive={activeAssignment === 'logistics'}
-                    onClick={() => handleChipClick('logistics')}
+                    isActive={activeAssignment.logistics}
+                    onClick={() => {}}
+                    disabled={true}
                   />
                 </div>
               </div>
@@ -192,21 +281,39 @@ export default function ProjectCreatePage() {
             <div className="mb-[80px] mt-[80px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="입고 업무 담당자">
-                  <DropdownInput
-                    initialSelected={inventoryManager}
-                    onChange={setInventoryManager}
-                    disabled={activeAssignment !== 'inbound'}
-                  />
+                  {inventoryOptions.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={inventoryManager}
+                      onChange={handleInventoryManagerChange}
+                      onOpen={handleInventoryManagerOpen}
+                      options={inventoryOptions}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        입고 부서 직원 없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
 
               <div className="w-[390px]">
                 <FormGroup label="물류 업무 담당자">
-                  <DropdownInput
-                    initialSelected={logisticsManager}
-                    onChange={setLogisticsManager}
-                    disabled={activeAssignment !== 'logistics'}
-                  />
+                  {logisticsOptions.length > 0 ? (
+                    <DropdownInput
+                      initialSelected={logisticsManager}
+                      onChange={handleLogisticsManagerChange}
+                      onOpen={handleLogisticsManagerOpen}
+                      options={logisticsOptions}
+                    />
+                  ) : (
+                    <div className="flex h-[50px] w-[390px] items-center rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-4">
+                      <span className="font-pretendard text-[17px] text-greyColor-grey400">
+                        물류 부서 직원 없음
+                      </span>
+                    </div>
+                  )}
                 </FormGroup>
               </div>
             </div>

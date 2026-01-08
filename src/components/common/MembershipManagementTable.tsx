@@ -21,6 +21,40 @@ const REVERSE_STATUS_MAP: Record<string, string> = {
   거절: 'REJECTED',
 };
 
+// 부서 매핑 함수
+const mapDepartment = (department: string): string => {
+  switch (department) {
+    case 'LOGISTICS':
+      return '출하 부서';
+    case 'INVENTORY':
+      return '입고 부서';
+    case 'MANAGEMENT':
+      return '관리 부서';
+    default:
+      return department;
+  }
+};
+
+// 직급 매핑 함수
+const mapPosition = (position: string): string => {
+  switch (position) {
+    case 'INTERN':
+      return '인턴';
+    case 'ASSISTANT_MANAGER':
+      return '주임';
+    case 'MANAGER':
+      return '대리';
+    case 'SENIOR_MANAGER':
+      return '과장';
+    case 'DEPARTMENT_HEAD':
+      return '부장';
+    case 'OWNER':
+      return '오너';
+    default:
+      return position;
+  }
+};
+
 export default function MembershipManagementTable({
   searchTerm,
   isLoading: parentLoading,
@@ -52,13 +86,7 @@ export default function MembershipManagementTable({
   const filteredList = useMemo(() => {
     if (!membershipList) return [];
     const lowerCaseSearch = searchTerm.toLowerCase();
-    return membershipList.filter(
-      (emp) =>
-        emp.name.toLowerCase().includes(lowerCaseSearch) ||
-        emp.department.toLowerCase().includes(lowerCaseSearch) ||
-        emp.position.toLowerCase().includes(lowerCaseSearch) ||
-        emp.email.toLowerCase().includes(lowerCaseSearch),
-    );
+    return membershipList.filter((emp) => emp.name.toLowerCase().includes(lowerCaseSearch));
   }, [membershipList, searchTerm]);
 
   const handleStatusChange = (memberId: number, newStatus: string) => {
@@ -122,8 +150,8 @@ export default function MembershipManagementTable({
             filteredList.map((emp) => (
               <div key={emp.memberId} className="flex w-full">
                 <div className={`${cellBase} w-[170px]`}>{emp.name}</div>
-                <div className={`${cellBase} w-[220px] border-l-0`}>{emp.department}</div>
-                <div className={`${cellBase} w-[160px] border-l-0`}>{emp.position}</div>
+                <div className={`${cellBase} w-[220px] border-l-0`}>{mapDepartment(emp.department)}</div>
+                <div className={`${cellBase} w-[160px] border-l-0`}>{mapPosition(emp.position)}</div>
                 <div className={`${cellBase} w-[230px] border-l-0`}>{emp.email}</div>
                 <div className={`${cellBase} w-[260px] border-l-0`}>
                   <Dropdown

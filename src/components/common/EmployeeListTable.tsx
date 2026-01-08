@@ -10,18 +10,51 @@ interface EmployeeListTableProps {
 }
 
 const ROLE_MAP: Record<string, string> = {
-  ALL: '전체 관리',
-  WRITE: '수정 가능',
-  READ: '조회 전용',
+  ALL: '편집',
+  WRITE: '편집',
+  READ: '조회',
 };
 
 const REVERSE_ROLE_MAP: Record<string, string> = {
-  '전체 관리': 'ALL',
-  '수정 가능': 'WRITE',
-  '조회 전용': 'READ',
+  '조회': 'READ',
+  '편집': 'WRITE',
 };
 
-const PERMISSION_OPTIONS = ['전체 관리', '수정 가능', '조회 전용']; //워딩 확인
+const PERMISSION_OPTIONS = ['조회', '편집'];
+
+// 부서 매핑 함수
+const mapDepartment = (department: string): string => {
+  switch (department) {
+    case 'LOGISTICS':
+      return '출하 부서';
+    case 'INVENTORY':
+      return '입고 부서';
+    case 'MANAGEMENT':
+      return '관리 부서';
+    default:
+      return department;
+  }
+};
+
+// 직급 매핑 함수
+const mapPosition = (position: string): string => {
+  switch (position) {
+    case 'INTERN':
+      return '인턴';
+    case 'ASSISTANT_MANAGER':
+      return '주임';
+    case 'MANAGER':
+      return '대리';
+    case 'SENIOR_MANAGER':
+      return '과장';
+    case 'DEPARTMENT_HEAD':
+      return '부장';
+    case 'OWNER':
+      return '오너';
+    default:
+      return position;
+  }
+};
 
 export default function EmployeeListTable({
   searchTerm,
@@ -54,12 +87,7 @@ export default function EmployeeListTable({
   const filteredList = useMemo(() => {
     if (!employeeList) return [];
     const lowerCaseSearch = searchTerm.toLowerCase();
-    return employeeList.filter(
-      (emp) =>
-        emp.name.toLowerCase().includes(lowerCaseSearch) ||
-        emp.department.toLowerCase().includes(lowerCaseSearch) ||
-        emp.position.toLowerCase().includes(lowerCaseSearch),
-    );
+    return employeeList.filter((emp) => emp.name.toLowerCase().includes(lowerCaseSearch));
   }, [employeeList, searchTerm]);
 
   const handlePermissionChange = (memberId: number, newPermission: string) => {
@@ -108,7 +136,7 @@ export default function EmployeeListTable({
           <div className={`${headerBase} w-[210px] rounded-tl-[10px]`}>이름</div>
           <div className={`${headerBase} w-[290px] border-l-0`}>부서</div>
           <div className={`${headerBase} w-[200px] border-l-0`}>직급</div>
-          <div className={`${headerBase} w-[340px] rounded-tr-[10px] border-l-0`}>가입 상태</div>
+          <div className={`${headerBase} w-[340px] rounded-tr-[10px] border-l-0`}>권한 설정</div>
         </div>
 
         <div className="w-full bg-white">
@@ -120,8 +148,8 @@ export default function EmployeeListTable({
             filteredList.map((emp) => (
               <div key={emp.memberId} className="flex w-full">
                 <div className={`${cellBase} w-[210px]`}>{emp.name}</div>
-                <div className={`${cellBase} w-[290px] border-l-0`}>{emp.department}</div>
-                <div className={`${cellBase} w-[200px] border-l-0`}>{emp.position}</div>
+                <div className={`${cellBase} w-[290px] border-l-0`}>{mapDepartment(emp.department)}</div>
+                <div className={`${cellBase} w-[200px] border-l-0`}>{mapPosition(emp.position)}</div>
                 <div className={`${cellBase} w-[340px] border-l-0`}>
                   <Dropdown
                     options={PERMISSION_OPTIONS}

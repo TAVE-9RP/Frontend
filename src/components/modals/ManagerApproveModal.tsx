@@ -7,6 +7,8 @@ interface ManagerApprovalModalProps {
   onConfirm: () => void;
   variant?: 'default' | 'request';
   managerName?: string;
+  closeOnBackdropClick?: boolean;
+  onReject?: () => void;
 }
 
 const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
@@ -15,6 +17,8 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
   onConfirm,
   variant = 'default',
   managerName = '홍길동',
+  closeOnBackdropClick = true,
+  onReject,
 }) => {
   if (!isOpen) return null;
 
@@ -32,7 +36,7 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
+      onClick={closeOnBackdropClick ? onClose : undefined}
     >
       <div
         className="flex h-[230px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
@@ -52,7 +56,7 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
 
         <div className="mt-[34.45px] flex gap-[17px]">
           <button
-            onClick={onClose}
+            onClick={onReject || onClose}
             className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] border border-greyColor-grey300 bg-greyColor-grey50 font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey500 transition-colors hover:bg-greyColor-grey100"
           >
             {content.cancelLabel}

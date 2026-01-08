@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BasicInput from '@/components/common/BasicInput';
+import { createItem } from '@/apis/item';
 
 interface NewInventoryModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
     location: '',
     price: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isFormValid = Object.values(formData).every((val) => val.trim() !== '');
 
@@ -22,6 +24,8 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      // 모달이 닫힐 때 폼 초기화
+      setFormData({ id: '', name: '', location: '', price: '' });
     }
     return () => {
       document.body.style.overflow = 'unset';
@@ -34,18 +38,48 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
-    if (!isFormValid) return;
-    onAdd({
-      ...formData,
-      price: Number(formData.price),
-      inboundQty: 0,
-      currentQty: 0,
-      targetQty: 0,
-      status: '미진행',
-    });
-    setFormData({ id: '', name: '', location: '', price: '' });
-    onClose();
+  const handleSubmit = async () => {
+    if (!isFormValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      console.log('=== 신규 재고 추가 API 호출 ===');
+      console.log('요청 데이터:', {
+        code: formData.id,
+        name: formData.name,
+        location: formData.location,
+        price: Number(formData.price),
+      });
+
+      const response = await createItem({
+        code: formData.id,
+        name: formData.name,
+        location: formData.location,
+        price: Number(formData.price),
+      });
+
+      console.log('=== 신규 재고 추가 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        console.log('신규 재고 추가 성공, itemId:', response.result?.itemId);
+        // 성공 시 모달 닫기 (부모 컴포넌트에서 목록 새로고침 필요)
+        setFormData({ id: '', name: '', location: '', price: '' });
+        onClose();
+      } else {
+        alert('신규 재고 추가에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('신규 재고 추가 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `신규 재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -105,10 +139,14 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
         <div className="absolute bottom-[64px] right-[64px]">
           <button
             onClick={handleSubmit}
-            disabled={!isFormValid}
-            className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] px-[15px] py-[5px] font-pretendard text-[19px] font-bold text-white transition-all ${isFormValid ? 'bg-mainColor-blue600' : 'cursor-not-allowed bg-greyColor-grey300'} `}
+            disabled={!isFormValid || isSubmitting}
+            className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] px-[15px] py-[5px] font-pretendard text-[19px] font-bold text-white transition-all ${
+              isFormValid && !isSubmitting
+                ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                : 'cursor-not-allowed bg-greyColor-grey300'
+            }`}
           >
-            추가하기
+            {isSubmitting ? '추가 중...' : '추가하기'}
           </button>
         </div>
       </div>
