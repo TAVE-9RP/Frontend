@@ -9,6 +9,7 @@ import InboundItemList from '@/components/common/InboundItemList';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
 import { getInventoryDetail } from '../../../apis/inventory';
+import { approveInventory } from '../../../apis/admin';
 
 const MOCK_DATA = [
   {
@@ -112,6 +113,7 @@ export default function InboundTaskDetailPage() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshItems, setRefreshItems] = useState(0);
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -158,12 +160,36 @@ export default function InboundTaskDetailPage() {
     };
 
     fetchInventoryDetail();
-  }, [inventoryId]);
+  }, [inventoryId, refreshItems]);
 
-  const handleConfirmApproval = () => {
-    setIsModalOpen(false);
-    setStatusType('approve');
-    setIsStatusModalOpen(true);
+  const handleConfirmApproval = async () => {
+    if (!inventoryId) return;
+
+    try {
+      console.log('=== 입고 승인 API 호출 ===');
+      console.log('inventoryId:', inventoryId);
+      const response = await approveInventory(inventoryId);
+      console.log('=== 입고 승인 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        setIsModalOpen(false);
+        setStatusType('approve');
+        setIsStatusModalOpen(true);
+        // 페이지 새로고침하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+      } else {
+        alert('승인 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('승인 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `승인 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
   };
 
   const handleRejectApproval = () => {

@@ -67,4 +67,9 @@ export const createProject = async (data: CreateProjectRequest) => {
   return response.data;
 };
 
+export const approveInventory = async (inventoryId: string | number) => {
+  const response = await api.patch(`/admin/inventory/${inventoryId}/approve`);
+  return response.data;
+};
+
 export default api;
