@@ -96,4 +96,15 @@ export const getInventoryItems = async () => {
   const response = await axios.get('/items');
   return response.data;
 };
+
+export const patchTargetQuantity = async (
+  logisticsId: number,
+  items: { logisticsItemId: number; targetQuantity: number }[],
+) => {
+  const response = await logisticsApi.patch(`/logistics/${logisticsId}/items/targetQuantity`, {
+    items,
+  });
+  return response.data;
+};
+
 export default logisticsApi;

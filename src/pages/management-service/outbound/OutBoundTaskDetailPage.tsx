@@ -114,16 +114,27 @@ const formatNullValue = (value: string | null | undefined): string => {
 // 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
 const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString || dateString === '-') return '-';
+<<<<<<< HEAD
+
+  // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+  const datePart = dateString.split('T')[0];
+  if (!datePart) return '-';
+
+=======
   
   // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
   const datePart = dateString.split('T')[0];
   if (!datePart) return '-';
   
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
   // '-'를 '.'로 변환
   return datePart.replace(/-/g, '.');
 };
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
 // API 응답의 logisticsStatus를 StatusStepBar가 기대하는 형식으로 매핑
 const mapStatusForStepBar = (status: string): string => {
   switch (status) {
@@ -173,7 +184,11 @@ export default function OutboundTaskDetailPage() {
         const response = await getLogisticsDetail(logisticsId);
         console.log('=== 출하 업무 상세 API 응답 ===');
         console.log('응답:', response);
+<<<<<<< HEAD
+
+=======
         
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
         if (response.isSuccess && response.result) {
           const result = response.result;
           console.log('=== 응답 result ===');
@@ -256,10 +271,17 @@ export default function OutboundTaskDetailPage() {
 
             <div className="mb-[64px] flex justify-between">
               <FormGroup label="출하 업무명" className="w-[390px]">
+<<<<<<< HEAD
+                <BasicInput
+                  value={taskDetail.taskName || '-'}
+                  disabled={true}
+                  readOnly
+=======
                 <BasicInput 
                   value={taskDetail.taskName || '-'} 
                   disabled={true} 
                   readOnly 
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
                   placeholder=""
                 />
               </FormGroup>
@@ -280,20 +302,34 @@ export default function OutboundTaskDetailPage() {
             <div className="mb-[64px] flex justify-between">
               <div className="w-[390px]">
                 <FormGroup label="운송수단">
+<<<<<<< HEAD
+                  <BasicInput
+                    value={taskDetail.vehicle || '-'}
+                    disabled={true}
+                    readOnly
+=======
                   <BasicInput 
                     value={taskDetail.vehicle || '-'} 
                     disabled={true} 
                     readOnly 
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
                     placeholder=""
                   />
                 </FormGroup>
               </div>
               <div className="w-[390px]">
                 <FormGroup label="운송업체">
+<<<<<<< HEAD
+                  <BasicInput
+                    value={taskDetail.carrier || '-'}
+                    disabled={true}
+                    readOnly
+=======
                   <BasicInput 
                     value={taskDetail.carrier || '-'} 
                     disabled={true} 
                     readOnly 
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
                     placeholder=""
                   />
                 </FormGroup>
@@ -317,6 +353,24 @@ export default function OutboundTaskDetailPage() {
                 {taskDetail.status === 'TASK_ASSIGNMENT' ? (
                   <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
                     <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
+<<<<<<< HEAD
+                      <div className="flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
+                        품목명
+                      </div>
+                      <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
+                        현재 출하 수량
+                      </div>
+                      <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
+                        목표 출하 수량
+                      </div>
+                      <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
+                        판매액
+                      </div>
+                      <div className="flex h-full w-[122px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
+                        처리 상태
+                      </div>
+                      <div className="flex h-full w-[140px] items-center justify-center font-pretendard text-[13px] font-bold text-black">
+=======
                       <div className="w-[130px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
                         품목명
                       </div>
@@ -333,11 +387,18 @@ export default function OutboundTaskDetailPage() {
                         처리 상태
                       </div>
                       <div className="w-[140px] flex h-full items-center justify-center font-pretendard text-[13px] font-bold text-black">
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
                         총 판매액
                       </div>
                     </div>
                     <div className="flex h-[40px] items-center justify-center bg-white">
+<<<<<<< HEAD
+                      <span className="font-pretendard text-[14px] text-greyColor-grey400">
+                        없음
+                      </span>
+=======
                       <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+>>>>>>> 93c06de346362876e6787c1850ffd4cdb805da18
                     </div>
                   </div>
                 ) : (

@@ -33,6 +33,7 @@ export interface OutboundItem {
   itemPrice: number;
   targetedQuantity: number;
   processedQuantity: number;
+  tempProcessedQuantity?: number;
   itemTotalPrice: number;
   logisticsProcessingStatus: ItemProcessingStatus;
 }
