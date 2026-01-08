@@ -109,7 +109,7 @@ export default function ExistingInventoryModal({
 
         <div className="mt-[32px]">
           <SearchBar
-            placeholder="재고 번호 또는 물품명을 입력하세요"
+            placeholder="재고 번호, 물품명, 위치를 검색하세요"
             className="h-[50px] w-[520px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
