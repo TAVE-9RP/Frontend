@@ -11,6 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
+import { getInventoryDetail } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -83,6 +84,36 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?
   </div>
 );
 
+// null 값을 "-"로 변환하는 헬퍼 함수
+const formatNullValue = (value: string | null | undefined): string => {
+  return value ?? '-';
+};
+
+// API 응답의 inventoryAssignees 배열을 문자열로 변환
+const formatAssignees = (assignees: string[] | null | undefined): string => {
+  if (!assignees || assignees.length === 0) return '-';
+  if (assignees.length === 1) return assignees[0];
+  return `${assignees[0]} 외 ${assignees.length - 1}명`;
+};
+
+// API 응답의 inventoryStatus를 StatusStepBar가 기대하는 형식으로 매핑
+const mapStatusForStepBar = (status: string): string => {
+  switch (status) {
+    case 'ASSIGNED':
+      return 'TASK_ASSIGNMENT';
+    case 'PENDING':
+      return 'APPROVAL_PENDING';
+    case 'REJECT':
+      return 'APPROVAL_PENDING'; // REJECT는 StatusStepBar에 없으므로 APPROVAL_PENDING으로 매핑
+    case 'IN_PROGRESS':
+      return 'IN_PROGRESS';
+    case 'COMPLETED':
+      return 'COMPLETED';
+    default:
+      return 'TASK_ASSIGNMENT';
+  }
+};
+
 export default function InventoryInboundTaskDetailPage() {
   const { projectNumber } = useParams<{ projectNumber: string }>();
   const navigate = useNavigate();
@@ -107,12 +138,41 @@ export default function InventoryInboundTaskDetailPage() {
   const [isFinalInbound, setIsFinalInbound] = useState(false);
 
   useEffect(() => {
-    const foundData = MOCK_INBOUND_TASK_LIST.find((item) => item.projectNumber === projectNumber);
-    if (foundData) setTaskDetail(foundData);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+    const fetchInventoryDetail = async () => {
+      if (!projectNumber) return;
+
+      setIsLoading(true);
+      try {
+        console.log('=== 입고 업무 상세 API 호출 ===');
+        console.log('projectNumber:', projectNumber);
+        const response = await getInventoryDetail(projectNumber);
+        console.log('=== 입고 업무 상세 API 응답 ===');
+        console.log('응답:', response);
+        
+        if (response.isSuccess && response.result) {
+          const result = response.result;
+          console.log('=== 응답 result ===');
+          console.log('result:', result);
+          setTaskDetail({
+            projectNumber: formatNullValue(result.projectNumber),
+            taskName: formatNullValue(result.inventoryTitle),
+            manager: formatAssignees(result.inventoryAssignees),
+            requestDate: formatNullValue(result.inventoryRequestedAt),
+            description: formatNullValue(result.inventoryDescription),
+            status: mapStatusForStepBar(result.inventoryStatus),
+          });
+        }
+      } catch (error: any) {
+        console.error('입고 업무 상세 정보 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInventoryDetail();
   }, [projectNumber]);
 
   const handleAddNewInventory = (newItem: InboundItem) => {
@@ -203,7 +263,7 @@ export default function InventoryInboundTaskDetailPage() {
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <h1 className="font-pretendard text-[24px] font-bold text-black">입고 업무 상세</h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate.replace(/-/g, '.')}
+            요청일: {taskDetail.requestDate !== '-' ? taskDetail.requestDate.replace(/-/g, '.') : '-'}
           </p>
 
           <div className="mt-[70px]">
@@ -213,7 +273,7 @@ export default function InventoryInboundTaskDetailPage() {
               </FormGroup>
               <FormGroup label="프로젝트 넘버" className="w-[390px]">
                 <BasicInput
-                  value={taskDetail.projectNumber}
+                  value={taskDetail.projectNumber || '-'}
                   readOnly
                   disabled
                   className="bg-greyColor-grey100 text-greyColor-grey400"
@@ -225,7 +285,7 @@ export default function InventoryInboundTaskDetailPage() {
               <FormGroup label="입고 업무명" className="w-[390px]">
                 <BasicInput
                   name="taskName"
-                  value={taskDetail.taskName}
+                  value={taskDetail.taskName || '-'}
                   onChange={handleInputChange}
                   placeholder="업무명을 입력해주세요"
                   readOnly={isDisabled}
@@ -246,7 +306,7 @@ export default function InventoryInboundTaskDetailPage() {
             <FormGroup label="업무 설명" className="mb-[40px]">
               <LargeInput
                 name="description"
-                value={taskDetail.description}
+                value={taskDetail.description || '-'}
                 onChange={handleInputChange}
                 className="h-[160px]"
                 placeholder="상세 설명을 입력해주세요"
