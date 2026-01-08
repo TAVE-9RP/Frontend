@@ -124,6 +124,7 @@ export default function InventoryInboundTaskDetailPage() {
   });
   const [items, setItems] = useState<InboundItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshItems, setRefreshItems] = useState(0);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -202,13 +203,15 @@ export default function InventoryInboundTaskDetailPage() {
       }
     };
 
+
     fetchInventoryDetail();
     fetchInventoryItems();
-  }, [projectNumber]);
+  }, [projectNumber, refreshItems]);
 
   const handleAddNewInventory = (newItem: InboundItem) => {
-    setItems((prev) => [...prev, newItem]);
+    // API 연동 예정 - 현재는 모달만 닫고 API 데이터만 표시
     setIsNewModalOpen(false);
+    // TODO: 신규 재고 추가 API 호출 후 setRefreshItems((prev) => prev + 1)로 목록 새로고침
   };
 
   const handleFinalConfirm = () => {
@@ -232,15 +235,16 @@ export default function InventoryInboundTaskDetailPage() {
   };
 
   const handleInboundConfirm = () => {
-    const nextItems = items.map((item) =>
-      selectedItemIds.includes(item.id) ? { ...item, status: '완료' } : item,
-    );
-
-    setItems(nextItems);
+    // API 연동 예정 - 입고 처리 API 호출 후 목록 새로고침
     setSelectedItemIds([]);
     setIsInboundConfirmModalOpen(false);
-
-    const isTaskFullyCompleted = nextItems.every((item) => item.status === '완료');
+    
+    // TODO: 입고 처리 API 호출 후 setRefreshItems((prev) => prev + 1)로 목록 새로고침
+    // 임시로 API 데이터 새로고침
+    setRefreshItems((prev) => prev + 1);
+    
+    // 상태 확인은 API 응답에서 가져와야 함
+    const isTaskFullyCompleted = false; // TODO: API 응답에서 확인
 
     if (isTaskFullyCompleted) {
       setTaskDetail((prev) => ({ ...prev, status: 'COMPLETED' }));
