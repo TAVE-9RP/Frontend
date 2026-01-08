@@ -3,22 +3,33 @@ import checkboxImg from '@/assets/checkbox.png';
 import checkboxCheckImg from '@/assets/checkbox_check.png';
 import { OutboundItem, LogisticsStatus, ItemProcessingStatus } from '@/types/logistics';
 
+interface ExtendedOutboundItem extends OutboundItem {
+  tempProcessedQuantity?: number;
+}
+
 interface OutboundItemListProps {
-  items: OutboundItem[];
+  items: ExtendedOutboundItem[];
   selectedItemIds: number[];
   onSelect: (id: number) => void;
+  onTargetQuantityChange?: (id: number, quantity: number) => void;
   status?: LogisticsStatus;
+  onProcessedQuantityChange?: (id: number, quantity: number) => void;
 }
 
 const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   items,
   selectedItemIds,
   onSelect,
+  onTargetQuantityChange,
+  onProcessedQuantityChange,
   status = 'ASSIGNED',
 }) => {
   const currentStatus = status.toUpperCase();
+  const isEditable = currentStatus === 'ASSIGNED' || currentStatus === 'REJECT';
   const isTaskAssignment = currentStatus === 'ASSIGNED';
   const isApprovalPending = currentStatus === 'PENDING';
+  const isInProgress = currentStatus === 'IN_PROGRESS';
+  const isCompletedStatus = currentStatus === 'COMPLETED';
   const showHyphenInSelect = isTaskAssignment || isApprovalPending;
 
   const statusMap: Record<ItemProcessingStatus, string> = {
@@ -42,25 +53,35 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   return (
     <div className="w-full overflow-hidden border-[2px] border-greyColor-grey200">
       <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-        {columns.map((col, idx) => (
-          <div
-            key={idx}
-            className={`${col.width} flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black last:border-r-0`}
-          >
-            {col.label}
-          </div>
-        ))}
+        {columns.map((col, idx) => {
+          const isQuantityHeader = col.label === '출하 수량' || col.label === '현재 출하 수량';
+          const headerTextColor =
+            isQuantityHeader && isTaskAssignment ? 'text-greyColor-grey300' : 'text-black';
+
+          return (
+            <div
+              key={idx}
+              className={`${col.width} flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold ${headerTextColor} last:border-r-0`}
+            >
+              {col.label}
+            </div>
+          );
+        })}
       </div>
 
       {items.map((item) => {
         const isSelected = selectedItemIds.includes(item.logisticsItemId);
-        const isCompleted = item.logisticsProcessingStatus === 'COMPLETED';
-        const isProcessing = item.logisticsProcessingStatus === 'IN_PROGRESS';
+        const isItemCompleted = item.logisticsProcessingStatus === 'COMPLETED';
+        const isItemProcessing = item.logisticsProcessingStatus === 'IN_PROGRESS';
 
-        const processedQty = item.processedQuantity ?? 0;
-        const targetedQty = item.targetedQuantity ?? 0;
         const price = item.itemPrice ?? 0;
         const totalPrice = item.itemTotalPrice ?? 0;
+
+        const currentProcessedQtyFromApi = item.processedQuantity ?? 0;
+
+        const tempInputQty = item.tempProcessedQuantity ?? 0;
+
+        const targetedQty = item.targetedQuantity ?? 0;
 
         return (
           <div
@@ -70,14 +91,14 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             }`}
           >
             <div className="flex h-full w-[40px] items-center justify-center border-r-[2px] border-greyColor-grey200">
-              {showHyphenInSelect || isProcessing ? (
+              {showHyphenInSelect ? (
                 <span className="font-pretendard text-[14px] text-greyColor-grey300">-</span>
               ) : (
                 <button
                   type="button"
-                  onClick={() => !isCompleted && onSelect(item.logisticsItemId)}
-                  disabled={isCompleted}
-                  className={`${isCompleted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                  onClick={() => !isItemCompleted && onSelect(item.logisticsItemId)}
+                  disabled={isItemCompleted}
+                  className={`${isItemCompleted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 >
                   <img
                     src={isSelected ? checkboxCheckImg : checkboxImg}
@@ -89,27 +110,60 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
-              {item.logisticsItemId}
+              {item.itemCode || '-'}
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {item.itemName || '-'}
             </div>
 
-            <div
-              className={`flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] ${processedQty === 0 ? 'text-greyColor-grey300' : 'text-black'}`}
-            >
-              {processedQty === 0 ? '-' : processedQty}
+            <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200">
+              {isInProgress && !isItemCompleted ? (
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={tempInputQty === 0 ? '' : tempInputQty}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    onProcessedQuantityChange?.(
+                      item.logisticsItemId,
+                      value === '' ? 0 : Number(value),
+                    );
+                  }}
+                  className="w-[80%] rounded border border-greyColor-grey200 text-center font-pretendard text-[14px] focus:outline-none"
+                />
+              ) : (
+                <span className="font-pretendard text-[14px] text-greyColor-grey300">-</span>
+              )}
             </div>
 
             <div
-              className={`flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] ${targetedQty - processedQty === 0 ? 'text-greyColor-grey300' : 'text-black'}`}
+              className={`flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] ${
+                isTaskAssignment || isApprovalPending ? 'text-greyColor-grey300' : 'text-black'
+              }`}
             >
-              {targetedQty - processedQty === 0 ? '-' : targetedQty - processedQty}
+              {isTaskAssignment || isApprovalPending ? '-' : currentProcessedQtyFromApi}
             </div>
 
-            <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
-              {targetedQty}
+            <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px]">
+              {isEditable ? (
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={targetedQty === 0 ? '' : targetedQty}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    onTargetQuantityChange?.(
+                      item.logisticsItemId,
+                      value === '' ? 0 : Number(value),
+                    );
+                  }}
+                  className="w-[80%] rounded border border-greyColor-grey300 bg-white px-1 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue500 focus:outline-none"
+                />
+              ) : (
+                <span>{targetedQty}</span>
+              )}
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
@@ -117,15 +171,15 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
-              {totalPrice.toLocaleString()}
+              {totalPrice ? totalPrice.toLocaleString() : '-'}
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center font-pretendard text-[14px]">
               <div
                 className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] py-[8px] ${
-                  isCompleted
+                  isItemCompleted || isCompletedStatus
                     ? 'bg-mainColor-blue050 text-mainColor-blue600'
-                    : isProcessing
+                    : isItemProcessing
                       ? 'bg-[#FFEEBC] text-[#FF803B]'
                       : 'bg-greyColor-grey200 text-greyColor-grey600'
                 }`}

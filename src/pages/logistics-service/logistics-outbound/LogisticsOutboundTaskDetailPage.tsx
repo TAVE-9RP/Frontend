@@ -20,6 +20,7 @@ import {
   patchRequestApproval,
   patchCompleteLogistics,
   patchUpdateLogisticsCommon,
+  patchTargetQuantity,
 } from '@/apis/logistics';
 import {
   LogisticsDetail,
@@ -140,25 +141,51 @@ export default function LogisticsOutboundTaskDetailPage() {
     );
   };
 
+  const handleTargetQuantityChange = (id: number, quantity: number) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.logisticsItemId === id ? { ...item, targetedQuantity: quantity } : item,
+      ),
+    );
+  };
+
+  const handleProcessedQuantityChange = (id: number, quantity: number) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.logisticsItemId === id ? { ...item, tempProcessedQuantity: quantity } : item,
+      ),
+    );
+  };
+
   const handleOutboundConfirm = async () => {
-    if (!logisticsId) return;
+    if (!logisticsId || selectedItemIds.length === 0) return;
+
     try {
       const payload = {
-        items: selectedItemIds.map((id) => ({
-          logisticsItemId: id,
-          processedQuantity: 1,
-        })),
+        items: items
+          .filter((item) => selectedItemIds.includes(item.logisticsItemId))
+          .map((item) => ({
+            logisticsItemId: item.logisticsItemId,
+            processedQuantity: item.tempProcessedQuantity || 0,
+          })),
       };
+
       const res = await patchLogisticsItems(Number(logisticsId), payload);
+
       if (res.isSuccess) {
         setIsOutboundConfirmModalOpen(false);
         setSelectedItemIds([]);
-        setSuccessText({ title: '처리 완료', description: '출하 처리되었어요' });
+
+        setSuccessText({
+          title: '처리 완료',
+          description: '실제 출하 수량이 재고에 반영되었습니다.',
+        });
         setIsSuccessModalOpen(true);
+
         fetchData();
       }
     } catch (error) {
-      alert('출하 처리 중 오류가 발생했습니다.');
+      alert('출하 수량 반영에 실패했습니다.');
     }
   };
 
@@ -181,7 +208,7 @@ export default function LogisticsOutboundTaskDetailPage() {
     if (!logisticsId) return;
 
     if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
-      alert('출하 업무명과 업무 설명은 필수입니다. 내용을 입력해주세요.');
+      alert('출하 업무명과 업무 설명은 필수입니다.');
       setIsApprovalModalOpen(false);
       return;
     }
@@ -199,11 +226,17 @@ export default function LogisticsOutboundTaskDetailPage() {
         logisticsCarrier: taskDetail.logisticsCarrier ?? '',
         logisticsCarrierCompany: taskDetail.logisticsCarrierCompany ?? '',
       };
+      await patchUpdateLogisticsCommon(Number(logisticsId), updatePayload);
 
-      const updateRes = await patchUpdateLogisticsCommon(Number(logisticsId), updatePayload);
+      const targetQuantityPayload = items.map((item) => ({
+        logisticsItemId: item.logisticsItemId,
+        targetQuantity: item.targetedQuantity,
+      }));
 
-      if (!updateRes.isSuccess) {
-        throw new Error('정보 저장 중 오류가 발생했습니다.');
+      const quantityRes = await patchTargetQuantity(Number(logisticsId), targetQuantityPayload);
+
+      if (!quantityRes.isSuccess) {
+        throw new Error('목표 수량 저장에 실패했습니다.');
       }
 
       const approvalRes = await patchRequestApproval(Number(logisticsId));
@@ -212,15 +245,14 @@ export default function LogisticsOutboundTaskDetailPage() {
         setIsApprovalModalOpen(false);
         setSuccessText({
           title: '승인 요청 완료',
-          description: '입력된 정보가 저장되고 관리자에게 승인 요청되었습니다.',
+          description: '입력된 정보와 목표 수량이 저장되고 관리자에게 승인 요청되었습니다.',
         });
         setIsSuccessModalOpen(true);
         fetchData();
       }
     } catch (error: any) {
       console.error('승인 요청 프로세스 오류:', error);
-      const errorMsg = error.response?.data?.message || '처리 중 오류가 발생했습니다.';
-      alert(errorMsg);
+      alert(error.message || '처리 중 오류가 발생했습니다.');
     }
   };
 
@@ -392,6 +424,8 @@ export default function LogisticsOutboundTaskDetailPage() {
                 items={items}
                 selectedItemIds={selectedItemIds}
                 onSelect={handleItemSelect}
+                onTargetQuantityChange={handleTargetQuantityChange}
+                onProcessedQuantityChange={handleProcessedQuantityChange}
                 status={taskDetail.logisticsStatus as LogisticsStatus}
               />
             </div>
@@ -400,7 +434,7 @@ export default function LogisticsOutboundTaskDetailPage() {
           <div className="mt-auto flex justify-end pt-10">
             {isInProgress ? (
               <div className="flex gap-3">
-                {!isAllItemsCompleted && (
+                {!isAllItemsCompleted ? (
                   <button
                     disabled={!isAnythingSelected}
                     onClick={() => setIsOutboundConfirmModalOpen(true)}
@@ -412,19 +446,14 @@ export default function LogisticsOutboundTaskDetailPage() {
                   >
                     출하 처리
                   </button>
+                ) : (
+                  <button
+                    onClick={() => setIsFinalCompleteModalOpen(true)}
+                    className="h-[50px] w-[113px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
+                  >
+                    출하 완료
+                  </button>
                 )}
-
-                <button
-                  disabled={!isAllItemsCompleted}
-                  onClick={() => setIsFinalCompleteModalOpen(true)}
-                  className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
-                    isAllItemsCompleted
-                      ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
-                      : 'cursor-not-allowed bg-greyColor-grey300'
-                  }`}
-                >
-                  출하 완료
-                </button>
               </div>
             ) : isApprovalPending ? (
               <button
@@ -446,7 +475,7 @@ export default function LogisticsOutboundTaskDetailPage() {
               isCompleted && (
                 <button
                   disabled
-                  className="h-[50px] w-[113px] cursor-not-allowed rounded-[10px] bg-greyColor-grey300 font-pretendard text-[19px] font-bold text-greyColor-grey500"
+                  className="h-[50px] w-[113px] cursor-not-allowed rounded-[10px] bg-greyColor-grey300 font-pretendard text-[19px] font-bold text-white"
                 >
                   출하 완료
                 </button>
