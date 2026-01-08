@@ -15,11 +15,7 @@ interface ExistingInventoryModalProps {
   onAdd: (selectedItems: InventoryItem[]) => void;
 }
 
-const MOCK_INVENTORY_DATA: InventoryItem[] = [
-  { id: 'INV-001', name: '카피바라 인형', quantity: 100, location: 'A-1 창고', price: 15000 },
-  { id: 'INV-002', name: '애플망고', quantity: 50, location: 'B-3 냉동고', price: 20000 },
-  { id: 'INV-003', name: '강아지 간식', quantity: 200, location: 'C-2 선반', price: 5000 },
-];
+const MOCK_INVENTORY_DATA: InventoryItem[] = [];
 
 export default function ExistingInventoryModal({
   isOpen,
@@ -66,44 +62,68 @@ export default function ExistingInventoryModal({
           <SearchBar placeholder="이름, 부서, 직급 검색" className="h-[50px] w-[520px]" />
         </div>
 
-        <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto overflow-x-hidden border-2 border-greyColor-grey200">
-          <table className="w-full border-collapse font-pretendard">
-            <thead className="sticky top-0 z-10 bg-greyColor-grey100">
-              <tr className="h-[40px] text-[15px] font-bold text-black">
-                <th className="w-[40px] border-b-2 border-r-2 border-greyColor-grey200 text-center">
+        <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto overflow-x-hidden">
+          {MOCK_INVENTORY_DATA.length === 0 ? (
+            <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+              <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
+                <div className="w-[40px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                   선택
-                </th>
-                <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                   재고 번호
-                </th>
-                <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                   물품명
-                </th>
-                <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                   수량
-                </th>
-                <th className="w-[140px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                </div>
+                <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                   위치
-                </th>
-                <th className="w-[160px] border-b-2 border-greyColor-grey200 px-4 text-left">
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
                   물품 가격
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white text-[15px] font-normal text-black">
-              {MOCK_INVENTORY_DATA.map((item, index) => {
-                const isSelected = selectedIds.includes(item.id);
-                const isLastRow = index === MOCK_INVENTORY_DATA.length - 1;
+                </div>
+              </div>
+              <div className="flex h-[40px] items-center justify-center bg-white">
+                <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+              <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
+                <div className="w-[40px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                  선택
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                  재고 번호
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                  물품명
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                  수량
+                </div>
+                <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                  위치
+                </div>
+                <div className="w-[160px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
+                  물품 가격
+                </div>
+              </div>
+              <div className="w-full bg-white">
+                {MOCK_INVENTORY_DATA.map((item, index) => {
+                  const isSelected = selectedIds.includes(item.id);
+                  const isLastRow = index === MOCK_INVENTORY_DATA.length - 1;
 
-                return (
-                  <tr
-                    key={item.id}
-                    className={`h-[40px] transition-colors ${isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'}`}
-                  >
-                    <td
-                      className={`w-[40px] border-r-2 border-greyColor-grey200 text-center ${!isLastRow ? 'border-b-2' : ''}`}
+                  return (
+                    <div
+                      key={item.id}
+                      className={`flex h-[40px] items-center transition-colors ${isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'}`}
                     >
-                      <div className="flex justify-center">
+                      <div
+                        className={`w-[40px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                      >
                         <button
                           onClick={() => handleCheckboxChange(item.id)}
                           className="flex h-10 w-10 items-center justify-center"
@@ -119,37 +139,37 @@ export default function ExistingInventoryModal({
                           />
                         </button>
                       </div>
-                    </td>
-                    <td
-                      className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
-                    >
-                      {item.id}
-                    </td>
-                    <td
-                      className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
-                    >
-                      {item.name}
-                    </td>
-                    <td
-                      className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
-                    >
-                      {item.quantity}
-                    </td>
-                    <td
-                      className={`w-[140px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
-                    >
-                      {item.location}
-                    </td>
-                    <td
-                      className={`w-[160px] border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
-                    >
-                      {item.price.toLocaleString()}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      <div
+                        className={`w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                      >
+                        {item.id}
+                      </div>
+                      <div
+                        className={`w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                      >
+                        {item.name}
+                      </div>
+                      <div
+                        className={`w-[160px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                      >
+                        {item.quantity}
+                      </div>
+                      <div
+                        className={`w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                      >
+                        {item.location}
+                      </div>
+                      <div
+                        className={`w-[160px] flex h-full items-center justify-center font-pretendard text-[15px] font-normal text-black ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                      >
+                        {item.price.toLocaleString()}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex-1" />
@@ -165,7 +185,12 @@ export default function ExistingInventoryModal({
 
               setSelectedIds([]);
             }}
-            className="h-[50px] w-[113px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-all hover:bg-mainColor-blue700"
+            disabled={MOCK_INVENTORY_DATA.length === 0 || selectedIds.length === 0}
+            className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-all ${
+              MOCK_INVENTORY_DATA.length === 0 || selectedIds.length === 0
+                ? 'cursor-not-allowed bg-greyColor-grey300'
+                : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+            }`}
           >
             추가하기
           </button>
