@@ -86,13 +86,7 @@ export default function MembershipManagementTable({
   const filteredList = useMemo(() => {
     if (!membershipList) return [];
     const lowerCaseSearch = searchTerm.toLowerCase();
-    return membershipList.filter(
-      (emp) =>
-        emp.name.toLowerCase().includes(lowerCaseSearch) ||
-        emp.department.toLowerCase().includes(lowerCaseSearch) ||
-        emp.position.toLowerCase().includes(lowerCaseSearch) ||
-        emp.email.toLowerCase().includes(lowerCaseSearch),
-    );
+    return membershipList.filter((emp) => emp.name.toLowerCase().includes(lowerCaseSearch));
   }, [membershipList, searchTerm]);
 
   const handleStatusChange = (memberId: number, newStatus: string) => {

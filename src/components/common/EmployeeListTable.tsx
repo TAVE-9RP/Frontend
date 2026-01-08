@@ -87,12 +87,7 @@ export default function EmployeeListTable({
   const filteredList = useMemo(() => {
     if (!employeeList) return [];
     const lowerCaseSearch = searchTerm.toLowerCase();
-    return employeeList.filter(
-      (emp) =>
-        emp.name.toLowerCase().includes(lowerCaseSearch) ||
-        emp.department.toLowerCase().includes(lowerCaseSearch) ||
-        emp.position.toLowerCase().includes(lowerCaseSearch),
-    );
+    return employeeList.filter((emp) => emp.name.toLowerCase().includes(lowerCaseSearch));
   }, [employeeList, searchTerm]);
 
   const handlePermissionChange = (memberId: number, newPermission: string) => {
