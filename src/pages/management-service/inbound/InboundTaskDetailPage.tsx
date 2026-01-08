@@ -295,8 +295,10 @@ export default function InboundTaskDetailPage() {
       </main>
       <ManagerApprovalModal
         isOpen={isModalOpen}
-        onClose={handleRejectApproval}
+        onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmApproval}
+        onReject={handleRejectApproval}
+        closeOnBackdropClick={true}
       />
       <ApproveModal
         isOpen={isStatusModalOpen}
