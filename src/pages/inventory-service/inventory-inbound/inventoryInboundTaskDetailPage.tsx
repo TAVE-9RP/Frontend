@@ -201,23 +201,6 @@ export default function InventoryInboundTaskDetailPage() {
 
   const isFullyDone = taskDetail.status === 'COMPLETED';
 
-  const handleAddInventoryItems = (selectedItems: any[]) => {
-    const newItems: InboundItem[] = selectedItems.map((item) => ({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      inboundQty: 0,
-      currentQty: item.quantity,
-      targetQty: 0,
-      status: '미진행',
-    }));
-    setItems((prev) => {
-      const existingIds = new Set(prev.map((i) => i.id));
-      const filteredNewItems = newItems.filter((i) => !existingIds.has(i.id));
-      return [...prev, ...filteredNewItems];
-    });
-    setIsInventoryModalOpen(false);
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -310,7 +293,8 @@ export default function InventoryInboundTaskDetailPage() {
                   <ExistingInventoryModal
                     isOpen={isInventoryModalOpen}
                     onClose={() => setIsInventoryModalOpen(false)}
-                    onAdd={handleAddInventoryItems}
+                    onAdd={() => {}}
+                    inventoryId={projectNumber}
                   />
                   <button
                     disabled={isPending}

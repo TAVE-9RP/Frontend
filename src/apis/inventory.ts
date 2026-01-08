@@ -26,5 +26,12 @@ export const getInventoryDetail = async (inventoryId: string | number) => {
   return response.data;
 };
 
+export const addInventoryItems = async (inventoryId: string | number, itemIds: number[]) => {
+  const response = await api.post(`/inventory/${inventoryId}/items`, {
+    itemIds: itemIds,
+  });
+  return response.data;
+};
+
 export default api;
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '@/components/common/SearchBar';
 import { getItems } from '@/apis/item';
+import { addInventoryItems } from '@/apis/inventory';
 
 interface InventoryItem {
   id: string;
+  itemId: number;
   name: string;
   quantity: number;
   location: string;
@@ -14,16 +16,19 @@ interface ExistingInventoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (selectedItems: InventoryItem[]) => void;
+  inventoryId?: string | number;
 }
 
 export default function ExistingInventoryModal({
   isOpen,
   onClose,
   onAdd,
+  inventoryId,
 }: ExistingInventoryModalProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
@@ -52,6 +57,7 @@ export default function ExistingInventoryModal({
         if (response.isSuccess && response.result) {
           const mappedData: InventoryItem[] = response.result.map((item: any) => ({
             id: item.code, // 재고 번호를 id로 사용
+            itemId: item.itemId, // API 요청에 사용할 itemId
             name: item.name,
             quantity: item.quantity,
             location: item.location,
@@ -222,23 +228,55 @@ export default function ExistingInventoryModal({
 
         <div className="mt-[40px] flex justify-end">
           <button
-            onClick={() => {
+            onClick={async () => {
+              if (!inventoryId) {
+                alert('입고 업무 ID가 없습니다.');
+                return;
+              }
+
               const selectedItems = inventoryData.filter((item) =>
                 selectedIds.includes(item.id),
               );
 
-              onAdd(selectedItems);
+              if (selectedItems.length === 0) {
+                alert('추가할 재고를 선택해주세요.');
+                return;
+              }
 
-              setSelectedIds([]);
+              setIsAdding(true);
+              try {
+                console.log('=== 재고 추가 API 호출 ===');
+                console.log('inventoryId:', inventoryId);
+                const itemIds = selectedItems.map((item) => item.itemId);
+                console.log('itemIds:', itemIds);
+
+                const response = await addInventoryItems(inventoryId, itemIds);
+                console.log('=== 재고 추가 API 응답 ===');
+                console.log('응답:', response);
+
+                if (response.isSuccess) {
+                  console.log('재고 추가 성공:', response.result);
+                  setSelectedIds([]);
+                  onClose();
+                } else {
+                  alert('재고 추가에 실패했습니다.');
+                }
+              } catch (error: any) {
+                console.error('재고 추가 실패:', error);
+                console.error('에러 응답:', error?.response?.data);
+                alert(`재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`);
+              } finally {
+                setIsAdding(false);
+              }
             }}
-            disabled={inventoryData.length === 0 || selectedIds.length === 0}
+            disabled={inventoryData.length === 0 || selectedIds.length === 0 || isAdding}
             className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-all ${
-              inventoryData.length === 0 || selectedIds.length === 0
+              inventoryData.length === 0 || selectedIds.length === 0 || isAdding
                 ? 'cursor-not-allowed bg-greyColor-grey300'
                 : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
             }`}
           >
-            추가하기
+            {isAdding ? '추가 중...' : '추가하기'}
           </button>
         </div>
       </div>
