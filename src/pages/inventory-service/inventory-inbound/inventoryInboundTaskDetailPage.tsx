@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, requestApproval } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -213,9 +213,33 @@ export default function InventoryInboundTaskDetailPage() {
     setRefreshItems((prev) => prev + 1);
   };
 
-  const handleFinalConfirm = () => {
-    setIsApprovalModalOpen(false);
-    setIsSuccessModalOpen(true);
+  const handleFinalConfirm = async () => {
+    if (!projectNumber) return;
+
+    try {
+      console.log('=== 승인 요청 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      const response = await requestApproval(projectNumber);
+      console.log('=== 승인 요청 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        setIsApprovalModalOpen(false);
+        setIsSuccessModalOpen(true);
+        // 페이지 새로고침하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+      } else {
+        alert('승인 요청에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('승인 요청 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `승인 요청 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
   };
 
   const handleInboundProcess = () => {

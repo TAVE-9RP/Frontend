@@ -38,5 +38,10 @@ export const getInventoryItems = async (inventoryId: string | number) => {
   return response.data;
 };
 
+export const requestApproval = async (inventoryId: string | number) => {
+  const response = await api.patch(`/inventory/${inventoryId}/request-approval`);
+  return response.data;
+};
+
 export default api;
 
