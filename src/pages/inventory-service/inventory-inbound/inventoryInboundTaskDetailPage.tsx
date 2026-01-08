@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems, requestApproval } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -163,10 +163,10 @@ export default function InventoryInboundTaskDetailPage() {
           console.log('result:', result);
           setTaskDetail({
             projectNumber: formatNullValue(result.projectNumber),
-            taskName: formatNullValue(result.inventoryTitle),
+            taskName: result.inventoryTitle || '',
             manager: formatAssignees(result.inventoryAssignees),
             requestDate: formatDate(result.inventoryRequestedAt),
-            description: formatNullValue(result.inventoryDescription),
+            description: result.inventoryDescription || '',
             status: mapStatusForStepBar(result.inventoryStatus),
           });
         }
@@ -229,13 +229,35 @@ export default function InventoryInboundTaskDetailPage() {
     if (!projectNumber) return;
 
     try {
+      // 1. 입고 업무명과 업무 설명 업데이트
+      console.log('=== 입고 정보 업데이트 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      console.log('요청 데이터:', {
+        inventoryTitle: taskDetail.taskName,
+        inventoryDescription: taskDetail.description,
+      });
+      
+      const updateResponse = await updateInventory(projectNumber, {
+        inventoryTitle: taskDetail.taskName,
+        inventoryDescription: taskDetail.description,
+      });
+      
+      console.log('=== 입고 정보 업데이트 API 응답 ===');
+      console.log('응답:', updateResponse);
+
+      if (!updateResponse.isSuccess) {
+        alert('입고 정보 업데이트에 실패했습니다.');
+        return;
+      }
+
+      // 2. 승인 요청 API 호출
       console.log('=== 승인 요청 API 호출 ===');
       console.log('inventoryId:', projectNumber);
-      const response = await requestApproval(projectNumber);
+      const approvalResponse = await requestApproval(projectNumber);
       console.log('=== 승인 요청 API 응답 ===');
-      console.log('응답:', response);
+      console.log('응답:', approvalResponse);
 
-      if (response.isSuccess) {
+      if (approvalResponse.isSuccess) {
         setIsApprovalModalOpen(false);
         setIsSuccessModalOpen(true);
         // 페이지 새로고침하여 진행 상태 업데이트
@@ -244,12 +266,12 @@ export default function InventoryInboundTaskDetailPage() {
         alert('승인 요청에 실패했습니다.');
       }
     } catch (error: any) {
-      console.error('승인 요청 실패:', error);
+      console.error('처리 실패:', error);
       console.error('에러 응답:', error?.response?.data);
       console.error('에러 상태 코드:', error?.response?.status);
       console.error('에러 메시지:', error?.message);
       alert(
-        `승인 요청 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+        `처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
       );
     }
   };
@@ -338,7 +360,7 @@ export default function InventoryInboundTaskDetailPage() {
               <FormGroup label="입고 업무명" className="w-[390px]">
                 <BasicInput
                   name="taskName"
-                  value={taskDetail.taskName || '-'}
+                  value={taskDetail.taskName || ''}
                   onChange={handleInputChange}
                   placeholder="업무명을 입력해주세요"
                   readOnly={isDisabled}
@@ -359,7 +381,7 @@ export default function InventoryInboundTaskDetailPage() {
             <FormGroup label="업무 설명" className="mb-[40px]">
               <LargeInput
                 name="description"
-                value={taskDetail.description || '-'}
+                value={taskDetail.description || ''}
                 onChange={handleInputChange}
                 className="h-[160px]"
                 placeholder="상세 설명을 입력해주세요"
