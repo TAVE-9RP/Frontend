@@ -70,6 +70,18 @@ const formatNullValue = (value: string | null | undefined): string => {
   return value ?? '-';
 };
 
+// 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
+const formatDate = (dateString: string | null | undefined): string => {
+  if (!dateString || dateString === '-') return '-';
+  
+  // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+  const datePart = dateString.split('T')[0];
+  if (!datePart) return '-';
+  
+  // '-'를 '.'로 변환
+  return datePart.replace(/-/g, '.');
+};
+
 // API 응답의 inventoryAssignees 배열을 문자열로 변환
 const formatAssignees = (assignees: string[] | null | undefined): string => {
   if (!assignees || assignees.length === 0) return '-';
@@ -153,7 +165,7 @@ export default function InventoryInboundTaskDetailPage() {
             projectNumber: formatNullValue(result.projectNumber),
             taskName: formatNullValue(result.inventoryTitle),
             manager: formatAssignees(result.inventoryAssignees),
-            requestDate: formatNullValue(result.inventoryRequestedAt),
+            requestDate: formatDate(result.inventoryRequestedAt),
             description: formatNullValue(result.inventoryDescription),
             status: mapStatusForStepBar(result.inventoryStatus),
           });
@@ -304,7 +316,7 @@ export default function InventoryInboundTaskDetailPage() {
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <h1 className="font-pretendard text-[24px] font-bold text-black">입고 업무 상세</h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate !== '-' ? taskDetail.requestDate.replace(/-/g, '.') : '-'}
+            요청일: {taskDetail.requestDate}
           </p>
 
           <div className="mt-[70px]">
