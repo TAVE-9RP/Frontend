@@ -64,8 +64,8 @@ export default function InboundItemTable({
         <div className={`${cell110} ${getHeaderTextColor('id')}`}>재고 번호</div>
         <div className={`${cell110} ${getHeaderTextColor('name')}`}>물품명</div>
         <div className={`${cell110} ${getHeaderTextColor('price')}`}>물품 가격</div>
-        <div className={`${cell110} ${getHeaderTextColor('inboundQty')}`}>입고 수량</div>
-        <div className={`${cell110} ${getHeaderTextColor('currentQty')}`}>현재 입고 수량</div>
+        <div className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('inboundQty')}`}>입고 수량</div>
+        <div className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('currentQty')}`}>현재 입고 수량</div>
         <div className={`${cell110} text-greyColor-grey900`}>목표 입고 수량</div>
         <div className={`${cell110} text-greyColor-grey900`}>처리 상태</div>
       </div>
