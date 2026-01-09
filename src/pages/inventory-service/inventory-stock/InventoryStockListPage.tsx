@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SearchBar from '../../../components/common/SearchBar';
 import SideBar from '../../../components/common/SideBar';
 import InventoryStockListTable from '../../../components/common/InventoryStockListTable';
+import { getItems } from '../../../apis/item';
 
 interface InventoryStock {
   id: number;
@@ -23,15 +24,42 @@ export default function InventoryStockListPage() {
     setSearchTerm(event.target.value);
   };
 
-  // TODO: API 연동 시 사용할 함수
-  const fetchStock = () => {
-    setIsLoading(true);
+  // null 값을 "-"로 변환하는 헬퍼 함수
+  const formatNullValue = (value: string | null | undefined): string => {
+    return value ?? '-';
+  };
 
-    // API 연동 전까지 빈 배열로 설정
-    setTimeout(() => {
+  // API에서 데이터 가져오기
+  const fetchStock = async () => {
+    setIsLoading(true);
+    try {
+      // 검색어가 있으면 keyword로 전달, 없으면 공백으로 전달
+      const keyword = searchTerm.trim();
+      const response = await getItems(keyword);
+      
+      if (response.isSuccess && response.result) {
+        // API 응답을 InventoryStock 형식으로 변환
+        const mappedStocks: InventoryStock[] = response.result.map((item: any) => ({
+          id: item.itemId,
+          inventoryNumber: formatNullValue(item.code),
+          itemName: formatNullValue(item.name),
+          quantity: item.quantity ?? 0,
+          itemPrice: item.price ? String(item.price) : '-',
+          location: formatNullValue(item.location),
+          recentInboundDate: formatNullValue(item.receivedAt),
+          creationDate: formatNullValue(item.createdAt),
+        }));
+
+        setStockList(mappedStocks);
+      } else {
+        setStockList([]);
+      }
+    } catch (error) {
+      console.error('재고 목록 가져오기 실패:', error);
       setStockList([]);
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
   };
 
   useEffect(() => {
