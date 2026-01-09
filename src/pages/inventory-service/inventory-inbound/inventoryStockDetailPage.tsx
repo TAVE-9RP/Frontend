@@ -5,6 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import { getItems } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -91,10 +92,41 @@ export default function InventoryStockDetailPage() {
   const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
 
   useEffect(() => {
-    const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
-    if (found) {
-      setInventoryDetail(found);
-    }
+    const fetchInventoryDetail = async () => {
+      if (!inventoryNumber) return;
+
+      try {
+        // 재고 번호로 검색
+        const response = await getItems(inventoryNumber);
+
+        if (response.isSuccess && response.result) {
+          const found = response.result.find((item: any) => item.code === inventoryNumber);
+
+          if (found) {
+            setInventoryDetail({
+              id: found.itemId,
+              inventoryNumber: found.code,
+              itemName: found.name,
+              quantity: found.quantity ?? 0,
+              itemPrice: found.price ? String(found.price) : '-',
+              location: found.location ?? '-',
+              creationDate: found.createdAt ?? '-',
+              targetQty: '-',
+              safetyQty: '-',
+            });
+          }
+        }
+      } catch (error) {
+        console.error('재고 정보 가져오기 실패:', error);
+        // API 실패 시 MOCK 데이터에서 찾기 (fallback)
+        const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
+        if (found) {
+          setInventoryDetail(found);
+        }
+      }
+    };
+
+    fetchInventoryDetail();
   }, [inventoryNumber]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
