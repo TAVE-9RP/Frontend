@@ -19,9 +19,9 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
   const isTaskAssignment = status === 'TASK_ASSIGNMENT';
   const hasItems = items && items.length > 0;
 
-  // 총 판매액 계산 (모든 아이템의 itemTotalPrice 합계)
+  // 총 판매액 계산 (모든 아이템의 processedQuantity * itemPrice 합계)
   const totalSalesAmount = hasItems
-    ? items.reduce((acc, cur) => acc + (cur.totalPrice || 0), 0)
+    ? items.reduce((acc, cur) => acc + (cur.currQty * cur.unitPrice), 0)
     : 0;
 
   const isColumnAllHyphen = (key: string) => {
@@ -62,10 +62,10 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
       {hasItems && (
         <div className="box-border flex flex-col">
           {items.map((item, rowIdx) => {
-            // 판매액: itemPrice * processedQuantity
-            const salesAmount = item.unitPrice * item.currQty;
-            // 각 행의 총 판매액: itemTotalPrice
-            const itemTotalPrice = item.totalPrice || 0;
+            // 판매액: itemPrice (단가)
+            const salesAmount = item.unitPrice;
+            // 총 판매액: processedQuantity * itemPrice
+            const itemTotalPrice = item.currQty * item.unitPrice;
             
             return (
               <div
@@ -84,7 +84,7 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
                   {item.targetQty.toLocaleString()}
                 </div>
                 <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                  {salesAmount.toLocaleString()}
+                  {salesAmount.toLocaleString()}원
                 </div>
                 <div className="box-border flex h-full w-[122px] items-center justify-center border-r-[2px] border-greyColor-grey200">
                   <div
