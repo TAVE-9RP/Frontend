@@ -8,8 +8,9 @@ import ManagerChip from '@/components/common/ManagerChip';
 import InboundItemList from '@/components/common/InboundItemList';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
-import { getInventoryDetail } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems } from '../../../apis/inventory';
 import { approveInventory } from '../../../apis/admin';
+import { InboundItem } from '@/components/common/InboundItemList';
 
 const MOCK_DATA = [
   {
@@ -117,6 +118,20 @@ const mapStatusForStepBar = (status: string): string => {
   }
 };
 
+// API 응답의 inventoryProcessingStatus를 한글로 매핑
+const mapProcessingStatus = (status: string): string => {
+  switch (status) {
+    case 'NOT_STARTED':
+      return '미진행';
+    case 'IN_PROGRESS':
+      return '진행중';
+    case 'COMPLETED':
+      return '완료';
+    default:
+      return '미진행';
+  }
+};
+
 export default function InboundTaskDetailPage() {
   const { inventoryId } = useParams<{ inventoryId: string }>();
   const navigate = useNavigate(); //승인 처리 후 자동으로 목록 페이지로 이동?
@@ -126,6 +141,7 @@ export default function InboundTaskDetailPage() {
   const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [refreshItems, setRefreshItems] = useState(0);
+  const [items, setItems] = useState<InboundItem[]>([]);
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -171,7 +187,43 @@ export default function InboundTaskDetailPage() {
       }
     };
 
+    const fetchInventoryItems = async () => {
+      if (!inventoryId) return;
+
+      try {
+        console.log('=== 입고 물품 목록 API 호출 ===');
+        console.log('inventoryId:', inventoryId);
+        const response = await getInventoryItems(inventoryId);
+        console.log('=== 입고 물품 목록 API 응답 ===');
+        console.log('응답:', response);
+
+        if (response.isSuccess && response.result) {
+          const mappedItems: InboundItem[] = response.result.map((item: any) => ({
+            id: item.itemCode || String(item.itemId || Math.random()), // 재고 번호
+            stockNumber: item.itemCode || '-', // 재고 번호
+            itemName: item.itemName || '-', // 물품명
+            reqQty: item.requestedQuantity || item.processedQuantity || '-', // 입고 요청 수량 (없으면 처리된 수량 사용)
+            currQty: item.processedQuantity || '-', // 현재 입고 수량
+            targetQty: item.targetQuantity || '-', // 목표 입고 수량
+            status: mapProcessingStatus(item.inventoryProcessingStatus), // 처리 상태
+          }));
+          console.log('=== 매핑된 입고 물품 목록 ===');
+          console.log('mappedItems:', mappedItems);
+          setItems(mappedItems);
+        } else {
+          setItems([]);
+        }
+      } catch (error: any) {
+        console.error('입고 물품 목록 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+        setItems([]);
+      }
+    };
+
     fetchInventoryDetail();
+    fetchInventoryItems();
   }, [inventoryId, refreshItems]);
 
   const handleConfirmApproval = async () => {
@@ -299,7 +351,7 @@ export default function InboundTaskDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <InboundItemList status={taskDetail.status} />
+                  <InboundItemList status={taskDetail.status} items={items} />
                 )}
               </FormGroup>
             </div>
