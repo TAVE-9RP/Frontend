@@ -20,7 +20,7 @@ export default function InventoryHistoryTable({ historyData }: InventoryHistoryT
   const bodyTextClasses = 'font-pretendard text-[17px] font-normal text-black';
 
   return (
-    <div className="w-fit border-l-[2px] border-t-[2px] border-greyColor-grey200">
+    <div className="w-fit overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
       <div className="flex bg-greyColor-grey100">
         <div className={`${cellClasses} ${headerTextClasses}`}>구분</div>
         <div className={`${cellClasses} ${headerTextClasses}`}>담당자</div>
@@ -30,8 +30,8 @@ export default function InventoryHistoryTable({ historyData }: InventoryHistoryT
 
       <div className="flex flex-col bg-white">
         {historyData.length === 0 ? (
-          <div className="flex h-[200px] w-[812px] items-center justify-center border-b-[2px] border-r-[2px] border-greyColor-grey200 font-pretendard text-[17px] text-greyColor-grey400">
-            이력 데이터가 없습니다.
+          <div className="flex h-[40px] items-center justify-center bg-white">
+            <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
           </div>
         ) : (
           historyData.map((item) => (

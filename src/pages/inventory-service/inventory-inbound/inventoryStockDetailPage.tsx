@@ -65,12 +65,6 @@ const MOCK_INVENTORY_LIST = [
   },
 ];
 
-const MOCK_HISTORY_DATA = [
-  { id: 1, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-  { id: 2, type: '출고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-  { id: 3, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-  { id: 4, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-];
 
 const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="flex w-[390px] flex-col">
@@ -276,7 +270,7 @@ export default function InventoryStockDetailPage() {
             <h2 className="mb-4 block font-pretendard text-[19px] font-bold text-black">
               입출고 이력
             </h2>
-            <InventoryHistoryTable historyData={MOCK_HISTORY_DATA} />
+            <InventoryHistoryTable historyData={[]} />
           </div>
 
           <div className="mt-auto flex justify-end pt-10">
