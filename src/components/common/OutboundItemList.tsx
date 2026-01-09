@@ -1,38 +1,31 @@
 import React from 'react';
 
-const OUTBOUND_ITEM_MOCK_DATA = [
-  {
-    id: 1,
-    itemName: '강아지 껌',
-    currQty: 50,
-    targetQty: 100,
-    unitPrice: 5000,
-    status: '진행중',
-  },
-  {
-    id: 2,
-    itemName: '강아지 간식',
-    currQty: 30,
-    targetQty: 50,
-    unitPrice: 3000,
-    status: '완료',
-  },
-];
+export interface OutboundItem {
+  id: string | number;
+  itemName: string;
+  currQty: number;
+  targetQty: number;
+  unitPrice: number;
+  status: string;
+  totalPrice: number | null;
+}
 
 interface OutboundItemListProps {
   status: string;
+  items?: OutboundItem[];
 }
 
-const OutboundItemList: React.FC<OutboundItemListProps> = ({ status }) => {
+const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] }) => {
   const isTaskAssignment = status === 'TASK_ASSIGNMENT';
-  // status가 빈 문자열이거나 유효하지 않으면 샘플 데이터를 표시하지 않음
-  const displayItems = !status || status === '' || isTaskAssignment ? [] : OUTBOUND_ITEM_MOCK_DATA;
+  const hasItems = items && items.length > 0;
 
-  // 총 판매액 계산? 아님 API로 받아오는지
-  const totalSalesAmount = displayItems.reduce((acc, cur) => acc + cur.currQty * cur.unitPrice, 0);
+  // 총 판매액 계산 (모든 아이템의 itemTotalPrice 합계)
+  const totalSalesAmount = hasItems
+    ? items.reduce((acc, cur) => acc + (cur.totalPrice || 0), 0)
+    : 0;
 
   const isColumnAllHyphen = (key: string) => {
-    if (displayItems.length === 0) return false;
+    if (!hasItems) return false;
     return false;
   };
 
@@ -60,42 +53,55 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status }) => {
         ))}
       </div>
 
-      {!isTaskAssignment && displayItems.length > 0 && (
+      {!hasItems && (
+        <div className="flex h-[40px] items-center justify-center bg-white">
+          <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+        </div>
+      )}
+
+      {hasItems && (
         <div className="box-border flex flex-col">
-          {displayItems.map((item, rowIdx) => (
-            <div
-              key={item.id}
-              className={`box-border flex h-[40px] items-center bg-white ${
-                rowIdx !== displayItems.length - 1 ? 'border-b-[2px] border-greyColor-grey200' : ''
-              }`}
-            >
-              <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                {item.itemName}
-              </div>
-              <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                {item.currQty.toLocaleString()}
-              </div>
-              <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                {item.targetQty.toLocaleString()}
-              </div>
-              <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                {(item.currQty * item.unitPrice).toLocaleString()}
-              </div>
-              <div className="box-border flex h-full w-[122px] items-center justify-center border-r-[2px] border-greyColor-grey200">
-                <div
-                  className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] ${item.status === '완료' ? 'bg-mainColor-blue050 text-mainColor-blue600' : 'bg-greyColor-grey200 text-greyColor-grey600'}`}
-                >
-                  <span className="font-pretendard text-[13px] font-bold leading-none">
-                    {item.status}
-                  </span>
+          {items.map((item, rowIdx) => {
+            // 판매액: itemPrice * processedQuantity
+            const salesAmount = item.unitPrice * item.currQty;
+            // 각 행의 총 판매액: itemTotalPrice
+            const itemTotalPrice = item.totalPrice || 0;
+            
+            return (
+              <div
+                key={item.id}
+                className={`box-border flex h-[40px] items-center bg-white ${
+                  rowIdx !== items.length - 1 ? 'border-b-[2px] border-greyColor-grey200' : ''
+                }`}
+              >
+                <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
+                  {item.itemName}
+                </div>
+                <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
+                  {item.currQty.toLocaleString()}
+                </div>
+                <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
+                  {item.targetQty.toLocaleString()}
+                </div>
+                <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
+                  {salesAmount.toLocaleString()}
+                </div>
+                <div className="box-border flex h-full w-[122px] items-center justify-center border-r-[2px] border-greyColor-grey200">
+                  <div
+                    className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] ${item.status === '완료' ? 'bg-mainColor-blue050 text-mainColor-blue600' : 'bg-greyColor-grey200 text-greyColor-grey600'}`}
+                  >
+                    <span className="font-pretendard text-[13px] font-bold leading-none">
+                      {item.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="box-border flex h-full w-[140px] items-center justify-center font-pretendard text-[13px] text-black">
+                  {itemTotalPrice.toLocaleString()}원
                 </div>
               </div>
-
-              <div className="box-border flex h-full w-[140px] items-center justify-center font-pretendard text-[13px] text-black">
-                {totalSalesAmount.toLocaleString()}원
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

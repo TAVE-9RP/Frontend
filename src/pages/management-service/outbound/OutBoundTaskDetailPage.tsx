@@ -7,8 +7,8 @@ import StatusStepBar from '../../../components/common/StatusStepBar';
 import ManagerChip from '@/components/common/ManagerChip';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
-import OutboundItemList from '@/components/common/OutboundItemList';
-import { getLogisticsDetail } from '../../../apis/ownerLogistics';
+import OutboundItemList, { OutboundItem } from '@/components/common/OutboundItemList';
+import { getLogisticsDetail, getLogisticsItems } from '../../../apis/ownerLogistics';
 
 const MOCK_DATA_OUTBOUND = [
   {
@@ -141,6 +141,20 @@ const mapStatusForStepBar = (status: string): string => {
   }
 };
 
+// API 응답의 logisticsProcessingStatus를 한글로 매핑
+const mapProcessingStatus = (status: string): string => {
+  switch (status) {
+    case 'NOT_STARTED':
+      return '미진행';
+    case 'IN_PROGRESS':
+      return '진행중';
+    case 'COMPLETED':
+      return '완료';
+    default:
+      return '미진행';
+  }
+};
+
 export default function OutboundTaskDetailPage() {
   const { logisticsId } = useParams<{ logisticsId: string }>();
   const navigate = useNavigate();
@@ -149,6 +163,7 @@ export default function OutboundTaskDetailPage() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [statusType, setStatusType] = useState<'approve' | 'cancel'>('approve');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [items, setItems] = useState<OutboundItem[]>([]);
 
   const [taskDetail, setTaskDetail] = useState({
     projectNumber: '',
@@ -173,11 +188,17 @@ export default function OutboundTaskDetailPage() {
         console.log('=== 출하 업무 상세 API 응답 ===');
         console.log('응답:', response);
 
+        console.log('=== 응답 확인 ===');
+        console.log('isSuccess:', response.isSuccess);
+        console.log('result:', response.result);
+        console.log('result type:', typeof response.result);
+        console.log('result is array:', Array.isArray(response.result));
+        
         if (response.isSuccess && response.result) {
           const result = response.result;
           console.log('=== 응답 result ===');
           console.log('result:', result);
-          setTaskDetail({
+          const newTaskDetail = {
             projectNumber: formatNullValue(result.projectNumber),
             taskName: formatNullValue(result.logisticsTitle),
             assignees: result.logisticsAssignees || [],
@@ -186,7 +207,17 @@ export default function OutboundTaskDetailPage() {
             carrier: formatNullValue(result.logisticsCarrierCompany),
             description: formatNullValue(result.logisticsDescription),
             status: mapStatusForStepBar(result.logisticsStatus),
-          });
+          };
+          console.log('=== 설정할 taskDetail ===');
+          console.log('newTaskDetail:', newTaskDetail);
+          console.log('status mapped:', mapStatusForStepBar(result.logisticsStatus));
+          setTaskDetail(newTaskDetail);
+          console.log('=== setTaskDetail 호출 완료 ===');
+        } else {
+          console.warn('=== 응답 조건 불일치 ===');
+          console.warn('isSuccess:', response.isSuccess);
+          console.warn('result:', response.result);
+          console.warn('result truthy:', !!response.result);
         }
       } catch (error: any) {
         console.error('출하 업무 상세 정보 가져오기 실패:', error);
@@ -198,7 +229,43 @@ export default function OutboundTaskDetailPage() {
       }
     };
 
+    const fetchLogisticsItems = async () => {
+      if (!logisticsId) return;
+
+      try {
+        console.log('=== 출하 물품 목록 API 호출 ===');
+        console.log('logisticsId:', logisticsId);
+        const response = await getLogisticsItems(logisticsId);
+        console.log('=== 출하 물품 목록 API 응답 ===');
+        console.log('응답:', response);
+
+        if (response.isSuccess && response.result) {
+          const mappedItems: OutboundItem[] = response.result.map((item: any) => ({
+            id: item.logisticsItemId || item.itemId || Math.random(),
+            itemName: item.itemName || '-',
+            currQty: item.processedQuantity || 0,
+            targetQty: item.targetedQuantity || 0,
+            unitPrice: item.itemPrice || 0,
+            status: mapProcessingStatus(item.logisticsProcessingStatus),
+            totalPrice: item.itemTotalPrice,
+          }));
+          console.log('=== 매핑된 출하 물품 목록 ===');
+          console.log('mappedItems:', mappedItems);
+          setItems(mappedItems);
+        } else {
+          setItems([]);
+        }
+      } catch (error: any) {
+        console.error('출하 물품 목록 가져오기 실패:', error);
+        console.error('에러 응답:', error?.response?.data);
+        console.error('에러 상태 코드:', error?.response?.status);
+        console.error('에러 메시지:', error?.message);
+        setItems([]);
+      }
+    };
+
     fetchLogisticsDetail();
+    fetchLogisticsItems();
   }, [logisticsId]);
 
   const handleConfirmApproval = () => {
@@ -233,7 +300,7 @@ export default function OutboundTaskDetailPage() {
             출하 업무 상세
           </h1>
           <p className="mt-2 font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-            요청일: {taskDetail.requestDate}
+            요청일: {taskDetail.requestDate || '-'}
           </p>
 
           <div className="mt-[70px] flex-1">
@@ -248,7 +315,7 @@ export default function OutboundTaskDetailPage() {
                   disabled={true}
                   readOnly
                   placeholder=""
-                  className="text-greyColor-grey400"
+                  className="text-black"
                 />
               </FormGroup>
             </div>
@@ -260,6 +327,7 @@ export default function OutboundTaskDetailPage() {
                   disabled={true}
                   readOnly
                   placeholder=""
+                  className="text-black"
                 />
               </FormGroup>
 
@@ -284,6 +352,7 @@ export default function OutboundTaskDetailPage() {
                     disabled={true}
                     readOnly
                     placeholder=""
+                    className="text-black"
                   />
                 </FormGroup>
               </div>
@@ -294,6 +363,7 @@ export default function OutboundTaskDetailPage() {
                     disabled={true}
                     readOnly
                     placeholder=""
+                    className="text-black"
                   />
                 </FormGroup>
               </div>
@@ -313,37 +383,7 @@ export default function OutboundTaskDetailPage() {
 
             <div className="mt-[80px]">
               <FormGroup label="출하 물품 목록">
-                {taskDetail.status === 'TASK_ASSIGNMENT' ? (
-                  <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
-                    <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-                      <div className="flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
-                        품목명
-                      </div>
-                      <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
-                        현재 출하 수량
-                      </div>
-                      <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
-                        목표 출하 수량
-                      </div>
-                      <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
-                        판매액
-                      </div>
-                      <div className="flex h-full w-[122px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold text-black">
-                        처리 상태
-                      </div>
-                      <div className="flex h-full w-[140px] items-center justify-center font-pretendard text-[13px] font-bold text-black">
-                        총 판매액
-                      </div>
-                    </div>
-                    <div className="flex h-[40px] items-center justify-center bg-white">
-                      <span className="font-pretendard text-[14px] text-greyColor-grey400">
-                        없음
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <OutboundItemList status={taskDetail.status} />
-                )}
+                <OutboundItemList status={taskDetail.status} items={items} />
               </FormGroup>
             </div>
           </div>
