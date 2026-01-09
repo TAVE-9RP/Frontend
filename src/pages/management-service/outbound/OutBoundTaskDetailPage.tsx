@@ -300,6 +300,10 @@ export default function OutboundTaskDetailPage() {
     }
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   const handleRejectApproval = () => {
     setIsModalOpen(false);
     setStatusType('cancel');
@@ -422,8 +426,9 @@ export default function OutboundTaskDetailPage() {
 
       <ManagerApprovalModal
         isOpen={isModalOpen}
-        onClose={handleRejectApproval}
+        onClose={handleCloseModal}
         onConfirm={handleConfirmApproval}
+        onReject={handleRejectApproval}
       />
       <ApproveModal
         isOpen={isStatusModalOpen}
