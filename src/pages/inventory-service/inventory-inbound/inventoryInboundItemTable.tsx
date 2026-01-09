@@ -18,6 +18,7 @@ interface InboundItemTableProps {
   selectedItemIds: string[];
   onSelect: (id: string) => void;
   onTargetQtyChange?: (id: string, value: string) => void;
+  onInboundQtyChange?: (id: string, value: string) => void;
   isDisabled?: boolean;
 }
 
@@ -28,6 +29,7 @@ export default function InboundItemTable({
   selectedItemIds = [],
   onSelect,
   onTargetQtyChange,
+  onInboundQtyChange,
   isDisabled = false,
 }: InboundItemTableProps) {
   const isColumnEmpty = (key: keyof InboundItem) => {
@@ -110,7 +112,22 @@ export default function InboundItemTable({
                 <div className={`${cell110} text-greyColor-grey900`}>
                   {typeof item.price === 'number' ? `${item.price.toLocaleString()}원` : item.price}
                 </div>
-                <div className={`${cell110} text-greyColor-grey900`}>{item.inboundQty}</div>
+                <div className={`${cell110} flex items-center justify-center`}>
+                  {isProgress ? (
+                    <input
+                      type="number"
+                      value={item.inboundQty === '-' ? '' : item.inboundQty}
+                      onChange={(e) => onInboundQtyChange?.(item.id, e.target.value)}
+                      disabled={item.status === '완료'}
+                      className={`h-[30px] w-[100px] border border-greyColor-grey300 rounded-[5px] px-2 text-center font-pretendard text-[14px] text-black focus:outline-none focus:border-mainColor-blue600 ${
+                        item.status === '완료' ? 'cursor-not-allowed bg-greyColor-grey100' : ''
+                      }`}
+                      min="0"
+                    />
+                  ) : (
+                    <span className="text-greyColor-grey900">{item.inboundQty === '-' ? '' : item.inboundQty}</span>
+                  )}
+                </div>
                 <div className={`${cell110} text-greyColor-grey900`}>{item.currentQty}</div>
                 <div className={`${cell110} flex items-center justify-center`}>
                   {isDisabled ? (

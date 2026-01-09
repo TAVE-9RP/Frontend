@@ -358,6 +358,12 @@ export default function InventoryInboundTaskDetailPage() {
     );
   };
 
+  const handleInboundQtyChange = (id: string, value: string) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => (item.id === id ? { ...item, inboundQty: value } : item)),
+    );
+  };
+
   const isPending = taskDetail.status === 'APPROVAL_PENDING';
   const isInProgress = taskDetail.status === 'IN_PROGRESS';
   const isDisabled = isPending || isInProgress;
@@ -493,6 +499,7 @@ export default function InventoryInboundTaskDetailPage() {
                   selectedItemIds={selectedItemIds}
                   onSelect={handleItemSelect}
                   onTargetQtyChange={handleTargetQtyChange}
+                  onInboundQtyChange={handleInboundQtyChange}
                   isDisabled={isDisabled}
                 />
               )}
