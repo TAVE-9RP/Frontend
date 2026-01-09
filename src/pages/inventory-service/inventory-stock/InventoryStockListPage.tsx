@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SearchBar from '../../../components/common/SearchBar';
 import SideBar from '../../../components/common/SideBar';
 import InventoryStockListTable from '../../../components/common/InventoryStockListTable';
+import { getItems } from '../../../apis/item';
 
 interface InventoryStock {
   id: number;
@@ -14,59 +15,6 @@ interface InventoryStock {
   creationDate: string;
 }
 
-const MOCK_INVENTORY_LIST: InventoryStock[] = [
-  {
-    id: 1,
-    inventoryNumber: '1111-1111',
-    itemName: '애플망고',
-    quantity: 1200,
-    itemPrice: '1000',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 2,
-    inventoryNumber: '1111-1112',
-    itemName: '카피바라',
-    quantity: 60000,
-    itemPrice: '500000000',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 3,
-    inventoryNumber: '1111-4444',
-    itemName: '초코우유',
-    quantity: 1200,
-    itemPrice: '1500',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 4,
-    inventoryNumber: '1111-7777',
-    itemName: '바나나',
-    quantity: 1200,
-    itemPrice: '가격입니다.',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 5,
-    inventoryNumber: '1111-8885',
-    itemName: '김부각',
-    quantity: 1200,
-    itemPrice: '가격입니다.',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-];
-
 export default function InventoryStockListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [stockList, setStockList] = useState<InventoryStock[]>([]);
@@ -76,18 +24,42 @@ export default function InventoryStockListPage() {
     setSearchTerm(event.target.value);
   };
 
-  const fetchStock = () => {
+  // null 값을 "-"로 변환하는 헬퍼 함수
+  const formatNullValue = (value: string | null | undefined): string => {
+    return value ?? '-';
+  };
+
+  // API에서 데이터 가져오기
+  const fetchStock = async () => {
     setIsLoading(true);
+    try {
+      // 검색어가 있으면 keyword로 전달, 없으면 공백으로 전달
+      const keyword = searchTerm.trim();
+      const response = await getItems(keyword);
+      
+      if (response.isSuccess && response.result) {
+        // API 응답을 InventoryStock 형식으로 변환
+        const mappedStocks: InventoryStock[] = response.result.map((item: any) => ({
+          id: item.itemId,
+          inventoryNumber: formatNullValue(item.code),
+          itemName: formatNullValue(item.name),
+          quantity: item.quantity ?? 0,
+          itemPrice: item.price ? String(item.price) : '-',
+          location: formatNullValue(item.location),
+          recentInboundDate: formatNullValue(item.receivedAt),
+          creationDate: formatNullValue(item.createdAt),
+        }));
 
-    setTimeout(() => {
-      const filteredList = MOCK_INVENTORY_LIST.filter(
-        (stock) =>
-          stock.inventoryNumber.includes(searchTerm) || stock.itemName.includes(searchTerm),
-      );
-
-      setStockList(filteredList);
+        setStockList(mappedStocks);
+      } else {
+        setStockList([]);
+      }
+    } catch (error) {
+      console.error('재고 목록 가져오기 실패:', error);
+      setStockList([]);
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
   };
 
   useEffect(() => {

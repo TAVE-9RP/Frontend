@@ -144,7 +144,7 @@ export default function OutboundTaskListPage() {
     return value ?? '-';
   };
 
-  // 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
+  // 날짜를 '2025-12-21T14:22:00' 형식에서 '2025-12-21' 형식으로 변환
   const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString || dateString === '-') return '-';
     
@@ -152,8 +152,7 @@ export default function OutboundTaskListPage() {
     const datePart = dateString.split('T')[0];
     if (!datePart) return '-';
     
-    // '-'를 '.'로 변환
-    return datePart.replace(/-/g, '.');
+    return datePart;
   };
 
   // API에서 데이터 가져오기

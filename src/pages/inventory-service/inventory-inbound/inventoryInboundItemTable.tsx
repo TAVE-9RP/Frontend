@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface InboundItem {
   id: string;
+  inventoryItemId?: number;
   name: string;
   price: number | string;
   inboundQty: number | string;
@@ -16,6 +17,9 @@ interface InboundItemTableProps {
   isProgress?: boolean;
   selectedItemIds: string[];
   onSelect: (id: string) => void;
+  onTargetQtyChange?: (id: string, value: string) => void;
+  onInboundQtyChange?: (id: string, value: string) => void;
+  isDisabled?: boolean;
 }
 
 export default function InboundItemTable({
@@ -24,6 +28,9 @@ export default function InboundItemTable({
   isProgress = false,
   selectedItemIds = [],
   onSelect,
+  onTargetQtyChange,
+  onInboundQtyChange,
+  isDisabled = false,
 }: InboundItemTableProps) {
   const isColumnEmpty = (key: keyof InboundItem) => {
     if (items.length === 0) return true;
@@ -59,9 +66,9 @@ export default function InboundItemTable({
         <div className={`${cell110} ${getHeaderTextColor('id')}`}>재고 번호</div>
         <div className={`${cell110} ${getHeaderTextColor('name')}`}>물품명</div>
         <div className={`${cell110} ${getHeaderTextColor('price')}`}>물품 가격</div>
-        <div className={`${cell110} ${getHeaderTextColor('inboundQty')}`}>입고 수량</div>
-        <div className={`${cell110} ${getHeaderTextColor('currentQty')}`}>현재 입고 수량</div>
-        <div className={`${cell110} ${getHeaderTextColor('targetQty')}`}>목표 입고 수량</div>
+        <div className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('inboundQty')}`}>입고 수량</div>
+        <div className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('currentQty')}`}>현재 입고 수량</div>
+        <div className={`${cell110} text-greyColor-grey900`}>목표 입고 수량</div>
         <div className={`${cell110} text-greyColor-grey900`}>처리 상태</div>
       </div>
 
@@ -105,9 +112,36 @@ export default function InboundItemTable({
                 <div className={`${cell110} text-greyColor-grey900`}>
                   {typeof item.price === 'number' ? `${item.price.toLocaleString()}원` : item.price}
                 </div>
-                <div className={`${cell110} text-greyColor-grey900`}>{item.inboundQty}</div>
+                <div className={`${cell110} flex items-center justify-center`}>
+                  {isProgress ? (
+                    <input
+                      type="number"
+                      value={item.inboundQty === '-' ? '' : item.inboundQty}
+                      onChange={(e) => onInboundQtyChange?.(item.id, e.target.value)}
+                      disabled={!isSelected || item.status === '완료'}
+                      className={`h-[30px] w-[100px] border border-greyColor-grey300 rounded-[5px] px-2 text-center font-pretendard text-[14px] text-black focus:outline-none focus:border-mainColor-blue600 ${
+                        !isSelected || item.status === '완료' ? 'cursor-not-allowed bg-greyColor-grey100' : ''
+                      }`}
+                      min="0"
+                    />
+                  ) : (
+                    <span className="text-greyColor-grey900">{item.inboundQty === '-' ? '' : item.inboundQty}</span>
+                  )}
+                </div>
                 <div className={`${cell110} text-greyColor-grey900`}>{item.currentQty}</div>
-                <div className={`${cell110} text-greyColor-grey900`}>{item.targetQty}</div>
+                <div className={`${cell110} flex items-center justify-center`}>
+                  {isDisabled ? (
+                    <span className="text-greyColor-grey900">{item.targetQty === '-' ? '' : item.targetQty}</span>
+                  ) : (
+                    <input
+                      type="number"
+                      value={item.targetQty === '-' ? '' : item.targetQty}
+                      onChange={(e) => onTargetQtyChange?.(item.id, e.target.value)}
+                      className="h-[30px] w-[100px] border border-greyColor-grey300 rounded-[5px] px-2 text-center font-pretendard text-[14px] text-black focus:outline-none focus:border-mainColor-blue600"
+                      min="0"
+                    />
+                  )}
+                </div>
                 <div className={cell110}>
                   <div
                     className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium ${

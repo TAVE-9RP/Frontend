@@ -51,5 +51,35 @@ export const updateInventory = async (
   return response.data;
 };
 
+export const rejectInventory = async (inventoryId: string | number) => {
+  const response = await api.patch(`/admin/inventory/${inventoryId}/reject`);
+  return response.data;
+};
+
+export const updateInventoryItemTargetQuantity = async (
+  inventoryId: string | number,
+  updates: { inventoryItemId: number; targetQuantity: number }[],
+) => {
+  const response = await api.patch(`/inventory/${inventoryId}/items/targetQuantity`, {
+    updates: updates,
+  });
+  return response.data;
+};
+
+export const processInventoryItems = async (
+  inventoryId: string | number,
+  items: { inventoryItemId: number; receiveQuantity: number }[],
+) => {
+  const response = await api.patch(`/inventory/${inventoryId}/items`, {
+    items: items,
+  });
+  return response.data;
+};
+
+export const completeInventory = async (inventoryId: string | number) => {
+  const response = await api.patch(`/inventory/${inventoryId}/complete`);
+  return response.data;
+};
+
 export default api;
 

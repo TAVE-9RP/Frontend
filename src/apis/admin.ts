@@ -72,4 +72,14 @@ export const approveInventory = async (inventoryId: string | number) => {
   return response.data;
 };
 
+export const approveLogistics = async (logisticsId: string | number) => {
+  const response = await api.patch(`/admin/logistics/${logisticsId}/approve`);
+  return response.data;
+};
+
+export const rejectLogistics = async (logisticsId: string | number) => {
+  const response = await api.patch(`/admin/logistics/${logisticsId}/reject`);
+  return response.data;
+};
+
 export default api;

@@ -5,6 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import { getItems, getItemHistory } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -64,12 +65,6 @@ const MOCK_INVENTORY_LIST = [
   },
 ];
 
-const MOCK_HISTORY_DATA = [
-  { id: 1, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-  { id: 2, type: '출고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-  { id: 3, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-  { id: 4, type: '입고' as const, manager: '홍길동', date: '2025-01-01', quantity: 2000 },
-];
 
 const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="flex w-[390px] flex-col">
@@ -83,6 +78,7 @@ export default function InventoryStockDetailPage() {
 
   const [inventoryDetail, setInventoryDetail] = useState<any>(null);
   const [isChanged, setIsChanged] = useState(false);
+  const [historyData, setHistoryData] = useState<any[]>([]);
 
   const [isTargetChanged, setIsTargetChanged] = useState(false);
   const [isSafetyChanged, setIsSafetyChanged] = useState(false);
@@ -90,11 +86,71 @@ export default function InventoryStockDetailPage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
 
+  // 날짜 포맷팅 함수 (ISO 형식에서 YYYY-MM-DD 형식으로)
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return '-';
+    const datePart = dateString.split('T')[0];
+    return datePart || '-';
+  };
+
   useEffect(() => {
-    const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
-    if (found) {
-      setInventoryDetail(found);
-    }
+    const fetchInventoryDetail = async () => {
+      if (!inventoryNumber) return;
+
+      try {
+        // 재고 번호로 검색
+        const response = await getItems(inventoryNumber);
+
+        if (response.isSuccess && response.result) {
+          const found = response.result.find((item: any) => item.code === inventoryNumber);
+
+          if (found) {
+            setInventoryDetail({
+              id: found.itemId,
+              inventoryNumber: found.code,
+              itemName: found.name,
+              quantity: found.quantity ?? 0,
+              itemPrice: found.price ? String(found.price) : '-',
+              location: found.location ?? '-',
+              creationDate: found.createdAt ?? '-',
+              targetQty: '-',
+              safetyQty: '-',
+            });
+
+            // 입출고 이력 API 호출
+            if (found.itemId) {
+              try {
+                const historyResponse = await getItemHistory(found.itemId);
+                if (historyResponse.isSuccess && historyResponse.result) {
+                  const mappedHistory = historyResponse.result.map((item: any) => ({
+                    id: item.itemHistoryId,
+                    type: item.taskType === 'INVENTORY' ? ('입고' as const) : ('출하' as const),
+                    manager: item.memberName || '-',
+                    date: formatDate(item.processedAt),
+                    quantity: item.changeQuantity || 0,
+                  }));
+                  setHistoryData(mappedHistory);
+                } else {
+                  setHistoryData([]);
+                }
+              } catch (error) {
+                console.error('입출고 이력 가져오기 실패:', error);
+                setHistoryData([]);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('재고 정보 가져오기 실패:', error);
+        // API 실패 시 MOCK 데이터에서 찾기 (fallback)
+        const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
+        if (found) {
+          setInventoryDetail(found);
+        }
+      }
+    };
+
+    fetchInventoryDetail();
   }, [inventoryNumber]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,7 +300,7 @@ export default function InventoryStockDetailPage() {
             <h2 className="mb-4 block font-pretendard text-[19px] font-bold text-black">
               입출고 이력
             </h2>
-            <InventoryHistoryTable historyData={MOCK_HISTORY_DATA} />
+            <InventoryHistoryTable historyData={historyData} />
           </div>
 
           <div className="mt-auto flex justify-end pt-10">
