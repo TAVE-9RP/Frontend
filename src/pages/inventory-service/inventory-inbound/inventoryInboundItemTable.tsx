@@ -118,9 +118,9 @@ export default function InboundItemTable({
                       type="number"
                       value={item.inboundQty === '-' ? '' : item.inboundQty}
                       onChange={(e) => onInboundQtyChange?.(item.id, e.target.value)}
-                      disabled={item.status === '완료'}
+                      disabled={!isSelected || item.status === '완료'}
                       className={`h-[30px] w-[100px] border border-greyColor-grey300 rounded-[5px] px-2 text-center font-pretendard text-[14px] text-black focus:outline-none focus:border-mainColor-blue600 ${
-                        item.status === '완료' ? 'cursor-not-allowed bg-greyColor-grey100' : ''
+                        !isSelected || item.status === '완료' ? 'cursor-not-allowed bg-greyColor-grey100' : ''
                       }`}
                       min="0"
                     />

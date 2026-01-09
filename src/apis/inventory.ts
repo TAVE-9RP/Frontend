@@ -66,5 +66,15 @@ export const updateInventoryItemTargetQuantity = async (
   return response.data;
 };
 
+export const processInventoryItems = async (
+  inventoryId: string | number,
+  items: { inventoryItemId: number; receiveQuantity: number }[],
+) => {
+  const response = await api.patch(`/inventory/${inventoryId}/items`, {
+    items: items,
+  });
+  return response.data;
+};
+
 export default api;
 

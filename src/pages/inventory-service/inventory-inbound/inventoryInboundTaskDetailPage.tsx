@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity, processInventoryItems } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -316,27 +316,65 @@ export default function InventoryInboundTaskDetailPage() {
     setIsInboundConfirmModalOpen(true);
   };
 
-  const handleInboundConfirm = () => {
-    // API 연동 예정 - 입고 처리 API 호출 후 목록 새로고침
-    setSelectedItemIds([]);
-    setIsInboundConfirmModalOpen(false);
-    
-    // TODO: 입고 처리 API 호출 후 setRefreshItems((prev) => prev + 1)로 목록 새로고침
-    // 임시로 API 데이터 새로고침
-    setRefreshItems((prev) => prev + 1);
-    
-    // 상태 확인은 API 응답에서 가져와야 함
-    const isTaskFullyCompleted = false; // TODO: API 응답에서 확인
+  const handleInboundConfirm = async () => {
+    if (!projectNumber) return;
 
-    if (isTaskFullyCompleted) {
-      setTaskDetail((prev) => ({ ...prev, status: 'COMPLETED' }));
+    try {
+      // 선택된 항목들 필터링
+      const selectedItems = items.filter((item) => selectedItemIds.includes(item.id));
+      
+      // API 요청 형식으로 매핑
+      const processItems = selectedItems
+        .filter((item) => item.inventoryItemId && item.inboundQty && item.inboundQty !== '-' && item.inboundQty !== '')
+        .map((item) => ({
+          inventoryItemId: item.inventoryItemId!,
+          receiveQuantity: Number(item.inboundQty),
+        }));
+
+      if (processItems.length === 0) {
+        alert('입고 수량이 입력된 항목이 없습니다.');
+        return;
+      }
+
+      console.log('=== 입고 처리 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      console.log('요청 데이터:', { items: processItems });
+
+      const response = await processInventoryItems(projectNumber, processItems);
+      console.log('=== 입고 처리 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        setSelectedItemIds([]);
+        setIsInboundConfirmModalOpen(false);
+        
+        // 입고 물품 목록 GET API 재호출
+        setRefreshItems((prev) => prev + 1);
+        
+        setIsCompleteSuccessModalOpen(true);
+      } else {
+        alert('입고 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('입고 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `입고 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
     }
-
-    setIsCompleteSuccessModalOpen(true);
   };
 
   const isFullyDone = taskDetail.status === 'COMPLETED';
 
+  // 입고 처리 버튼 활성화 조건 체크
+  const hasSelectedItems = selectedItemIds.length > 0;
+  const hasInboundQtyForSelected = selectedItemIds.some((id) => {
+    const item = items.find((item) => item.id === id);
+    return item && item.inboundQty && item.inboundQty !== '-' && item.inboundQty !== '';
+  });
+  const canProcessInbound = hasSelectedItems && hasInboundQtyForSelected;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -520,7 +558,12 @@ export default function InventoryInboundTaskDetailPage() {
             {!isFullyDone &&
               (isInProgress ? (
                 <button
-                  className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
+                  disabled={!canProcessInbound}
+                  className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
+                    !canProcessInbound
+                      ? 'cursor-not-allowed bg-greyColor-grey300'
+                      : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                  }`}
                   onClick={handleInboundProcess}
                 >
                   입고처리
