@@ -196,8 +196,8 @@ export default function InventoryInboundTaskDetailPage() {
             inventoryItemId: item.inventoryItemId, // inventoryItemId 저장
             name: item.itemName, // 물품명
             price: item.itemPrice, // 물품 가격
-            inboundQty: item.processedQuantity || '-', // 입고 수량
-            currentQty: '-', // 현재 입고 수량 (API 응답에 없음)
+            inboundQty: '-', // 입고 수량
+            currentQty: item.processedQuantity || '-', // 현재 입고 수량
             targetQty: item.targetQuantity || '-', // 목표 입고 수량
             status: mapProcessingStatus(item.inventoryProcessingStatus), // 처리 상태
           }));
