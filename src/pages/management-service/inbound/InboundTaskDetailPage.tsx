@@ -8,7 +8,7 @@ import ManagerChip from '@/components/common/ManagerChip';
 import InboundItemList from '@/components/common/InboundItemList';
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import ApproveModal from '@/components/modals/ApproveModal';
-import { getInventoryDetail, getInventoryItems } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, rejectInventory } from '../../../apis/inventory';
 import { approveInventory } from '../../../apis/admin';
 import { InboundItem } from '@/components/common/InboundItemList';
 
@@ -256,10 +256,34 @@ export default function InboundTaskDetailPage() {
     }
   };
 
-  const handleRejectApproval = () => {
-    setIsModalOpen(false);
-    setStatusType('cancel');
-    setIsStatusModalOpen(true);
+  const handleRejectApproval = async () => {
+    if (!inventoryId) return;
+
+    try {
+      console.log('=== 입고 거절 API 호출 ===');
+      console.log('inventoryId:', inventoryId);
+      const response = await rejectInventory(inventoryId);
+      console.log('=== 입고 거절 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        setIsModalOpen(false);
+        setStatusType('cancel');
+        setIsStatusModalOpen(true);
+        // 페이지 새로고침하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+      } else {
+        alert('거절 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('거절 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `거절 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
   };
 
   return (

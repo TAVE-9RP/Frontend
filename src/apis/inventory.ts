@@ -51,5 +51,10 @@ export const updateInventory = async (
   return response.data;
 };
 
+export const rejectInventory = async (inventoryId: string | number) => {
+  const response = await api.patch(`/admin/inventory/${inventoryId}/reject`);
+  return response.data;
+};
+
 export default api;
 
