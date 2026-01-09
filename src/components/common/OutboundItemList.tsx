@@ -34,8 +34,8 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
     { label: '현재 출하 수량', width: 'w-[140px]', key: 'currQty' },
     { label: '목표 출하 수량', width: 'w-[140px]', key: 'targetQty' },
     { label: '판매액', width: 'w-[140px]', key: 'unitPrice' },
-    { label: '처리 상태', width: 'w-[122px]', key: 'status' },
     { label: '총 판매액', width: 'w-[140px]', key: 'total' },
+    { label: '처리 상태', width: 'w-[122px]', key: 'status' },
   ];
   return (
     <div className="box-border w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
@@ -86,7 +86,10 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
                 <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
                   {salesAmount.toLocaleString()}원
                 </div>
-                <div className="box-border flex h-full w-[122px] items-center justify-center border-r-[2px] border-greyColor-grey200">
+                <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
+                  {itemTotalPrice.toLocaleString()}원
+                </div>
+                <div className="box-border flex h-full w-[122px] items-center justify-center font-pretendard text-[13px]">
                   <div
                     className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] ${item.status === '완료' ? 'bg-mainColor-blue050 text-mainColor-blue600' : 'bg-greyColor-grey200 text-greyColor-grey600'}`}
                   >
@@ -94,10 +97,6 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
                       {item.status}
                     </span>
                   </div>
-                </div>
-
-                <div className="box-border flex h-full w-[140px] items-center justify-center font-pretendard text-[13px] text-black">
-                  {itemTotalPrice.toLocaleString()}원
                 </div>
               </div>
             );
