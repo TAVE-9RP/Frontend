@@ -376,6 +376,9 @@ export default function InventoryInboundTaskDetailPage() {
   });
   const canProcessInbound = hasSelectedItems && hasInboundQtyForSelected;
 
+  // 모든 물품의 처리 상태가 '완료'인지 확인
+  const allItemsCompleted = items.length > 0 && items.every((item) => item.status === '완료');
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setTaskDetail((prev) => ({ ...prev, [name]: value }));
@@ -557,17 +560,29 @@ export default function InventoryInboundTaskDetailPage() {
           <div className="mt-auto flex justify-end pt-10">
             {!isFullyDone &&
               (isInProgress ? (
-                <button
-                  disabled={!canProcessInbound}
-                  className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
-                    !canProcessInbound
-                      ? 'cursor-not-allowed bg-greyColor-grey300'
-                      : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
-                  }`}
-                  onClick={handleInboundProcess}
-                >
-                  입고처리
-                </button>
+                allItemsCompleted ? (
+                  <button
+                    className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
+                    onClick={() => {
+                      // TODO: 입고 완료 API 연동
+                      alert('입고 완료 처리 기능은 준비 중입니다.');
+                    }}
+                  >
+                    입고 완료
+                  </button>
+                ) : (
+                  <button
+                    disabled={!canProcessInbound}
+                    className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
+                      !canProcessInbound
+                        ? 'cursor-not-allowed bg-greyColor-grey300'
+                        : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                    }`}
+                    onClick={handleInboundProcess}
+                  >
+                    입고처리
+                  </button>
+                )
               ) : (
                 <button
                   disabled={!canRequestApproval}
