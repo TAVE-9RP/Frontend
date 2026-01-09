@@ -2,7 +2,7 @@ import React from 'react';
 
 interface HistoryItem {
   id: number;
-  type: '입고' | '출고';
+  type: '입고' | '출하';
   manager: string;
   date: string;
   quantity: number;
@@ -43,7 +43,7 @@ export default function InventoryHistoryTable({ historyData }: InventoryHistoryT
                   </span>
                 ) : (
                   <span className="flex h-[25px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px] font-pretendard text-[17px] font-bold text-subColor-orange900">
-                    출고
+                    출하
                   </span>
                 )}
               </div>

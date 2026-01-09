@@ -5,7 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
-import { getItems } from '../../../apis/item';
+import { getItems, getItemHistory } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -78,12 +78,20 @@ export default function InventoryStockDetailPage() {
 
   const [inventoryDetail, setInventoryDetail] = useState<any>(null);
   const [isChanged, setIsChanged] = useState(false);
+  const [historyData, setHistoryData] = useState<any[]>([]);
 
   const [isTargetChanged, setIsTargetChanged] = useState(false);
   const [isSafetyChanged, setIsSafetyChanged] = useState(false);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
+
+  // 날짜 포맷팅 함수 (ISO 형식에서 YYYY-MM-DD 형식으로)
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return '-';
+    const datePart = dateString.split('T')[0];
+    return datePart || '-';
+  };
 
   useEffect(() => {
     const fetchInventoryDetail = async () => {
@@ -108,6 +116,28 @@ export default function InventoryStockDetailPage() {
               targetQty: '-',
               safetyQty: '-',
             });
+
+            // 입출고 이력 API 호출
+            if (found.itemId) {
+              try {
+                const historyResponse = await getItemHistory(found.itemId);
+                if (historyResponse.isSuccess && historyResponse.result) {
+                  const mappedHistory = historyResponse.result.map((item: any) => ({
+                    id: item.itemHistoryId,
+                    type: item.taskType === 'INVENTORY' ? ('입고' as const) : ('출하' as const),
+                    manager: item.memberName || '-',
+                    date: formatDate(item.processedAt),
+                    quantity: item.changeQuantity || 0,
+                  }));
+                  setHistoryData(mappedHistory);
+                } else {
+                  setHistoryData([]);
+                }
+              } catch (error) {
+                console.error('입출고 이력 가져오기 실패:', error);
+                setHistoryData([]);
+              }
+            }
           }
         }
       } catch (error) {
@@ -270,7 +300,7 @@ export default function InventoryStockDetailPage() {
             <h2 className="mb-4 block font-pretendard text-[19px] font-bold text-black">
               입출고 이력
             </h2>
-            <InventoryHistoryTable historyData={[]} />
+            <InventoryHistoryTable historyData={historyData} />
           </div>
 
           <div className="mt-auto flex justify-end pt-10">
