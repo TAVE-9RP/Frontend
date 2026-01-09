@@ -56,5 +56,15 @@ export const rejectInventory = async (inventoryId: string | number) => {
   return response.data;
 };
 
+export const updateInventoryItemTargetQuantity = async (
+  inventoryId: string | number,
+  updates: { inventoryItemId: number; targetQuantity: number }[],
+) => {
+  const response = await api.patch(`/inventory/${inventoryId}/items/targetQuantity`, {
+    updates: updates,
+  });
+  return response.data;
+};
+
 export default api;
 

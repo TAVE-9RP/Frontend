@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -193,6 +193,7 @@ export default function InventoryInboundTaskDetailPage() {
         if (response.isSuccess && response.result) {
           const mappedItems: InboundItem[] = response.result.map((item: any) => ({
             id: item.itemCode, // 재고 번호
+            inventoryItemId: item.inventoryItemId, // inventoryItemId 저장
             name: item.itemName, // 물품명
             price: item.itemPrice, // 물품 가격
             inboundQty: item.processedQuantity || '-', // 입고 수량
@@ -250,7 +251,31 @@ export default function InventoryInboundTaskDetailPage() {
         return;
       }
 
-      // 2. 승인 요청 API 호출
+      // 2. 목표 입고 수량 업데이트 API 호출
+      console.log('=== 목표 입고 수량 업데이트 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      
+      const targetQuantityUpdates = items
+        .filter((item) => item.inventoryItemId && item.targetQty && item.targetQty !== '-' && item.targetQty !== '')
+        .map((item) => ({
+          inventoryItemId: item.inventoryItemId!,
+          targetQuantity: Number(item.targetQty),
+        }));
+      
+      console.log('목표 입고 수량 업데이트 데이터:', targetQuantityUpdates);
+      
+      if (targetQuantityUpdates.length > 0) {
+        const targetQtyResponse = await updateInventoryItemTargetQuantity(projectNumber, targetQuantityUpdates);
+        console.log('=== 목표 입고 수량 업데이트 API 응답 ===');
+        console.log('응답:', targetQtyResponse);
+        
+        if (!targetQtyResponse.isSuccess) {
+          alert('목표 입고 수량 업데이트에 실패했습니다.');
+          return;
+        }
+      }
+
+      // 3. 승인 요청 API 호출
       console.log('=== 승인 요청 API 호출 ===');
       console.log('inventoryId:', projectNumber);
       const approvalResponse = await requestApproval(projectNumber);

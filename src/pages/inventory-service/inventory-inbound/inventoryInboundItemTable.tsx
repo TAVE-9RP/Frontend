@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface InboundItem {
   id: string;
+  inventoryItemId?: number;
   name: string;
   price: number | string;
   inboundQty: number | string;
