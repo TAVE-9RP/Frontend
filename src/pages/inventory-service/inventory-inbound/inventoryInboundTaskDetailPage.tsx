@@ -337,6 +337,14 @@ export default function InventoryInboundTaskDetailPage() {
   const isInProgress = taskDetail.status === 'IN_PROGRESS';
   const isDisabled = isPending || isInProgress;
 
+  // 승인 요청 버튼 활성화 조건 체크
+  const isTaskNameEmpty = !taskDetail.taskName || taskDetail.taskName.trim() === '';
+  const isDescriptionEmpty = !taskDetail.description || taskDetail.description.trim() === '';
+  const hasEmptyTargetQty = items.some(
+    (item) => !item.targetQty || item.targetQty === '' || item.targetQty === '-',
+  );
+  const canRequestApproval = !isPending && items.length > 0 && !isTaskNameEmpty && !isDescriptionEmpty && !hasEmptyTargetQty;
+
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
@@ -487,9 +495,9 @@ export default function InventoryInboundTaskDetailPage() {
                 </button>
               ) : (
                 <button
-                  disabled={isPending || items.length === 0}
+                  disabled={!canRequestApproval}
                   className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
-                    isPending || items.length === 0
+                    !canRequestApproval
                       ? 'cursor-not-allowed bg-greyColor-grey300'
                       : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
                   }`}
