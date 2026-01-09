@@ -434,19 +434,21 @@ export default function OutboundTaskDetailPage() {
             </div>
           </div>
 
-          <div className="mt-[50px] flex justify-end">
-            <button
-              disabled={taskDetail.status !== 'APPROVAL_PENDING' || taskDetail.logisticsStatus === 'REJECT'}
-              onClick={() => setIsModalOpen(true)}
-              className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                taskDetail.status === 'APPROVAL_PENDING' && taskDetail.logisticsStatus !== 'REJECT'
-                  ? 'cursor-pointer bg-mainColor-blue600'
-                  : 'cursor-default bg-greyColor-grey300'
-              }`}
-            >
-              승인 처리
-            </button>
-          </div>
+          {taskDetail.logisticsStatus !== 'IN_PROGRESS' && (
+            <div className="mt-[50px] flex justify-end">
+              <button
+                disabled={taskDetail.status !== 'APPROVAL_PENDING' || taskDetail.logisticsStatus === 'REJECT'}
+                onClick={() => setIsModalOpen(true)}
+                className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
+                  taskDetail.status === 'APPROVAL_PENDING' && taskDetail.logisticsStatus !== 'REJECT'
+                    ? 'cursor-pointer bg-mainColor-blue600'
+                    : 'cursor-default bg-greyColor-grey300'
+                }`}
+              >
+                승인 처리
+              </button>
+            </div>
+          )}
         </div>
       </main>
 
