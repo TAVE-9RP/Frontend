@@ -176,6 +176,7 @@ export default function OutboundTaskDetailPage() {
     carrier: '',
     description: '',
     status: '',
+    logisticsStatus: '', // 원본 logisticsStatus 저장
   });
 
   useEffect(() => {
@@ -209,6 +210,7 @@ export default function OutboundTaskDetailPage() {
             carrier: formatNullValue(result.logisticsCarrierCompany),
             description: formatNullValue(result.logisticsDescription),
             status: mapStatusForStepBar(result.logisticsStatus),
+            logisticsStatus: result.logisticsStatus || '', // 원본 상태 저장
           };
           console.log('=== 설정할 taskDetail ===');
           console.log('newTaskDetail:', newTaskDetail);
@@ -434,10 +436,10 @@ export default function OutboundTaskDetailPage() {
 
           <div className="mt-[50px] flex justify-end">
             <button
-              disabled={taskDetail.status !== 'APPROVAL_PENDING'}
+              disabled={taskDetail.status !== 'APPROVAL_PENDING' || taskDetail.logisticsStatus === 'REJECT'}
               onClick={() => setIsModalOpen(true)}
               className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                taskDetail.status === 'APPROVAL_PENDING'
+                taskDetail.status === 'APPROVAL_PENDING' && taskDetail.logisticsStatus !== 'REJECT'
                   ? 'cursor-pointer bg-mainColor-blue600'
                   : 'cursor-default bg-greyColor-grey300'
               }`}
