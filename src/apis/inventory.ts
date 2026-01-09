@@ -76,5 +76,10 @@ export const processInventoryItems = async (
   return response.data;
 };
 
+export const completeInventory = async (inventoryId: string | number) => {
+  const response = await api.patch(`/inventory/${inventoryId}/complete`);
+  return response.data;
+};
+
 export default api;
 

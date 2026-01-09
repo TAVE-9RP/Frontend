@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity, processInventoryItems } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity, processInventoryItems, completeInventory } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -368,6 +368,47 @@ export default function InventoryInboundTaskDetailPage() {
 
   const isFullyDone = taskDetail.status === 'COMPLETED';
 
+  const handleCompleteInventory = async () => {
+    if (!projectNumber) return;
+
+    try {
+      console.log('=== 입고 완료 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+
+      const response = await completeInventory(projectNumber);
+      console.log('=== 입고 완료 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        // 페이지 GET API 재호출하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+        // taskDetail도 새로고침
+        const detailResponse = await getInventoryDetail(projectNumber);
+        if (detailResponse.isSuccess && detailResponse.result) {
+          const result = detailResponse.result;
+          setTaskDetail({
+            projectNumber: formatNullValue(result.projectNumber),
+            taskName: result.inventoryTitle || '',
+            manager: formatAssignees(result.inventoryAssignees),
+            requestDate: formatDate(result.inventoryRequestedAt),
+            description: result.inventoryDescription || '',
+            status: mapStatusForStepBar(result.inventoryStatus),
+          });
+        }
+      } else {
+        alert('입고 완료 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('입고 완료 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `입고 완료 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
+  };
+
   // 입고 처리 버튼 활성화 조건 체크
   const hasSelectedItems = selectedItemIds.length > 0;
   const hasInboundQtyForSelected = selectedItemIds.some((id) => {
@@ -563,10 +604,7 @@ export default function InventoryInboundTaskDetailPage() {
                 allItemsCompleted ? (
                   <button
                     className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
-                    onClick={() => {
-                      // TODO: 입고 완료 API 연동
-                      alert('입고 완료 처리 기능은 준비 중입니다.');
-                    }}
+                    onClick={handleCompleteInventory}
                   >
                     입고 완료
                   </button>
