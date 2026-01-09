@@ -448,7 +448,7 @@ export default function InventoryInboundTaskDetailPage() {
 
   const isPending = taskDetail.status === 'APPROVAL_PENDING';
   const isInProgress = taskDetail.status === 'IN_PROGRESS';
-  const isDisabled = isPending || isInProgress;
+  const isDisabled = isPending || isInProgress || isFullyDone;
 
   // 승인 요청 버튼 활성화 조건 체크
   const isTaskNameEmpty = !taskDetail.taskName || taskDetail.taskName.trim() === '';
