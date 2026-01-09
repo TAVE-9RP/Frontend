@@ -150,6 +150,7 @@ export default function InboundTaskDetailPage() {
     requestDate: '',
     description: '',
     status: '',
+    inventoryStatus: '', // 원본 inventoryStatus 저장
   });
 
   useEffect(() => {
@@ -175,6 +176,7 @@ export default function InboundTaskDetailPage() {
             requestDate: formatDate(result.inventoryRequestedAt),
             description: formatNullValue(result.inventoryDescription),
             status: mapStatusForStepBar(result.inventoryStatus),
+            inventoryStatus: result.inventoryStatus || '', // 원본 상태 저장
           });
         }
       } catch (error: any) {
@@ -383,10 +385,10 @@ export default function InboundTaskDetailPage() {
           <div className="mt-[50px] flex justify-end">
             {taskDetail.status !== 'IN_PROGRESS' && taskDetail.status !== 'COMPLETED' && (
               <button
-                disabled={taskDetail.status !== 'APPROVAL_PENDING'}
+                disabled={taskDetail.status !== 'APPROVAL_PENDING' || taskDetail.inventoryStatus === 'REJECT'}
                 onClick={() => setIsModalOpen(true)}
                 className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                  taskDetail.status === 'APPROVAL_PENDING'
+                  taskDetail.status === 'APPROVAL_PENDING' && taskDetail.inventoryStatus !== 'REJECT'
                     ? 'cursor-pointer bg-mainColor-blue600'
                     : 'cursor-default bg-greyColor-grey300'
                 } `}
