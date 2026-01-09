@@ -14,59 +14,6 @@ interface InventoryStock {
   creationDate: string;
 }
 
-const MOCK_INVENTORY_LIST: InventoryStock[] = [
-  {
-    id: 1,
-    inventoryNumber: '1111-1111',
-    itemName: '애플망고',
-    quantity: 1200,
-    itemPrice: '1000',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 2,
-    inventoryNumber: '1111-1112',
-    itemName: '카피바라',
-    quantity: 60000,
-    itemPrice: '500000000',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 3,
-    inventoryNumber: '1111-4444',
-    itemName: '초코우유',
-    quantity: 1200,
-    itemPrice: '1500',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 4,
-    inventoryNumber: '1111-7777',
-    itemName: '바나나',
-    quantity: 1200,
-    itemPrice: '가격입니다.',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-  {
-    id: 5,
-    inventoryNumber: '1111-8885',
-    itemName: '김부각',
-    quantity: 1200,
-    itemPrice: '가격입니다.',
-    location: '위치입니다.',
-    recentInboundDate: '2025-10-25',
-    creationDate: '2025-10-25',
-  },
-];
-
 export default function InventoryStockListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [stockList, setStockList] = useState<InventoryStock[]>([]);
@@ -76,16 +23,13 @@ export default function InventoryStockListPage() {
     setSearchTerm(event.target.value);
   };
 
+  // TODO: API 연동 시 사용할 함수
   const fetchStock = () => {
     setIsLoading(true);
 
+    // API 연동 전까지 빈 배열로 설정
     setTimeout(() => {
-      const filteredList = MOCK_INVENTORY_LIST.filter(
-        (stock) =>
-          stock.inventoryNumber.includes(searchTerm) || stock.itemName.includes(searchTerm),
-      );
-
-      setStockList(filteredList);
+      setStockList([]);
       setIsLoading(false);
     }, 300);
   };
