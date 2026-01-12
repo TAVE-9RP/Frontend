@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SideBar from '@/components/common/SideBar';
-import DashboardChart from '@/components/common/DashboardChart';
+import DashboardChart from '@/components/dashboard/DashboardChart';
 import ProjectListTable from '@/components/dashboard/ProjectListTable';
 import DashboardTab from '@/components/dashboard/DashboardTab';
 import LeadTimeChart from '@/components/dashboard/LeadTimeChart';
@@ -33,7 +33,7 @@ export default function LogisticsHome() {
               2025.11.01 ~ 2025.11.30
             </p>
 
-            <div className="mt-[32px] flex flex-col pr-10">
+            <div className="mt-[16px] flex flex-col pr-10">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
                   <DashboardChart percent={80} label="출하 완료율(%)" colorType="blue" />
@@ -77,7 +77,7 @@ export default function LogisticsHome() {
           </section>
 
           <section className="mb-10 ml-[10px] mt-[40px] pr-10">
-            <h2 className="mb-[20px] font-pretendard text-[19px] font-bold text-black">
+            <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-black">
               프로젝트 리스트
             </h2>
             <div className="min-h-[400px] w-full max-w-[1070px] rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
