@@ -42,7 +42,7 @@ export default function InventoryHome() {
               2025.11.01 ~ 2025.11.30
             </p>
 
-            <div className="mt-[15px] flex gap-[20px] pr-10">
+            <div className="mt-[16px] flex gap-[20px] pr-10">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
                   <DashboardChart percent={80} label="안전 재고 확보율(%)" colorType="blue" />
