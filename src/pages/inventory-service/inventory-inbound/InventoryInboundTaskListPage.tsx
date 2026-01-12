@@ -143,6 +143,17 @@ export default function InventoryInboundTaskListPage() {
     return value ?? '-';
   };
 
+  // 날짜를 ISO 형식에서 'YYYY-MM-DD' 형식으로 변환
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString || dateString === '-') return '-';
+    
+    // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
+    const datePart = dateString.split('T')[0];
+    if (!datePart) return '-';
+    
+    return datePart;
+  };
+
   // API에서 데이터 가져오기
   useEffect(() => {
     const fetchInventoryList = async () => {
@@ -157,7 +168,7 @@ export default function InventoryInboundTaskListPage() {
             taskName: formatNullValue(item.inventoryTitle),
             items: formatNullValue(item.itemSummary),
             location: '-', // API 응답에 없으므로 "-"
-            requestDate: formatNullValue(item.requestedAt),
+            requestDate: formatDate(item.requestedAt),
             manager: formatNullValue(item.assigneeSummary),
             status: item.inventoryStatus as InventoryStatus, // API 응답의 status를 그대로 사용
           }));

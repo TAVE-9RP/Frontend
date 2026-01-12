@@ -11,7 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory } from '../../../apis/inventory';
+import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity, processInventoryItems, completeInventory } from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -193,10 +193,11 @@ export default function InventoryInboundTaskDetailPage() {
         if (response.isSuccess && response.result) {
           const mappedItems: InboundItem[] = response.result.map((item: any) => ({
             id: item.itemCode, // 재고 번호
+            inventoryItemId: item.inventoryItemId, // inventoryItemId 저장
             name: item.itemName, // 물품명
             price: item.itemPrice, // 물품 가격
-            inboundQty: item.processedQuantity || '-', // 입고 수량
-            currentQty: '-', // 현재 입고 수량 (API 응답에 없음)
+            inboundQty: '-', // 입고 수량
+            currentQty: item.processedQuantity || '-', // 현재 입고 수량
             targetQty: item.targetQuantity || '-', // 목표 입고 수량
             status: mapProcessingStatus(item.inventoryProcessingStatus), // 처리 상태
           }));
@@ -250,7 +251,31 @@ export default function InventoryInboundTaskDetailPage() {
         return;
       }
 
-      // 2. 승인 요청 API 호출
+      // 2. 목표 입고 수량 업데이트 API 호출
+      console.log('=== 목표 입고 수량 업데이트 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      
+      const targetQuantityUpdates = items
+        .filter((item) => item.inventoryItemId && item.targetQty && item.targetQty !== '-' && item.targetQty !== '')
+        .map((item) => ({
+          inventoryItemId: item.inventoryItemId!,
+          targetQuantity: Number(item.targetQty),
+        }));
+      
+      console.log('목표 입고 수량 업데이트 데이터:', targetQuantityUpdates);
+      
+      if (targetQuantityUpdates.length > 0) {
+        const targetQtyResponse = await updateInventoryItemTargetQuantity(projectNumber, targetQuantityUpdates);
+        console.log('=== 목표 입고 수량 업데이트 API 응답 ===');
+        console.log('응답:', targetQtyResponse);
+        
+        if (!targetQtyResponse.isSuccess) {
+          alert('목표 입고 수량 업데이트에 실패했습니다.');
+          return;
+        }
+      }
+
+      // 3. 승인 요청 API 호출
       console.log('=== 승인 요청 API 호출 ===');
       console.log('inventoryId:', projectNumber);
       const approvalResponse = await requestApproval(projectNumber);
@@ -291,27 +316,109 @@ export default function InventoryInboundTaskDetailPage() {
     setIsInboundConfirmModalOpen(true);
   };
 
-  const handleInboundConfirm = () => {
-    // API 연동 예정 - 입고 처리 API 호출 후 목록 새로고침
-    setSelectedItemIds([]);
-    setIsInboundConfirmModalOpen(false);
-    
-    // TODO: 입고 처리 API 호출 후 setRefreshItems((prev) => prev + 1)로 목록 새로고침
-    // 임시로 API 데이터 새로고침
-    setRefreshItems((prev) => prev + 1);
-    
-    // 상태 확인은 API 응답에서 가져와야 함
-    const isTaskFullyCompleted = false; // TODO: API 응답에서 확인
+  const handleInboundConfirm = async () => {
+    if (!projectNumber) return;
 
-    if (isTaskFullyCompleted) {
-      setTaskDetail((prev) => ({ ...prev, status: 'COMPLETED' }));
+    try {
+      // 선택된 항목들 필터링
+      const selectedItems = items.filter((item) => selectedItemIds.includes(item.id));
+      
+      // API 요청 형식으로 매핑
+      const processItems = selectedItems
+        .filter((item) => item.inventoryItemId && item.inboundQty && item.inboundQty !== '-' && item.inboundQty !== '')
+        .map((item) => ({
+          inventoryItemId: item.inventoryItemId!,
+          receiveQuantity: Number(item.inboundQty),
+        }));
+
+      if (processItems.length === 0) {
+        alert('입고 수량이 입력된 항목이 없습니다.');
+        return;
+      }
+
+      console.log('=== 입고 처리 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+      console.log('요청 데이터:', { items: processItems });
+
+      const response = await processInventoryItems(projectNumber, processItems);
+      console.log('=== 입고 처리 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        setSelectedItemIds([]);
+        setIsInboundConfirmModalOpen(false);
+        
+        // 입고 물품 목록 GET API 재호출
+        setRefreshItems((prev) => prev + 1);
+        
+        setIsCompleteSuccessModalOpen(true);
+      } else {
+        alert('입고 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('입고 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `입고 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
     }
-
-    setIsCompleteSuccessModalOpen(true);
   };
 
   const isFullyDone = taskDetail.status === 'COMPLETED';
 
+  const handleCompleteInventory = async () => {
+    if (!projectNumber) return;
+
+    try {
+      console.log('=== 입고 완료 API 호출 ===');
+      console.log('inventoryId:', projectNumber);
+
+      const response = await completeInventory(projectNumber);
+      console.log('=== 입고 완료 API 응답 ===');
+      console.log('응답:', response);
+
+      if (response.isSuccess) {
+        // 페이지 GET API 재호출하여 진행 상태 업데이트
+        setRefreshItems((prev) => prev + 1);
+        // taskDetail도 새로고침
+        const detailResponse = await getInventoryDetail(projectNumber);
+        if (detailResponse.isSuccess && detailResponse.result) {
+          const result = detailResponse.result;
+          setTaskDetail({
+            projectNumber: formatNullValue(result.projectNumber),
+            taskName: result.inventoryTitle || '',
+            manager: formatAssignees(result.inventoryAssignees),
+            requestDate: formatDate(result.inventoryRequestedAt),
+            description: result.inventoryDescription || '',
+            status: mapStatusForStepBar(result.inventoryStatus),
+          });
+        }
+      } else {
+        alert('입고 완료 처리에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('입고 완료 처리 실패:', error);
+      console.error('에러 응답:', error?.response?.data);
+      console.error('에러 상태 코드:', error?.response?.status);
+      console.error('에러 메시지:', error?.message);
+      alert(
+        `입고 완료 처리 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
+  };
+
+  // 입고 처리 버튼 활성화 조건 체크
+  const hasSelectedItems = selectedItemIds.length > 0;
+  const hasInboundQtyForSelected = selectedItemIds.some((id) => {
+    const item = items.find((item) => item.id === id);
+    return item && item.inboundQty && item.inboundQty !== '-' && item.inboundQty !== '';
+  });
+  const canProcessInbound = hasSelectedItems && hasInboundQtyForSelected;
+
+  // 모든 물품의 처리 상태가 '완료'인지 확인
+  const allItemsCompleted = items.length > 0 && items.every((item) => item.status === '완료');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -327,9 +434,29 @@ export default function InventoryInboundTaskDetailPage() {
     );
   };
 
+  const handleTargetQtyChange = (id: string, value: string) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => (item.id === id ? { ...item, targetQty: value } : item)),
+    );
+  };
+
+  const handleInboundQtyChange = (id: string, value: string) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => (item.id === id ? { ...item, inboundQty: value } : item)),
+    );
+  };
+
   const isPending = taskDetail.status === 'APPROVAL_PENDING';
   const isInProgress = taskDetail.status === 'IN_PROGRESS';
   const isDisabled = isPending || isInProgress;
+
+  // 승인 요청 버튼 활성화 조건 체크
+  const isTaskNameEmpty = !taskDetail.taskName || taskDetail.taskName.trim() === '';
+  const isDescriptionEmpty = !taskDetail.description || taskDetail.description.trim() === '';
+  const hasEmptyTargetQty = items.some(
+    (item) => !item.targetQty || item.targetQty === '' || item.targetQty === '-',
+  );
+  const canRequestApproval = !isPending && items.length > 0 && !isTaskNameEmpty && !isDescriptionEmpty && !hasEmptyTargetQty;
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -453,6 +580,9 @@ export default function InventoryInboundTaskDetailPage() {
                   isProgress={isInProgress}
                   selectedItemIds={selectedItemIds}
                   onSelect={handleItemSelect}
+                  onTargetQtyChange={handleTargetQtyChange}
+                  onInboundQtyChange={handleInboundQtyChange}
+                  isDisabled={isDisabled}
                 />
               )}
             </div>
@@ -471,17 +601,31 @@ export default function InventoryInboundTaskDetailPage() {
           <div className="mt-auto flex justify-end pt-10">
             {!isFullyDone &&
               (isInProgress ? (
-                <button
-                  className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
-                  onClick={handleInboundProcess}
-                >
-                  입고처리
-                </button>
+                allItemsCompleted ? (
+                  <button
+                    className="h-[54px] w-[140px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white transition-colors hover:bg-mainColor-blue700"
+                    onClick={handleCompleteInventory}
+                  >
+                    입고 완료
+                  </button>
+                ) : (
+                  <button
+                    disabled={!canProcessInbound}
+                    className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
+                      !canProcessInbound
+                        ? 'cursor-not-allowed bg-greyColor-grey300'
+                        : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                    }`}
+                    onClick={handleInboundProcess}
+                  >
+                    입고처리
+                  </button>
+                )
               ) : (
                 <button
-                  disabled={isPending || items.length === 0}
+                  disabled={!canRequestApproval}
                   className={`h-[54px] w-[140px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
-                    isPending || items.length === 0
+                    !canRequestApproval
                       ? 'cursor-not-allowed bg-greyColor-grey300'
                       : 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
                   }`}
