@@ -1,0 +1,180 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import ellipseIcon from '@/assets/ellipse.png';
+
+interface ProjectData {
+  id: string;
+  number: string;
+  title: string;
+  dueDate: string;
+  status: 'ASSIGNED' | 'PENDING' | 'REJECT' | 'IN_PROGRESS' | 'COMPLETED' | '미진행';
+}
+
+const MOCK_DATA: ProjectData[] = [
+  {
+    id: 'SYS-01-001',
+    number: 'SYS-01-001',
+    title: '제목입니다.',
+    dueDate: '2025-10-25',
+    status: '미진행',
+  },
+  {
+    id: 'SYS-01-002',
+    number: 'SYS-01-001',
+    title: '제목입니다.',
+    dueDate: '2025-10-25',
+    status: 'IN_PROGRESS',
+  },
+  {
+    id: 'SYS-01-003',
+    number: 'SYS-01-001',
+    title: '제목입니다.',
+    dueDate: '2025-10-25',
+    status: 'COMPLETED',
+  },
+  {
+    id: 'SYS-01-004',
+    number: 'SYS-01-001',
+    title: '제목입니다.',
+    dueDate: '2025-10-25',
+    status: 'PENDING',
+  },
+  {
+    id: 'SYS-01-005',
+    number: 'SYS-01-001',
+    title: '제목입니다.',
+    dueDate: '2025-10-25',
+    status: 'REJECT',
+  },
+];
+
+const ProjectListTable = () => {
+  const navigate = useNavigate();
+  const borderColor = 'border-greyColor-grey200';
+  const headerBg = 'bg-mainColor-blue050';
+
+  const handleNavigation = (id: string) => {
+    navigate(`/inventory/project/${id}`); //경로 확인
+  };
+
+  const getStatusChipClasses = (status: ProjectData['status']) => {
+    const baseClasses =
+      'flex w-[68px] h-[24px] items-center justify-center rounded-full text-[11px] font-bold font-pretendard whitespace-nowrap gap-[8px]';
+
+    switch (status) {
+      case '미진행':
+      case 'ASSIGNED':
+        return `${baseClasses} bg-greyColor-grey200 text-greyColor-grey600`;
+      case 'PENDING':
+      case 'IN_PROGRESS':
+        return `${baseClasses} bg-subColor-orange100 text-subColor-orange800`;
+      case 'REJECT':
+        return `${baseClasses} bg-red-100 text-red-600`;
+      case 'COMPLETED':
+        return `${baseClasses} bg-mainColor-blue050 text-mainColor-blue600`;
+      default:
+        return `${baseClasses} bg-greyColor-grey200 text-greyColor-grey600`;
+    }
+  };
+
+  const getStatusText = (status: ProjectData['status']) => {
+    switch (status) {
+      case '미진행':
+        return '미진행';
+      case 'ASSIGNED':
+        return '업무 할당';
+      case 'PENDING':
+        return '승인 대기';
+      case 'IN_PROGRESS':
+        return '진행 중';
+      case 'REJECT':
+        return '승인 반려';
+      case 'COMPLETED':
+        return '완료';
+      default:
+        return status;
+    }
+  };
+
+  return (
+    <div className="flex w-full flex-col items-start overflow-x-auto">
+      <div className={`flex w-[980px] border ${borderColor} ${headerBg}`}>
+        <div
+          className={`flex h-[40px] w-[180px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+        >
+          프로젝트 넘버
+        </div>
+        <div
+          className={`flex h-[40px] w-[210px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+        >
+          프로젝트 제목
+        </div>
+        <div
+          className={`flex h-[40px] w-[220px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+        >
+          목표 완료일
+        </div>
+        <div
+          className={`flex h-[40px] w-[190px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+        >
+          진행 상태
+        </div>
+        <div className="flex h-[40px] w-[180px] items-center justify-center font-pretendard text-[13px] font-bold text-black">
+          조회
+        </div>
+      </div>
+
+      <div className="flex w-[980px] flex-col">
+        {MOCK_DATA.map((item) => (
+          <div key={item.id} className={`flex border-x border-b ${borderColor}`}>
+            <div
+              className={`flex h-[48px] w-[180px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
+            >
+              {item.number}
+            </div>
+            <div
+              className={`flex h-[48px] w-[210px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
+            >
+              {item.title}
+            </div>
+            <div
+              className={`flex h-[48px] w-[220px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
+            >
+              {item.dueDate}
+            </div>
+            <div
+              className={`flex h-[48px] w-[190px] items-center justify-center border-r ${borderColor}`}
+            >
+              <div className={getStatusChipClasses(item.status)}>
+                <span
+                  className="inline-block h-[6px] w-[6px] bg-current"
+                  style={{
+                    maskImage: `url(${ellipseIcon})`,
+                    maskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskImage: `url(${ellipseIcon})`,
+                    WebkitMaskSize: 'contain',
+                    WebkitMaskRepeat: 'no-repeat',
+                  }}
+                />
+                {getStatusText(item.status)}
+              </div>
+            </div>
+            <div className="flex h-[48px] w-[180px] items-center justify-center">
+              <button
+                onClick={() => handleNavigation(item.id)}
+                className="flex h-[28px] w-[61px] items-center justify-center gap-[15px] rounded-[50px] bg-mainColor-blue600 p-[8px] transition-colors hover:bg-mainColor-blue700"
+              >
+                <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-mainColor-blue050">
+                  조회하기
+                </span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ProjectListTable;

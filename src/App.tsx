@@ -26,6 +26,7 @@ import OutboundTaskDetailPage from './pages/management-service/outbound/OutBound
 import InventoryInboundTaskDetailPage from './pages/inventory-service/inventory-inbound/inventoryInboundTaskDetailPage';
 import InventoryDetailPage from './pages/inventory-service/inventory-inbound/inventoryStockDetailPage';
 import LogisticsOutboundTaskDetailPage from './pages/logistics-service/logistics-outbound/LogisticsOutboundTaskDetailPage';
+import InventoryHome from './pages/inventory-service/InventoryHome';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ function App() {
         <Route path="/outbound-task" element={<OutBoundTaskListPage />} />
         <Route path="/outbound-task/:logisticsId" element={<OutboundTaskDetailPage />} />
         <Route path="/inventory-inbound-task" element={<InventoryInboundTaskListPage />} />
+        <Route path="/inventory-home" element={<InventoryHome />} />
         <Route
           path="/inventory-inbound-task/:projectNumber"
           element={<InventoryInboundTaskDetailPage />}
