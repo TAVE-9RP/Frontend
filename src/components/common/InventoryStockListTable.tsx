@@ -72,8 +72,8 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
         <tbody className="bg-white">
           {data.length === 0 ? (
             <tr className="flex">
-              <td className="flex h-[40px] w-full items-center justify-center border-b border-greyColor-grey200 font-pretendard text-[15px] text-greyColor-grey500">
-                해당 재고 목록이 없습니다.
+              <td className="flex h-[40px] w-full items-center justify-center border-b border-greyColor-grey200 font-pretendard text-[15px] text-greyColor-grey400">
+                없음
               </td>
             </tr>
           ) : (
