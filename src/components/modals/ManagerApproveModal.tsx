@@ -25,7 +25,7 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
   const isRequestMode = variant === 'request';
 
   const content = {
-    title: isRequestMode ? `승인 관리자: ${managerName}` : '관리자 승인을 진행하시겠습니까?',
+    title: isRequestMode ? `승인 관리자: ${managerName}` : '관리자 결재를 진행하시겠습니까?',
     description: isRequestMode
       ? '확인을 누르면 관리자에게 승인 요청이 전달돼요'
       : '승인 시 업무 상태가 진행 중으로 변경돼요',
