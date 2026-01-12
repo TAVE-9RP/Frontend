@@ -196,7 +196,7 @@ export default function OutboundTaskDetailPage() {
         console.log('result:', response.result);
         console.log('result type:', typeof response.result);
         console.log('result is array:', Array.isArray(response.result));
-        
+
         if (response.isSuccess && response.result) {
           const result = response.result;
           console.log('=== 응답 result ===');
@@ -437,15 +437,19 @@ export default function OutboundTaskDetailPage() {
           {taskDetail.logisticsStatus !== 'IN_PROGRESS' && (
             <div className="mt-[50px] flex justify-end">
               <button
-                disabled={taskDetail.status !== 'APPROVAL_PENDING' || taskDetail.logisticsStatus === 'REJECT'}
+                disabled={
+                  taskDetail.status !== 'APPROVAL_PENDING' ||
+                  taskDetail.logisticsStatus === 'REJECT'
+                }
                 onClick={() => setIsModalOpen(true)}
                 className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                  taskDetail.status === 'APPROVAL_PENDING' && taskDetail.logisticsStatus !== 'REJECT'
+                  taskDetail.status === 'APPROVAL_PENDING' &&
+                  taskDetail.logisticsStatus !== 'REJECT'
                     ? 'cursor-pointer bg-mainColor-blue600'
                     : 'cursor-default bg-greyColor-grey300'
                 }`}
               >
-                승인 처리
+                결재 처리
               </button>
             </div>
           )}
