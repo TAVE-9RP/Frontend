@@ -20,11 +20,7 @@ export default function Main() {
       {/* 헤더 */}
       <header className="fixed top-0 z-50 flex w-full items-center justify-between bg-white px-[120px] py-[24px]">
         <div className="flex items-center gap-[12px]">
-          <img
-            src={logoImg}
-            alt="NexERP 로고"
-            className="h-[54px] w-[191px] object-contain"
-          />
+          <img src={logoImg} alt="NexERP 로고" className="h-[54px] w-[191px] object-contain" />
         </div>
         <div className="flex items-center gap-[16px]">
           <button onClick={() => navigate('/login')} className="focus:outline-none">
@@ -67,7 +63,7 @@ export default function Main() {
               <img
                 src={personnelServiceIcon}
                 alt="인사 서비스"
-                className="w-full h-auto object-contain"
+                className="h-auto w-full object-contain"
               />
             </div>
 
@@ -79,7 +75,7 @@ export default function Main() {
               <img
                 src={inventoryServiceIcon}
                 alt="재고 서비스"
-                className="w-full h-auto object-contain"
+                className="h-auto w-full object-contain"
               />
             </div>
 
@@ -91,7 +87,7 @@ export default function Main() {
               <img
                 src={logisticsServiceIcon}
                 alt="물류 서비스"
-                className="w-full h-auto object-contain"
+                className="h-auto w-full object-contain"
               />
             </div>
           </div>
@@ -134,7 +130,7 @@ export default function Main() {
               <img
                 src={personnelServiceBadge}
                 alt="인사 서비스"
-                className="mb-[16px] h-auto w-auto object-contain"
+                className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
                 Personal Management
@@ -146,14 +142,14 @@ export default function Main() {
                 모든 구성원과 공정하게! 조직과 권한을 한눈에 관리하다
               </h4>
               <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
-              인사서비스는 구성원의 정보와 근무 이력을 체계적으로 관리하고, 인사·급여·
-              <br />
-              평가 등의 업무를 자동화하여 조직 운영의 효율을 높이는 솔루션입니다.
-              <br />
-              <br />
-              이를 통해 기업은 복잡한 인사 업무를 간소화하고, 구성원은 보다 공정하고 
-              <br />
-              투명한 평가 및 보상을 경험할 수 있습니다.
+                인사서비스는 구성원의 정보와 근무 이력을 체계적으로 관리하고, 인사·급여·
+                <br />
+                평가 등의 업무를 자동화하여 조직 운영의 효율을 높이는 솔루션입니다.
+                <br />
+                <br />
+                이를 통해 기업은 복잡한 인사 업무를 간소화하고, 구성원은 보다 공정하고
+                <br />
+                투명한 평가 및 보상을 경험할 수 있습니다.
               </p>
             </div>
             <div
@@ -190,7 +186,7 @@ export default function Main() {
               <img
                 src={inventoryServiceBadge}
                 alt="재고 서비스"
-                className="mb-[16px] h-auto w-auto object-contain"
+                className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
                 Inventory Management
@@ -202,14 +198,14 @@ export default function Main() {
                 자원을 효율적으로! 재고를 줄이고 비용을 아끼다
               </h4>
               <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
-              재고 관리는 기업이 보유한 재고(제품, 원자재 등)를 효율적으로 조달, 보관, 
-              <br />
-              추적하여 비용을 최적화하고 고객에게 적시에 공급하기 위한 활동입니다. 
-              <br />
-              <br />
-              이를 통해 불필요한 재고로 인한 비용 낭비를 줄이고, 재고 부족으로 인한 
-              <br />
-              판매 기회 손실을 막을 수 있습니다. 
+                재고 관리는 기업이 보유한 재고(제품, 원자재 등)를 효율적으로 조달, 보관,
+                <br />
+                추적하여 비용을 최적화하고 고객에게 적시에 공급하기 위한 활동입니다. 
+                <br />
+                <br />
+                이를 통해 불필요한 재고로 인한 비용 낭비를 줄이고, 재고 부족으로 인한
+                <br />
+                판매 기회 손실을 막을 수 있습니다. 
               </p>
             </div>
           </div>
@@ -220,7 +216,7 @@ export default function Main() {
               <img
                 src={logisticsServiceBadge}
                 alt="물류 서비스"
-                className="mb-[16px] h-auto w-auto object-contain"
+                className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
                 Logistics Management
@@ -232,14 +228,14 @@ export default function Main() {
                 승인부터 출하까지 빠르게! 데이터로 움직이는 물류 관리
               </h4>
               <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
-              로지스틱스 관리는 원재료 조달부터 최종 제품이 소비자에게 전달되기까지의 
-              <br />
-              모든 과정을 합리적으로 조정하고 효율성을 극대화하는 활동입니다. 
-              <br />
-              <br />
-              이는 운송, 보관, 하역, 포장, 정보 관리 등 다양한 요소를 통합적으로 관리하여, 
-              <br />
-              기업이 자원을 효율적으로 활용하고 고객 만족도를 높이도록 돕습니다. 
+                로지스틱스 관리는 원재료 조달부터 최종 제품이 소비자에게 전달되기까지의
+                <br />
+                모든 과정을 합리적으로 조정하고 효율성을 극대화하는 활동입니다. 
+                <br />
+                <br />
+                이는 운송, 보관, 하역, 포장, 정보 관리 등 다양한 요소를 통합적으로 관리하여,
+                <br />
+                기업이 자원을 효율적으로 활용하고 고객 만족도를 높이도록 돕습니다. 
               </p>
             </div>
             <div
