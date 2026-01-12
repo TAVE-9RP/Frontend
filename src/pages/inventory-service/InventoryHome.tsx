@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/common/SideBar';
 import DashboardChart from '@/components/dashboard/DashboardChart';
 import ProjectListTable from '@/components/dashboard/ProjectListTable';
@@ -7,27 +8,36 @@ import DashboardTab from '@/components/dashboard/DashboardTab';
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 
 export default function InventoryHome() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
 
   const mockTasks = {
-    '업무 할당': [{ date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' }],
-    '승인 대기': [{ date: '2025.11.12', title: '카피바라 랜드' }],
-    진행중: [{ date: '2025.11.15', title: '카피바라 쿠키' }],
-    '입고 완료': [{ date: '2025.11.08', title: '카피바라 자켓' }],
+    '업무 할당': [{ id: 'INV-A1', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' }],
+    '승인 대기': [{ id: 'INV-A2', date: '2025.11.12', title: '카피바라 랜드' }],
+    진행중: [{ id: 'INV-A3', date: '2025.11.15', title: '카피바라 쿠키' }],
+    '입고 완료': [{ id: 'INV-A4', date: '2025.11.08', title: '카피바라 자켓' }],
   };
 
   const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
 
+  const handleItemClick = (id: string) => {
+    navigate(`/inventory/${id}`);
+  };
+
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#F8F9FA]">
+    <div className="flex h-screen w-full overflow-hidden bg-greyColor-grey100">
       <SideBar />
 
       <main className="flex-1 overflow-y-auto">
         <div className="pl-[70px] pt-[60px]">
-          <h1 className="font-pretendard text-[24px] font-bold text-black">재고 서비스 홈</h1>
+          <h1 className="font-pretendard text-[24px] font-bold text-greyColor-grey900">
+            재고 서비스 홈
+          </h1>
 
           <section className="ml-[10px] mt-[64px]">
-            <h2 className="font-pretendard text-[19px] font-bold text-black">재고 대시보드</h2>
+            <h2 className="font-pretendard text-[19px] font-bold text-greyColor-grey900">
+              재고 대시보드
+            </h2>
             <p className="mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
               2025.11.01 ~ 2025.11.30
             </p>
@@ -51,15 +61,19 @@ export default function InventoryHome() {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    {mockTasks[activeTab].map((task, i) => (
-                      <div key={i} className="flex items-center">
-                        <div className="flex items-center justify-center rounded-[30px] bg-[#FFF9E5] px-[10px] py-[5px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-[#FF803B]">
+                    {mockTasks[activeTab].map((task) => (
+                      <div
+                        key={task.id}
+                        className="flex cursor-pointer items-center"
+                        onClick={() => handleItemClick(task.id)}
+                      >
+                        <div className="flex items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px] py-[5px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
                             {task.date}
                           </span>
                         </div>
                         <div className="ml-[13px] flex-1">
-                          <span className="block truncate font-pretendard text-[13px] font-normal text-[#44454D]">
+                          <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
                             {task.title}
                           </span>
                         </div>
@@ -80,11 +94,11 @@ export default function InventoryHome() {
           </section>
 
           <section className="mb-10 ml-[10px] mt-[40px] pr-10">
-            <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-black">
+            <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
               프로젝트 리스트
             </h2>
             <div className="min-h-[400px] w-full max-w-[1070px] rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-              <p className="mb-[24px] font-pretendard text-[15px] font-normal text-[#777981]">
+              <p className="mb-[24px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
                 할당된 프로젝트입니다
               </p>
               <ProjectListTable />
