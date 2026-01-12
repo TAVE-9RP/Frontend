@@ -28,6 +28,7 @@ import InventoryDetailPage from './pages/inventory-service/inventory-inbound/inv
 import LogisticsOutboundTaskDetailPage from './pages/logistics-service/logistics-outbound/LogisticsOutboundTaskDetailPage';
 import InventoryHome from './pages/inventory-service/InventoryHome';
 import LogisticsHome from './pages/logistics-service/LogisticsHome';
+import ManagementHome from './pages/management-service/ManagementHome';
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ function App() {
         <Route path="/inventory-stock/:inventoryNumber" element={<InventoryDetailPage />} />
 
         <Route path="hrmanagement" element={<HRManagementPage />} />
+        <Route path="management-home" element={<ManagementHome />} />
 
         <Route path="test" element={<TestPage />} />
       </Routes>

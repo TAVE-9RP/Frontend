@@ -3,17 +3,18 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 interface DashboardChartProps {
   percent: number;
   label: string;
-  colorType: 'blue' | 'orange';
+  colorType: 'blue' | 'orange' | 'black';
 }
 
 const DashboardChart = ({ percent, label, colorType }: DashboardChartProps) => {
   const COLORS = {
     blue: '#008CFF',
     orange: '#FF9B3F',
+    black: '#44454D',
     empty: '#E9EBEE',
   };
 
-  const selectedColor = colorType === 'blue' ? COLORS.blue : COLORS.orange;
+  const selectedColor = COLORS[colorType];
 
   const data = [
     { name: 'Progress', value: percent },
