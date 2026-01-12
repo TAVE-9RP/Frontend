@@ -105,7 +105,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
           </div>
 
           <div className="flex flex-col gap-[15px]">
-            <label className="font-pretendard text-[19px] font-bold text-black">품목명</label>
+            <label className="font-pretendard text-[19px] font-bold text-black">물품명</label>
             <BasicInput
               placeholder="내용 입력"
               className="h-[50px] w-[390px] text-[17px] text-greyColor-grey800"

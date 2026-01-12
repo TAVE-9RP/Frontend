@@ -65,7 +65,6 @@ const MOCK_INVENTORY_LIST = [
   },
 ];
 
-
 const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="flex w-[390px] flex-col">
     <label className="mb-4 block font-pretendard text-[19px] font-bold text-black">{label}</label>
@@ -208,7 +207,7 @@ export default function InventoryStockDetailPage() {
                   onChange={handleInputChange}
                 />
               </FormGroup>
-              <FormGroup label="품목명">
+              <FormGroup label="물품명">
                 <BasicInput
                   name="itemName"
                   value={inventoryDetail.itemName}

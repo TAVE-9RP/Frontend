@@ -11,7 +11,15 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
-import { getInventoryDetail, getInventoryItems, requestApproval, updateInventory, updateInventoryItemTargetQuantity, processInventoryItems, completeInventory } from '../../../apis/inventory';
+import {
+  getInventoryDetail,
+  getInventoryItems,
+  requestApproval,
+  updateInventory,
+  updateInventoryItemTargetQuantity,
+  processInventoryItems,
+  completeInventory,
+} from '../../../apis/inventory';
 
 const MOCK_INBOUND_TASK_LIST = [
   {
@@ -73,11 +81,11 @@ const formatNullValue = (value: string | null | undefined): string => {
 // 날짜를 '2025-12-21T14:22:00' 형식에서 '2025.12.21' 형식으로 변환
 const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString || dateString === '-') return '-';
-  
+
   // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
   const datePart = dateString.split('T')[0];
   if (!datePart) return '-';
-  
+
   // '-'를 '.'로 변환
   return datePart.replace(/-/g, '.');
 };
@@ -156,7 +164,7 @@ export default function InventoryInboundTaskDetailPage() {
         const response = await getInventoryDetail(projectNumber);
         console.log('=== 입고 업무 상세 API 응답 ===');
         console.log('응답:', response);
-        
+
         if (response.isSuccess && response.result) {
           const result = response.result;
           console.log('=== 응답 result ===');
@@ -216,7 +224,6 @@ export default function InventoryInboundTaskDetailPage() {
       }
     };
 
-
     fetchInventoryDetail();
     fetchInventoryItems();
   }, [projectNumber, refreshItems]);
@@ -237,12 +244,12 @@ export default function InventoryInboundTaskDetailPage() {
         inventoryTitle: taskDetail.taskName,
         inventoryDescription: taskDetail.description,
       });
-      
+
       const updateResponse = await updateInventory(projectNumber, {
         inventoryTitle: taskDetail.taskName,
         inventoryDescription: taskDetail.description,
       });
-      
+
       console.log('=== 입고 정보 업데이트 API 응답 ===');
       console.log('응답:', updateResponse);
 
@@ -254,21 +261,30 @@ export default function InventoryInboundTaskDetailPage() {
       // 2. 목표 입고 수량 업데이트 API 호출
       console.log('=== 목표 입고 수량 업데이트 API 호출 ===');
       console.log('inventoryId:', projectNumber);
-      
+
       const targetQuantityUpdates = items
-        .filter((item) => item.inventoryItemId && item.targetQty && item.targetQty !== '-' && item.targetQty !== '')
+        .filter(
+          (item) =>
+            item.inventoryItemId &&
+            item.targetQty &&
+            item.targetQty !== '-' &&
+            item.targetQty !== '',
+        )
         .map((item) => ({
           inventoryItemId: item.inventoryItemId!,
           targetQuantity: Number(item.targetQty),
         }));
-      
+
       console.log('목표 입고 수량 업데이트 데이터:', targetQuantityUpdates);
-      
+
       if (targetQuantityUpdates.length > 0) {
-        const targetQtyResponse = await updateInventoryItemTargetQuantity(projectNumber, targetQuantityUpdates);
+        const targetQtyResponse = await updateInventoryItemTargetQuantity(
+          projectNumber,
+          targetQuantityUpdates,
+        );
         console.log('=== 목표 입고 수량 업데이트 API 응답 ===');
         console.log('응답:', targetQtyResponse);
-        
+
         if (!targetQtyResponse.isSuccess) {
           alert('목표 입고 수량 업데이트에 실패했습니다.');
           return;
@@ -322,10 +338,16 @@ export default function InventoryInboundTaskDetailPage() {
     try {
       // 선택된 항목들 필터링
       const selectedItems = items.filter((item) => selectedItemIds.includes(item.id));
-      
+
       // API 요청 형식으로 매핑
       const processItems = selectedItems
-        .filter((item) => item.inventoryItemId && item.inboundQty && item.inboundQty !== '-' && item.inboundQty !== '')
+        .filter(
+          (item) =>
+            item.inventoryItemId &&
+            item.inboundQty &&
+            item.inboundQty !== '-' &&
+            item.inboundQty !== '',
+        )
         .map((item) => ({
           inventoryItemId: item.inventoryItemId!,
           receiveQuantity: Number(item.inboundQty),
@@ -347,10 +369,10 @@ export default function InventoryInboundTaskDetailPage() {
       if (response.isSuccess) {
         setSelectedItemIds([]);
         setIsInboundConfirmModalOpen(false);
-        
+
         // 입고 물품 목록 GET API 재호출
         setRefreshItems((prev) => prev + 1);
-        
+
         setIsCompleteSuccessModalOpen(true);
       } else {
         alert('입고 처리에 실패했습니다.');
@@ -456,7 +478,8 @@ export default function InventoryInboundTaskDetailPage() {
   const hasEmptyTargetQty = items.some(
     (item) => !item.targetQty || item.targetQty === '' || item.targetQty === '-',
   );
-  const canRequestApproval = !isPending && items.length > 0 && !isTaskNameEmpty && !isDescriptionEmpty && !hasEmptyTargetQty;
+  const canRequestApproval =
+    !isPending && items.length > 0 && !isTaskNameEmpty && !isDescriptionEmpty && !hasEmptyTargetQty;
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -550,22 +573,22 @@ export default function InventoryInboundTaskDetailPage() {
               {items.length === 0 ? (
                 <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
                   <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-                    <div className="w-[112px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                    <div className="flex h-full w-[112px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                       재고 번호
                     </div>
-                    <div className="w-[130px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                    <div className="flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                       물품명
                     </div>
-                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                    <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                       입고 요청 수량
                     </div>
-                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                    <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                       현재 입고 수량
                     </div>
-                    <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                    <div className="flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                       목표 입고 수량
                     </div>
-                    <div className="w-[150px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
+                    <div className="flex h-full w-[150px] items-center justify-center font-pretendard text-[14px] font-bold text-black">
                       처리 상태
                     </div>
                   </div>
@@ -631,7 +654,7 @@ export default function InventoryInboundTaskDetailPage() {
                   }`}
                   onClick={() => setIsApprovalModalOpen(true)}
                 >
-                  승인요청
+                  승인 요청
                 </button>
               ))}
           </div>

@@ -36,7 +36,7 @@ export default function InventoryStockListPage() {
       // 검색어가 있으면 keyword로 전달, 없으면 공백으로 전달
       const keyword = searchTerm.trim();
       const response = await getItems(keyword);
-      
+
       if (response.isSuccess && response.result) {
         // API 응답을 InventoryStock 형식으로 변환
         const mappedStocks: InventoryStock[] = response.result.map((item: any) => ({
@@ -77,7 +77,7 @@ export default function InventoryStockListPage() {
 
         <div className="mt-[60px] w-[1040px]">
           <SearchBar
-            placeholder="재고 번호 또는 품목명을 입력하세요."
+            placeholder="재고 번호 또는 물품명을 입력하세요."
             value={searchTerm}
             onChange={handleSearchChange}
           />

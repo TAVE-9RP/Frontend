@@ -21,7 +21,7 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
 
   // 총 판매액 계산 (모든 아이템의 processedQuantity * itemPrice 합계)
   const totalSalesAmount = hasItems
-    ? items.reduce((acc, cur) => acc + (cur.currQty * cur.unitPrice), 0)
+    ? items.reduce((acc, cur) => acc + cur.currQty * cur.unitPrice, 0)
     : 0;
 
   const isColumnAllHyphen = (key: string) => {
@@ -30,7 +30,7 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
   };
 
   const columns = [
-    { label: '품목명', width: 'w-[130px]', key: 'itemName' },
+    { label: '물품명', width: 'w-[130px]', key: 'itemName' },
     { label: '현재 출하 수량', width: 'w-[140px]', key: 'currQty' },
     { label: '목표 출하 수량', width: 'w-[140px]', key: 'targetQty' },
     { label: '판매액', width: 'w-[140px]', key: 'unitPrice' },
@@ -66,7 +66,7 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
             const salesAmount = item.unitPrice;
             // 총 판매액: processedQuantity * itemPrice
             const itemTotalPrice = item.currQty * item.unitPrice;
-            
+
             return (
               <div
                 key={item.id}

@@ -460,7 +460,7 @@ export default function LogisticsOutboundTaskDetailPage() {
                 disabled
                 className="h-[50px] w-[113px] cursor-not-allowed rounded-[10px] bg-greyColor-grey300 font-pretendard text-[19px] font-bold text-white"
               >
-                승인요청
+                승인 요청
               </button>
             ) : !isCompleted &&
               (taskDetail.logisticsStatus === 'ASSIGNED' ||
@@ -469,7 +469,7 @@ export default function LogisticsOutboundTaskDetailPage() {
                 onClick={() => setIsApprovalModalOpen(true)}
                 className="h-[50px] w-[113px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white hover:bg-mainColor-blue700"
               >
-                승인요청
+                승인 요청
               </button>
             ) : (
               isCompleted && (
