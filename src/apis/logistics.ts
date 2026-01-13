@@ -2,7 +2,6 @@ import axios from 'axios';
 import type {
   LogisticsSummary,
   LogisticsDetail,
-  OutboundItem,
   ApiResponse,
   UpdateLogisticsCommonRequest,
   ProcessOutboundRequest,
@@ -25,8 +24,14 @@ logisticsApi.interceptors.request.use((config) => {
   return config;
 });
 
-export const getLogisticsList = async (): Promise<ApiResponse<LogisticsSummary[]>> => {
-  const response = await logisticsApi.get('/logistics');
+export const getLogisticsList = async (
+  keyword: string = '',
+): Promise<ApiResponse<LogisticsSummary[]>> => {
+  const response = await logisticsApi.get('/logistics', {
+    params: {
+      keyword: keyword,
+    },
+  });
   return response.data;
 };
 
