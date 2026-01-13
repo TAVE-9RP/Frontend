@@ -43,7 +43,7 @@ export const getLogisticsDetail = async (
 };
 
 export const getLogisticsItems = async (logisticsId: number) => {
-  const response = await logisticsApi.get(`/logistics/${logisticsId}/items`); // logisticsApi로 변경
+  const response = await logisticsApi.get(`/logistics/${logisticsId}/items`);
   return response.data;
 };
 
