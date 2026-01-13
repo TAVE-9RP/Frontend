@@ -119,10 +119,17 @@ export default function LogisticsOutboundTaskDetailPage() {
       if (itemsRes.isSuccess && itemsRes.result) {
         console.log('품목 리스트 수신 성공:', itemsRes.result);
         setItems(itemsRes.result);
+      } else {
+        setItems([]);
       }
-    } catch (error) {
-      console.warn('품목 리스트 로딩 실패 (데이터가 없거나 API 오류):', error);
-      setItems([]);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        console.warn('등록된 품목이 없습니다. 빈 목록으로 표시합니다.');
+        setItems([]);
+      } else {
+        console.error('품목 리스트 로딩 중 실제 오류 발생:', error);
+        setItems([]);
+      }
     }
   };
 
@@ -294,6 +301,11 @@ export default function LogisticsOutboundTaskDetailPage() {
 
   const handleAddInventory = async (selectedItems: InventoryItem[]) => {
     if (!logisticsId) return;
+
+    if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
+      alert('출하 업무명과 업무 설명을 먼저 입력해 주세요.');
+      return;
+    }
 
     try {
       const updatePayload: UpdateLogisticsCommonRequest = {

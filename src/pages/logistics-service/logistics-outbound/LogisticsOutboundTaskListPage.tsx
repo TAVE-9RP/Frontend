@@ -23,7 +23,7 @@ export default function LogisticsOutboundTaskListPage() {
       if (viewMode === 'ALL') {
         res = await getLogisticsList(searchTerm);
       } else {
-        res = await getMyAssignedLogistics();
+        res = await getMyAssignedLogistics(searchTerm);
       }
 
       if (res.isSuccess) {
@@ -31,6 +31,7 @@ export default function LogisticsOutboundTaskListPage() {
       }
     } catch (error) {
       console.error('데이터 로드 실패:', error);
+      setAllTasks([]);
     } finally {
       setIsLoading(false);
     }
