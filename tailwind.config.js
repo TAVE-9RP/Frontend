@@ -49,6 +49,8 @@ export default {
         semanticColor: {
           green100: '#DDF8EF',
           green500: '#0CA678',
+          red100: '#FDECEC',
+          red500: '#E03131',
         },
       },
     },

@@ -70,6 +70,7 @@ export default function LogisticsOutboundTaskListPage() {
     { status: 'ALL', label: '전체' },
     { status: 'ASSIGNED', label: '업무 할당' },
     { status: 'PENDING', label: '승인 대기' },
+    { status: 'REJECT', label: '승인 반려' },
     { status: 'IN_PROGRESS', label: '진행중' },
     { status: 'COMPLETED', label: '완료' },
   ].map((item) => ({
