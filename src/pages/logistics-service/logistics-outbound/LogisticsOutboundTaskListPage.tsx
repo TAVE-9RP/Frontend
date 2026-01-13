@@ -19,13 +19,19 @@ export default function LogisticsOutboundTaskListPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = viewMode === 'ALL' ? await getLogisticsList() : await getMyAssignedLogistics();
+      let res;
+      if (viewMode === 'ALL') {
+        res = await getLogisticsList(searchTerm);
+      } else {
+        res = await getMyAssignedLogistics(searchTerm);
+      }
 
       if (res.isSuccess) {
         setAllTasks(res.result);
       }
     } catch (error) {
       console.error('데이터 로드 실패:', error);
+      setAllTasks([]);
     } finally {
       setIsLoading(false);
     }
@@ -33,46 +39,28 @@ export default function LogisticsOutboundTaskListPage() {
 
   useEffect(() => {
     fetchData();
-  }, [viewMode]);
+  }, [viewMode, searchTerm]);
 
   useEffect(() => {
     let result = [...allTasks];
 
     if (activeStatus !== 'ALL') {
-      result = result.filter((task: any) => (task.status || task.logisticsStatus) === activeStatus);
-    }
-
-    if (searchTerm) {
-      const lowerSearch = searchTerm.toLowerCase();
-      result = result.filter(
-        (task) =>
-          task.projectNumber.toLowerCase().includes(lowerSearch) ||
-          task.logisticsTitle.toLowerCase().includes(lowerSearch),
-      );
+      result = result.filter((task) => task.logisticsStatus === activeStatus);
     }
 
     const mappedData = result.map((task: any) => ({
       id: task.logisticsId,
       projectNumber: task.projectNumber,
-      taskName: task.logisticsTitle?.trim() ? task.logisticsTitle : '-',
+      taskName: task.logisticsTitle || '-',
       items: task.customer || '상세 참조',
       location: '물류센터',
-      requestDate: task.logisticsRequestedAt
-        ? task.logisticsRequestedAt.split('T')[0]
-        : task.requestedAt
-          ? task.requestedAt.split('T')[0]
-          : '-',
+      requestDate: task.requestedAt ? task.requestedAt.split('T')[0] : '-',
       manager: task.assigneeSummary || '미지정',
-      status:
-        task.status === 'ASSIGNED'
-          ? 'TASK_ASSIGNMENT'
-          : task.status === 'PENDING'
-            ? 'APPROVAL_PENDING'
-            : task.status || 'IN_PROGRESS',
+      status: task.logisticsStatus,
     }));
 
     setFilteredTasks(mappedData);
-  }, [allTasks, activeStatus, searchTerm]);
+  }, [allTasks, activeStatus]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -80,8 +68,9 @@ export default function LogisticsOutboundTaskListPage() {
 
   const statusButtonData = [
     { status: 'ALL', label: '전체' },
-    { status: 'ASSIGNMENT', label: '업무 할당' },
+    { status: 'ASSIGNED', label: '업무 할당' },
     { status: 'PENDING', label: '승인 대기' },
+    { status: 'REJECT', label: '승인 반려' },
     { status: 'IN_PROGRESS', label: '진행중' },
     { status: 'COMPLETED', label: '완료' },
   ].map((item) => ({
@@ -127,7 +116,7 @@ export default function LogisticsOutboundTaskListPage() {
           </div>
         </div>
 
-        <div className="mt-[27px] pl-[70px] pr-10">
+        <div className="mt-[27px] pb-20 pl-[70px] pr-10">
           <TaskListTable
             data={filteredTasks}
             isLoading={isLoading}

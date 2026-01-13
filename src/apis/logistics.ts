@@ -2,7 +2,6 @@ import axios from 'axios';
 import type {
   LogisticsSummary,
   LogisticsDetail,
-  OutboundItem,
   ApiResponse,
   UpdateLogisticsCommonRequest,
   ProcessOutboundRequest,
@@ -25,8 +24,14 @@ logisticsApi.interceptors.request.use((config) => {
   return config;
 });
 
-export const getLogisticsList = async (): Promise<ApiResponse<LogisticsSummary[]>> => {
-  const response = await logisticsApi.get('/logistics');
+export const getLogisticsList = async (
+  keyword: string = '',
+): Promise<ApiResponse<LogisticsSummary[]>> => {
+  const response = await logisticsApi.get('/logistics', {
+    params: {
+      keyword: keyword,
+    },
+  });
   return response.data;
 };
 
@@ -76,24 +81,15 @@ export const patchCompleteLogistics = async (logisticsId: number): Promise<ApiRe
   return response.data;
 };
 
-export const getMyAssignedLogistics = async (): Promise<ApiResponse<LogisticsSummary[]>> => {
-  const response = await logisticsApi.get('/projects/assigned');
-  return response.data;
-};
-
-export const patchUpdateTargetQuantity = async (
-  logisticsId: number,
-  payload: { items: { logisticsItemId: number; targetQuantity: number }[] },
-): Promise<ApiResponse<any>> => {
-  const response = await logisticsApi.patch(
-    `/logistics/${logisticsId}/items/targetQuantity`,
-    payload,
-  );
+export const getMyAssignedLogistics = async (keyword: string) => {
+  const response = await logisticsApi.get('/logistics/assigned', {
+    params: { keyword },
+  });
   return response.data;
 };
 
 export const getInventoryItems = async () => {
-  const response = await axios.get('/items');
+  const response = await logisticsApi.get('/items');
   return response.data;
 };
 
