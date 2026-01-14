@@ -429,7 +429,7 @@ export default function OutboundTaskDetailPage() {
 
             <div className="mt-[80px]">
               <FormGroup label="출하 물품 목록">
-                <OutboundItemList status={taskDetail.status} items={items} />
+                <OutboundItemList status={taskDetail.logisticsStatus || taskDetail.status} items={items} />
               </FormGroup>
             </div>
           </div>
