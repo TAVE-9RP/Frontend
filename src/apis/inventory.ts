@@ -23,6 +23,13 @@ export const getInventoryList = async (keyword: string = '') => {
   return response.data;
 };
 
+export const getInventoryAssignedList = async (keyword: string = '') => {
+  const response = await api.get('/inventory/assigned', {
+    params: { keyword },
+  });
+  return response.data;
+};
+
 export const getInventoryDetail = async (inventoryId: string | number) => {
   const response = await api.get(`/inventory/${inventoryId}`);
   return response.data;
