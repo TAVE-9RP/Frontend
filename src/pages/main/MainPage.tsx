@@ -116,7 +116,7 @@ export default function Main() {
             Core Modules of NexERP
           </h2>
           <p className="mb-[80px] text-center font-pretendard text-[18px] font-normal leading-relaxed text-greyColor-grey600">
-            데이터 기반으로 연결하여 더 효율적인 인사, 물류, 재고 서비스를 지원합니다.
+            데이터 기반으로 연결하여 더 효율적인 관리, 물류, 재고 서비스를 지원합니다.
           </p>
         </div>
       </section>
@@ -124,7 +124,7 @@ export default function Main() {
       {/* Core Modules 상세 */}
       <section className="bg-white px-[120px] py-[120px]">
         <div className="mx-auto max-w-[1200px] space-y-[120px]">
-          {/* Personal Management */}
+          {/* Management Service */}
           <div className="flex items-center gap-[80px]">
             <div className="flex-1">
               <img
@@ -133,23 +133,23 @@ export default function Main() {
                 className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
-                Personal Management
+                Management Service
               </h3>
               <h4
                 className="mb-[48px] font-pretendard text-[20px] font-semibold"
                 style={{ color: 'rgb(0, 126, 244)' }}
               >
-                모든 구성원과 공정하게! 조직과 권한을 한눈에 관리하다
+                프로젝트부터 인사까지, 흩어져 있던 관리의 조각을 하나로 연결하다.
               </h4>
-              <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
-                인사서비스는 구성원의 정보와 근무 이력을 체계적으로 관리하고, 인사·급여·
-                <br />
-                평가 등의 업무를 자동화하여 조직 운영의 효율을 높이는 솔루션입니다.
+              <p className="font-pretendard text-[17px] font-normal leading-relaxed text-greyColor-grey600">
+                프로젝트 관리는 워크플로우 시각화, 유연한 업무 할당, 중앙 집중형 히스토리를 제공하여 비즈니스 진척도를 한눈에 파악하고, 지연 없는 프로젝트 관리가 가능하게 합니다.
                 <br />
                 <br />
-                이를 통해 기업은 복잡한 인사 업무를 간소화하고, 구성원은 보다 공정하고
+                인사 관리는 원클릭 가입 및 승인 프로세스, 정교한 역할 기반 제어, 중앙 집중 사원 관리를 통해 투명한 조직의 시작과 안전하고 체계적인 시스템을 보장합니다.
                 <br />
-                투명한 평가 및 보상을 경험할 수 있습니다.
+                <br />
+                이를 통해 기업은 실시간 현황 파악과 협업 효율을 강조하고, 보안성과 관리 편의성을 확보할 수 있습니다.
+                <br />
               </p>
             </div>
             <div
@@ -167,7 +167,7 @@ export default function Main() {
             ></div>
           </div>
 
-          {/* Inventory Management */}
+          {/* Inventory Service */}
           <div className="flex items-center gap-[80px]">
             <div
               className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
@@ -189,7 +189,7 @@ export default function Main() {
                 className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
-                Inventory Management
+                Inventory Service
               </h3>
               <h4
                 className="mb-[48px] font-pretendard text-[20px] font-semibold"
@@ -197,7 +197,7 @@ export default function Main() {
               >
                 자원을 효율적으로! 재고를 줄이고 비용을 아끼다
               </h4>
-              <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
+              <p className="font-pretendard text-[17px] font-normal leading-relaxed text-greyColor-grey600">
                 재고 관리는 기업이 보유한 재고(제품, 원자재 등)를 효율적으로 조달, 보관,
                 <br />
                 추적하여 비용을 최적화하고 고객에게 적시에 공급하기 위한 활동입니다. 
@@ -210,7 +210,7 @@ export default function Main() {
             </div>
           </div>
 
-          {/* Logistics Management */}
+          {/* Logistics Service */}
           <div className="flex items-center gap-[80px]">
             <div className="flex-1">
               <img
@@ -219,7 +219,7 @@ export default function Main() {
                 className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
-                Logistics Management
+                Logistics Service
               </h3>
               <h4
                 className="mb-[48px] font-pretendard text-[20px] font-semibold"
@@ -227,7 +227,7 @@ export default function Main() {
               >
                 승인부터 출하까지 빠르게! 데이터로 움직이는 물류 관리
               </h4>
-              <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
+              <p className="font-pretendard text-[17px] font-normal leading-relaxed text-greyColor-grey600">
                 로지스틱스 관리는 원재료 조달부터 최종 제품이 소비자에게 전달되기까지의
                 <br />
                 모든 과정을 합리적으로 조정하고 효율성을 극대화하는 활동입니다. 
