@@ -105,7 +105,7 @@ export default function Main() {
       </section>
 
       {/* What we offer 섹션 */}
-      <section className="bg-greyColor-grey50 px-[120px] py-[120px]">
+      <section className="bg-white px-[120px] py-[120px]">
         <div className="mx-auto max-w-[1200px]">
           <div className="mb-[16px] text-center">
             <span className="font-pretendard text-[16px] font-semibold uppercase tracking-wider text-subColor-orange800">
