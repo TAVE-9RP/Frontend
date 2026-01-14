@@ -96,6 +96,11 @@ const calculateStatusCounts = (tasks: InboundTask[]) => {
       count: tasks.filter((t) => t.status === 'PENDING').length,
     },
     {
+      status: 'REJECT' as const,
+      label: '승인 반려',
+      count: tasks.filter((t) => t.status === 'REJECT').length,
+    },
+    {
       status: 'IN_PROGRESS' as const,
       label: '진행중',
       count: tasks.filter((t) => t.status === 'IN_PROGRESS').length,
