@@ -76,18 +76,15 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
 
         const price = item.itemPrice ?? 0;
         const totalPrice = item.itemTotalPrice ?? 0;
-
         const currentProcessedQtyFromApi = item.processedQuantity ?? 0;
-
         const tempInputQty = item.tempProcessedQuantity ?? 0;
-
         const targetedQty = item.targetedQuantity ?? 0;
 
         return (
           <div
             key={item.logisticsItemId}
             className={`flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 transition-colors last:border-b-0 ${
-              isSelected ? 'bg-mainColor-blue050' : 'bg-white'
+              isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'
             }`}
           >
             <div className="flex h-full w-[40px] items-center justify-center border-r-[2px] border-greyColor-grey200">
@@ -98,7 +95,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   type="button"
                   onClick={() => !isItemCompleted && onSelect(item.logisticsItemId)}
                   disabled={isItemCompleted}
-                  className={`${isItemCompleted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                  className={`flex h-full w-full items-center justify-center ${isItemCompleted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 >
                   <img
                     src={isSelected ? checkboxCheckImg : checkboxImg}
@@ -118,7 +115,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200">
-              {isInProgress && !isItemCompleted ? (
+              {isInProgress ? (
                 <input
                   type="text"
                   inputMode="numeric"
@@ -130,7 +127,12 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                       value === '' ? 0 : Number(value),
                     );
                   }}
-                  className="w-[80%] rounded border border-greyColor-grey200 text-center font-pretendard text-[14px] focus:outline-none"
+                  disabled={!isSelected || isItemCompleted}
+                  className={`h-[30px] w-[80%] rounded border border-greyColor-grey300 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue600 focus:outline-none ${
+                    !isSelected || isItemCompleted
+                      ? 'cursor-not-allowed bg-greyColor-grey100'
+                      : 'bg-white'
+                  }`}
                 />
               ) : (
                 <span className="font-pretendard text-[14px] text-greyColor-grey300">-</span>
@@ -150,7 +152,6 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                 <input
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9]*"
                   value={targetedQty === 0 ? '' : targetedQty}
                   onChange={(e) => {
                     const value = e.target.value.replace(/[^0-9]/g, '');
@@ -159,10 +160,10 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                       value === '' ? 0 : Number(value),
                     );
                   }}
-                  className="w-[80%] rounded border border-greyColor-grey300 bg-white px-1 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue500 focus:outline-none"
+                  className="h-[30px] w-[80%] rounded border border-greyColor-grey300 bg-white text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue500 focus:outline-none"
                 />
               ) : (
-                <span>{targetedQty}</span>
+                <span className="text-black">{targetedQty}</span>
               )}
             </div>
 
@@ -176,7 +177,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
 
             <div className="flex h-full w-[97px] items-center justify-center font-pretendard text-[14px]">
               <div
-                className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] py-[8px] ${
+                className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] text-[13px] font-bold leading-none ${
                   isItemCompleted || isCompletedStatus
                     ? 'bg-mainColor-blue050 text-mainColor-blue600'
                     : isItemProcessing
@@ -184,9 +185,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                       : 'bg-greyColor-grey200 text-greyColor-grey600'
                 }`}
               >
-                <span className="font-pretendard text-[13px] font-bold leading-none">
-                  {statusMap[item.logisticsProcessingStatus] || '미진행'}
-                </span>
+                {statusMap[item.logisticsProcessingStatus] || '미진행'}
               </div>
             </div>
           </div>

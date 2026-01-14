@@ -48,7 +48,7 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
               재고 번호
             </th>
             <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
-              품목명
+              물품명
             </th>
             <th className={`${commonCellClasses} w-[140px] ${headerTextClasses} justify-start`}>
               수량

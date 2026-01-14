@@ -26,6 +26,9 @@ import OutboundTaskDetailPage from './pages/management-service/outbound/OutBound
 import InventoryInboundTaskDetailPage from './pages/inventory-service/inventory-inbound/inventoryInboundTaskDetailPage';
 import InventoryDetailPage from './pages/inventory-service/inventory-inbound/inventoryStockDetailPage';
 import LogisticsOutboundTaskDetailPage from './pages/logistics-service/logistics-outbound/LogisticsOutboundTaskDetailPage';
+import InventoryHome from './pages/inventory-service/InventoryHome';
+import LogisticsHome from './pages/logistics-service/LogisticsHome';
+import ManagementHome from './pages/management-service/ManagementHome';
 
 const queryClient = new QueryClient();
 
@@ -52,16 +55,19 @@ function App() {
         <Route path="/outbound-task" element={<OutBoundTaskListPage />} />
         <Route path="/outbound-task/:logisticsId" element={<OutboundTaskDetailPage />} />
         <Route path="/inventory-inbound-task" element={<InventoryInboundTaskListPage />} />
+        <Route path="/inventory-home" element={<InventoryHome />} />
         <Route
           path="/inventory-inbound-task/:projectNumber"
           element={<InventoryInboundTaskDetailPage />}
         />
         <Route path="/logistics-outbound-task" element={<LogisticsOutboundTaskListPage />} />
+        <Route path="logistics-home" element={<LogisticsHome />} />
         <Route path="/logistics-outbound-task/:id" element={<LogisticsOutboundTaskDetailPage />} />
         <Route path="inventory-stock" element={<InventoryStockListPage />} />
         <Route path="/inventory-stock/:inventoryNumber" element={<InventoryDetailPage />} />
 
         <Route path="hrmanagement" element={<HRManagementPage />} />
+        <Route path="management-home" element={<ManagementHome />} />
 
         <Route path="test" element={<TestPage />} />
       </Routes>

@@ -5,12 +5,13 @@ export interface LogisticsSummary {
   logisticsId: number;
   projectNumber: string;
   logisticsTitle: string;
-  logisticsAssignees: string[];
-  logisticsRequestedAt: string;
+  customer?: string;
+  requestedAt?: string;
+  assigneeSummary?: string;
   logisticsStatus: LogisticsStatus;
-  logisticsCarrierCompany?: string;
-  logisticsDescription?: string;
-  logisticsCarrier?: string;
+
+  logisticsAssignees?: string[];
+  logisticsRequestedAt?: string;
 }
 
 export interface LogisticsDetail {

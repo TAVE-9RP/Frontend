@@ -46,6 +46,12 @@ export default {
           red010: '#FF2935',
           red020: '#C2000B',
         },
+        semanticColor: {
+          green100: '#DDF8EF',
+          green500: '#0CA678',
+          red100: '#FDECEC',
+          red500: '#E03131',
+        },
       },
     },
   },
