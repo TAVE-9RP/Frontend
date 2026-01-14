@@ -160,12 +160,12 @@ export default function OutboundTaskListPage() {
     return datePart;
   };
 
-  // API에서 데이터 가져오기
+  // API에서 데이터 가져오기 (검색어 포함)
   useEffect(() => {
     const fetchLogisticsList = async () => {
       setIsLoading(true);
       try {
-        const response = await getLogisticsList('');
+        const response = await getLogisticsList(searchTerm);
         if (response.isSuccess && response.result) {
           // API 응답을 OutboundTask 형식으로 변환
           const mappedTasks: OutboundTask[] = response.result.map((item: any) => ({
@@ -191,9 +191,9 @@ export default function OutboundTaskListPage() {
     };
 
     fetchLogisticsList();
-  }, []);
+  }, [searchTerm]);
 
-  // 상태 및 검색어에 따라 필터링
+  // 상태에 따라 필터링 (검색어는 API에서 처리)
   useEffect(() => {
     let filteredList: OutboundTask[];
 
@@ -203,15 +203,8 @@ export default function OutboundTaskListPage() {
       filteredList = allTasks.filter((task) => task.status === activeStatus);
     }
 
-    // 검색어 필터링
-    const finalFilteredList = filteredList.filter(
-      (task) =>
-        task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-
-    setTaskList(finalFilteredList);
-  }, [activeStatus, searchTerm, allTasks]);
+    setTaskList(filteredList);
+  }, [activeStatus, allTasks]);
 
   const handleStatusClick = (status: OutboundTask['status']) => {
     if (activeStatus === status) return;
