@@ -160,7 +160,7 @@ export default function OutboundTaskListPage() {
     const fetchLogisticsList = async () => {
       setIsLoading(true);
       try {
-        const response = await getLogisticsList();
+        const response = await getLogisticsList('');
         if (response.isSuccess && response.result) {
           // API 응답을 OutboundTask 형식으로 변환
           const mappedTasks: OutboundTask[] = response.result.map((item: any) => ({
