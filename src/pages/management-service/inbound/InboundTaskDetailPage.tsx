@@ -171,10 +171,10 @@ export default function InboundTaskDetailPage() {
           console.log('result:', result);
           setTaskDetail({
             projectNumber: formatNullValue(result.projectNumber),
-            taskName: formatNullValue(result.inventoryTitle),
+            taskName: result.inventoryTitle || '',
             manager: formatAssignees(result.inventoryAssignees),
             requestDate: formatDate(result.inventoryRequestedAt),
-            description: formatNullValue(result.inventoryDescription),
+            description: result.inventoryDescription || '',
             status: mapStatusForStepBar(result.inventoryStatus),
             inventoryStatus: result.inventoryStatus || '', // 원본 상태 저장
           });
@@ -320,7 +320,7 @@ export default function InboundTaskDetailPage() {
             <div className="mb-[64px] flex justify-between">
               <FormGroup label="입고 업무명" className="w-[390px]">
                 <BasicInput 
-                  value={taskDetail.taskName || '-'} 
+                  value={taskDetail.taskName || ''} 
                   disabled={true} 
                   readOnly 
                   placeholder=""
@@ -340,7 +340,7 @@ export default function InboundTaskDetailPage() {
             <div className="mb-[40px]">
               <FormGroup label="업무 설명">
                 <LargeInput
-                  value={taskDetail.description || '-'}
+                  value={taskDetail.description || ''}
                   disabled={true}
                   readOnly
                   placeholder=""
