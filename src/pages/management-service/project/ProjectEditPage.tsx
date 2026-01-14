@@ -89,7 +89,7 @@ export default function ProjectEditPage() {
             projectTitle: project.projectTitle || '',
             projectDescription: project.description || '',
             client: project.customer || '',
-            jobDescription: '', // API 응답에 없으므로 빈 문자열
+            jobDescription: project.taskDescription || '',
             targetYear: dateParts[0] || '',
             targetMonth: dateParts[1] || '',
             targetDay: dateParts[2] || '',
