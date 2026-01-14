@@ -153,6 +153,7 @@ export default function InventoryInboundTaskDetailPage() {
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [isFinalInbound, setIsFinalInbound] = useState(false);
 
+  // 입고 업무 상세 정보 가져오기 (초기 로드 시에만)
   useEffect(() => {
     const fetchInventoryDetail = async () => {
       if (!projectNumber) return;
@@ -188,6 +189,11 @@ export default function InventoryInboundTaskDetailPage() {
       }
     };
 
+    fetchInventoryDetail();
+  }, [projectNumber]);
+
+  // 입고 물품 목록 가져오기 (refreshItems 변경 시에도 호출)
+  useEffect(() => {
     const fetchInventoryItems = async () => {
       if (!projectNumber) return;
 
@@ -224,7 +230,6 @@ export default function InventoryInboundTaskDetailPage() {
       }
     };
 
-    fetchInventoryDetail();
     fetchInventoryItems();
   }, [projectNumber, refreshItems]);
 
@@ -301,7 +306,26 @@ export default function InventoryInboundTaskDetailPage() {
       if (approvalResponse.isSuccess) {
         setIsApprovalModalOpen(false);
         setIsSuccessModalOpen(true);
-        // 페이지 새로고침하여 진행 상태 업데이트
+        // 페이지 전체 새로고침 - 상세 정보 및 물품 목록 모두 재호출
+        setIsLoading(true);
+        try {
+          const detailResponse = await getInventoryDetail(projectNumber);
+          if (detailResponse.isSuccess && detailResponse.result) {
+            const result = detailResponse.result;
+            setTaskDetail({
+              projectNumber: formatNullValue(result.projectNumber),
+              taskName: result.inventoryTitle || '',
+              manager: formatAssignees(result.inventoryAssignees),
+              requestDate: formatDate(result.inventoryRequestedAt),
+              description: result.inventoryDescription || '',
+              status: mapStatusForStepBar(result.inventoryStatus),
+            });
+          }
+        } catch (error: any) {
+          console.error('입고 업무 상세 정보 가져오기 실패:', error);
+        } finally {
+          setIsLoading(false);
+        }
         setRefreshItems((prev) => prev + 1);
       } else {
         alert('승인 요청에 실패했습니다.');
