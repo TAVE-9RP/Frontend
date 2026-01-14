@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { decodeAccessToken } from '@/utils/jwt';
-
-interface SideBarProps {
-  memberName?: string;
-  memberPosition?: string;
-}
+import { getMemberMe } from '@/apis/member';
 
 const mapPositionToKorean = (position?: string): string => {
   const positionMap: Record<string, string> = {
@@ -17,14 +13,16 @@ const mapPositionToKorean = (position?: string): string => {
     OWNER: '오너',
   };
 
-  return position ? positionMap[position] || position : '오너';
+  return position ? positionMap[position] || position : '';
 };
 
-export default function SideBar({ memberName, memberPosition }: SideBarProps = {}) {
+export default function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
   const [departmentFromToken, setDepartmentFromToken] = useState<string | null>(null);
+  const [memberName, setMemberName] = useState<string>('');
+  const [memberPosition, setMemberPosition] = useState<string>('');
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -34,6 +32,23 @@ export default function SideBar({ memberName, memberPosition }: SideBarProps = {
     if (payload?.department) {
       setDepartmentFromToken(payload.department);
     }
+  }, []);
+
+  // 회원 정보 조회
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await getMemberMe();
+        if (response.isSuccess && response.result) {
+          setMemberName(response.result.name);
+          setMemberPosition(response.result.position);
+        }
+      } catch (error) {
+        console.error('회원 정보 조회 실패:', error);
+      }
+    };
+
+    fetchMemberInfo();
   }, []);
 
   const menuSections = [
@@ -118,9 +133,13 @@ export default function SideBar({ memberName, memberPosition }: SideBarProps = {
 
       <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
         <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
-        <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
-          {mapPositionToKorean(memberPosition)} | {memberName || '홍길동'}
-        </span>
+        {(memberPosition || memberName) && (
+          <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
+            {memberPosition ? mapPositionToKorean(memberPosition) : ''}
+            {memberPosition && memberName ? ' | ' : ''}
+            {memberName || ''}
+          </span>
+        )}
       </div>
 
       {menuSections.map((section) => {
