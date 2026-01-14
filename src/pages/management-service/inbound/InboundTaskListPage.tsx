@@ -140,7 +140,7 @@ export default function InboundTaskListPage() {
     const fetchInventoryList = async () => {
       setIsLoading(true);
       try {
-        const response = await getInventoryList();
+        const response = await getInventoryList('');
         if (response.isSuccess && response.result) {
           // API 응답을 InboundTask 형식으로 변환
           const mappedTasks: InboundTask[] = response.result.map((item: any) => ({
