@@ -53,13 +53,6 @@ const MOCK_DATA: ProjectData[] = [
     dueDate: '2025-10-26',
     status: 'IN_PROGRESS',
   },
-  {
-    id: 'SYS-01-007',
-    number: 'SYS-01-007',
-    title: '일곱 번째 데이터(스크롤 확인용)',
-    dueDate: '2025-10-27',
-    status: 'ASSIGNED',
-  },
 ];
 
 const ProjectListTable = () => {
@@ -138,7 +131,7 @@ const ProjectListTable = () => {
         </div>
       </div>
 
-      <div className="flex max-h-[288px] w-[980px] flex-col overflow-y-auto">
+      <div className="flex max-h-[240px] w-[980px] flex-col overflow-y-auto">
         {MOCK_DATA.map((item) => (
           <div key={item.id} className={`flex border-x border-b ${borderColor}`}>
             <div
