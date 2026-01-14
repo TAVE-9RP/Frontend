@@ -51,7 +51,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   ];
 
   return (
-    <div className="w-full overflow-hidden border-[2px] border-greyColor-grey200">
+    <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
       <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
         {columns.map((col, idx) => {
           const isQuantityHeader = col.label === '출하 수량' || col.label === '현재 출하 수량';

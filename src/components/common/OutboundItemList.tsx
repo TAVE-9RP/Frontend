@@ -38,7 +38,7 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
     { label: '처리 상태', width: 'w-[122px]', key: 'status' },
   ];
   return (
-    <div className="box-border w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+    <div className="box-border w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
       <div className="box-border flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
         {columns.map((col, idx) => (
           <div

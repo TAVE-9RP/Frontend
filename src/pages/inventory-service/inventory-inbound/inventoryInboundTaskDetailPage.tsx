@@ -571,7 +571,7 @@ export default function InventoryInboundTaskDetailPage() {
                 </div>
               </div>
               {items.length === 0 ? (
-                <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+                <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
                   <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
                     <div className="flex h-full w-[112px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                       재고 번호

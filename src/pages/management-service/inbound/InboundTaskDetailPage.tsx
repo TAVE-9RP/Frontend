@@ -351,7 +351,7 @@ export default function InboundTaskDetailPage() {
             <div className="mb-[40px] mt-[80px]">
               <FormGroup label="입고 물품 목록">
                 {taskDetail.status === 'TASK_ASSIGNMENT' ? (
-                  <div className="w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+                  <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
                     <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
                       <div className="w-[112px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                         재고 번호
