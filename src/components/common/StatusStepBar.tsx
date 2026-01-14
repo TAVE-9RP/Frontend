@@ -11,9 +11,10 @@ const StatusChip: React.FC<StatusChipProps> = ({ label, isActive }) => {
     <div
       className={`flex items-center justify-center gap-[10px] whitespace-nowrap rounded-[100px] px-[10px] py-[10px] transition-all ${
         isActive
-          ? 'bg-subColor-orange800 text-white'
+          ? 'text-white'
           : 'border border-greyColor-grey300 bg-white text-greyColor-grey300'
       }`}
+      style={isActive ? { backgroundColor: '#007ef5' } : {}}
     >
       <span
         className={`font-pretendard text-[13px] leading-normal ${isActive ? 'font-bold' : 'font-bold'}`}
