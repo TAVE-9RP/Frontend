@@ -84,7 +84,7 @@ export default function LogisticsOutboundTaskListPage() {
       <SideBar />
 
       <main className="flex-1">
-        <div className="mt-5 pl-[70px] pr-10 pt-10">
+        <div className="pl-[70px] pr-10 pt-[60px]">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             출하 업무 리스트
           </h1>
@@ -106,7 +106,7 @@ export default function LogisticsOutboundTaskListPage() {
               ))}
             </div>
 
-            <div className="ml-[160px] w-[500px]">
+            <div className="ml-[48px] w-[100px]">
               <SearchBar
                 placeholder="프로젝트 넘버 또는 출하 업무명을 입력하세요."
                 value={searchTerm}
