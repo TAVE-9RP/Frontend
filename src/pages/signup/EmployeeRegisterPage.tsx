@@ -8,6 +8,7 @@ export default function EmployeeRegisterPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    name: '',
     userId: '',
     email: '',
     password: '',
@@ -59,6 +60,7 @@ export default function EmployeeRegisterPage() {
 
   useEffect(() => {
     const isValid =
+      formData.name.trim() !== '' &&
       formData.userId.trim() !== '' &&
       emailRegex.test(formData.email) &&
       passwordRegex.test(formData.password) &&
@@ -78,6 +80,7 @@ export default function EmployeeRegisterPage() {
     console.log('폼 데이터 제출:', formData);
     navigate('/employeesignup/step2', {
       state: {
+        name: formData.name,
         userId: formData.userId,
         email: formData.email,
         password: formData.password,
@@ -90,6 +93,15 @@ export default function EmployeeRegisterPage() {
       <Header title="사원 신규 등록하기" />
 
       <form onSubmit={handleSubmit} className="mt-[49px] flex w-full flex-col gap-[20px]">
+        <InputField
+          label="이름"
+          name="name"
+          placeholder="이름을 입력해주세요."
+          type="text"
+          value={formData.name}
+          onChange={handleChange}
+        />
+
         <InputField
           label="아이디"
           name="userId"
