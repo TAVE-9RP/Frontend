@@ -82,14 +82,14 @@ export default function LoginPage() {
         const accessToken = response.result.accessToken;
         localStorage.setItem('accessToken', accessToken);
 
-        // Access Token 디코딩하여 department와 permissions 확인
+        // Access Token 디코딩하여 department 확인
         const tokenPayload = decodeAccessToken(accessToken);
 
         if (tokenPayload) {
-          const { department, permissions } = tokenPayload;
+          const { department } = tokenPayload;
 
-          // 1. department: MANAGEMENT이고 permissions.management가 ALL이면 /project-management
-          if (department === 'MANAGEMENT' && permissions.management === 'ALL') {
+          // 1. department: MANAGEMENT이면 /project-management
+          if (department === 'MANAGEMENT') {
             navigate('/project-management');
             return;
           }
