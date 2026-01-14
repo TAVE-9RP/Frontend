@@ -11,6 +11,9 @@ import registerBtnImg from '@/assets/mainpage/register.png';
 import personnelServiceBadge from '@/assets/mainpage/인사서비스icon.png';
 import inventoryServiceBadge from '@/assets/mainpage/재고서비스icon.png';
 import logisticsServiceBadge from '@/assets/mainpage/물류서비스icon.png';
+import managementServiceImg from '@/assets/mainpage/Frame 196.png';
+import inventoryServiceImg from '@/assets/mainpage/Frame 197.png';
+import logisticsServiceImg from '@/assets/mainpage/Frame 198.png';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -18,7 +21,7 @@ export default function Main() {
   return (
     <div className="min-h-screen w-full bg-white">
       {/* 헤더 */}
-      <header className="fixed top-0 z-50 flex w-full items-center justify-between bg-white px-[120px] py-[24px]">
+      <header className="fixed top-0 z-50 flex h-[157px] w-full items-center justify-between bg-white px-[120px]">
         <div className="flex items-center gap-[12px]">
           <img src={logoImg} alt="NexERP 로고" className="h-[54px] w-[191px] object-contain" />
         </div>
@@ -152,36 +155,22 @@ export default function Main() {
                 <br />
               </p>
             </div>
-            <div
-              className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
-              style={{
-                backgroundImage: `
-                  linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-              }}
-            ></div>
+            <img
+              src={managementServiceImg}
+              alt="Management Service"
+              className="flex-shrink-0 rounded-[16px] object-contain"
+              style={{ width: '581px', height: '382px' }}
+            />
           </div>
 
           {/* Inventory Service */}
           <div className="flex items-center gap-[80px]">
-            <div
-              className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
-              style={{
-                backgroundImage: `
-                  linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-              }}
-            ></div>
+            <img
+              src={inventoryServiceImg}
+              alt="Inventory Service"
+              className="flex-shrink-0 rounded-[16px] object-contain"
+              style={{ width: '581px', height: '382px' }}
+            />
             <div className="flex-1">
               <img
                 src={inventoryServiceBadge}
@@ -235,22 +224,15 @@ export default function Main() {
                 <br />
                 이는 운송, 보관, 하역, 포장, 정보 관리 등 다양한 요소를 통합적으로 관리하여,
                 <br />
-                기업이 자원을 효율적으로 활용하고 고객 만족도를 높이도록 돕습니다. 
+                기업이 자원을 효율적으로 활용하고 고객 만족도를 높이도록 돕습니다. 
               </p>
             </div>
-            <div
-              className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
-              style={{
-                backgroundImage: `
-                  linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-              }}
-            ></div>
+            <img
+              src={logisticsServiceImg}
+              alt="Logistics Service"
+              className="flex-shrink-0 rounded-[16px] object-contain"
+              style={{ width: '581px', height: '382px' }}
+            />
           </div>
         </div>
       </section>
