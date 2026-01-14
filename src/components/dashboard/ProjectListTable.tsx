@@ -46,6 +46,13 @@ const MOCK_DATA: ProjectData[] = [
     dueDate: '2025-10-25',
     status: 'REJECT',
   },
+  {
+    id: 'SYS-01-006',
+    number: 'SYS-01-006',
+    title: '여섯 번째 데이터',
+    dueDate: '2025-10-26',
+    status: 'IN_PROGRESS',
+  },
 ];
 
 const ProjectListTable = () => {
@@ -54,7 +61,7 @@ const ProjectListTable = () => {
   const headerBg = 'bg-mainColor-blue050';
 
   const handleNavigation = (id: string) => {
-    navigate(`/inventory/project/${id}`); //경로 확인
+    navigate(`/inventory/project/${id}`);
   };
 
   const getStatusChipClasses = (status: ProjectData['status']) => {
@@ -97,7 +104,7 @@ const ProjectListTable = () => {
   };
 
   return (
-    <div className="flex w-full flex-col items-start overflow-x-auto">
+    <div className="flex w-[980px] flex-col items-start">
       <div className={`flex w-[980px] border ${borderColor} ${headerBg}`}>
         <div
           className={`flex h-[40px] w-[180px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
@@ -124,7 +131,7 @@ const ProjectListTable = () => {
         </div>
       </div>
 
-      <div className="flex w-[980px] flex-col">
+      <div className="flex max-h-[240px] w-[980px] flex-col overflow-y-auto">
         {MOCK_DATA.map((item) => (
           <div key={item.id} className={`flex border-x border-b ${borderColor}`}>
             <div
