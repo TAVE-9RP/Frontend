@@ -27,22 +27,45 @@ export default function ManagementHome() {
   const dateTextStyle = 'mt-[8px] font-pretendard text-[15px] font-normal text-greyColor-grey500';
   const sectionTitleStyle = 'font-pretendard text-[19px] font-bold text-black';
 
+  const scrollContainerStyle = 'flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1';
+
   const mockTasks = {
-    '업무 할당': [{ id: 'P-1', date: '2025.11.10', title: '목욕하는 카피바라' }],
+    '업무 할당': [
+      { id: 'P-1', date: '2025.11.10', title: '목욕하는 카피바라' },
+      { id: 'P-1-2', date: '2025.11.10', title: '목욕 후 털 말리는 카피바라' },
+      { id: 'P-1-3', date: '2025.11.10', title: '물 온도 체크하는 카피바라' },
+      { id: 'P-1-4', date: '2025.11.10', title: '비누칠 하는 카피바라' },
+      { id: 'P-1-5', date: '2025.11.10', title: '수건 준비하는 카피바라' },
+      { id: 'P-1-6', date: '2025.11.10', title: '드라이기 빌리는 카피바라' },
+    ],
     '승인 대기': [{ id: 'P-2', date: '2025.11.12', title: '카피바라 전용 양배추' }],
     진행중: [{ id: 'P-3', date: '2025.11.15', title: '카피바라 입수 준비' }],
     '입고 완료': [{ id: 'P-4', date: '2025.11.08', title: '특급 당근' }],
   };
 
   const SafetyTasks = {
-    '업무 할당': [{ id: 'S-1', date: '2025.11.20', title: '카피바라 전용 당근' }],
+    '업무 할당': [
+      { id: 'S-1', date: '2025.11.20', title: '카피바라 전용 당근' },
+      { id: 'S-1-2', date: '2025.11.20', title: '당근 씻는 카피바라' },
+      { id: 'S-1-3', date: '2025.11.20', title: '당근 쟁여두는 카피바라' },
+      { id: 'S-1-4', date: '2025.11.20', title: '당근 나르는 카피바라' },
+      { id: 'S-1-5', date: '2025.11.20', title: '당근 품질 검사' },
+      { id: 'S-1-6', date: '2025.11.20', title: '당근 박스 포장' },
+    ],
     '승인 대기': [{ id: 'S-2', date: '2025.11.22', title: '카피바라 낮잠용 볏집' }],
     진행중: [{ id: 'S-3', date: '2025.11.25', title: '카피바라 밥먹을시간' }],
     '입고 완료': [{ id: 'S-4', date: '2025.11.18', title: '특급 당근' }],
   };
 
   const logisticsTasks = {
-    '업무 할당': [{ id: 'L-1', date: '2025.11.26', title: '카피바라 간식 긴급 배송 중' }],
+    '업무 할당': [
+      { id: 'L-1', date: '2025.11.26', title: '카피바라 간식 긴급 배송 중' },
+      { id: 'L-1-2', date: '2025.11.26', title: '트럭 시동 거는 카피바라' },
+      { id: 'L-1-3', date: '2025.11.26', title: '지도 확인하는 카피바라' },
+      { id: 'L-1-4', date: '2025.11.26', title: '휴게소 들린 카피바라' },
+      { id: 'L-1-5', date: '2025.11.26', title: '과속 방지턱 넘는 카피바라' },
+      { id: 'L-1-6', date: '2025.11.26', title: '목적지 도착한 카피바라' },
+    ],
     '승인 대기': [{ id: 'L-2', date: '2025.11.27', title: '카피바라표 김밥' }],
     진행중: [{ id: 'L-3', date: '2025.11.28', title: '두쫀쿠' }],
     '입고 완료': [{ id: 'L-4', date: '2025.11.25', title: '트럭 기사 카피바라' }],
@@ -97,15 +120,15 @@ export default function ManagementHome() {
                       />
                     ))}
                   </div>
-                  <div className="flex flex-col gap-3">
+                  <div className={scrollContainerStyle}>
                     {mockTasks[activeTab].map((task, i) => (
                       <div
                         key={i}
-                        className="flex cursor-pointer items-center"
+                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                         onClick={() => handleDetailClick('project', task.id)}
                       >
-                        <div className="flex items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
+                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
                             {task.date}
                           </span>
                         </div>
@@ -270,15 +293,15 @@ export default function ManagementHome() {
                       />
                     ))}
                   </div>
-                  <div className="flex flex-col gap-3">
+                  <div className={scrollContainerStyle}>
                     {SafetyTasks[safetyInventoryTab].map((task, i) => (
                       <div
                         key={i}
-                        className="flex cursor-pointer items-center"
+                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                         onClick={() => handleDetailClick('safety', task.id)}
                       >
-                        <div className="flex items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
+                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
                             {task.date}
                           </span>
                         </div>
@@ -292,7 +315,6 @@ export default function ManagementHome() {
                   </div>
                 </div>
               </div>
-
               <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[45px] top-[47.5px]">
                   <DashboardChart percent={65} label="재고 회전율(%)" colorType="blue" />
@@ -324,15 +346,15 @@ export default function ManagementHome() {
                       />
                     ))}
                   </div>
-                  <div className="flex flex-col gap-3">
+                  <div className={scrollContainerStyle}>
                     {logisticsTasks[logisticsTab].map((task, i) => (
                       <div
                         key={i}
-                        className="flex cursor-pointer items-center"
+                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                         onClick={() => handleDetailClick('logistics', task.id)}
                       >
-                        <div className="flex items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
+                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
                             {task.date}
                           </span>
                         </div>

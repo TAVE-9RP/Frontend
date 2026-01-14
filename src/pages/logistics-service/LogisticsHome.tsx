@@ -13,7 +13,16 @@ export default function LogisticsHome() {
   const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
 
   const mockTasks = {
-    '업무 할당': [{ id: 'LOG-001', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' }],
+    '업무 할당': [
+      { id: 'LOG-001', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-002', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-003', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-004', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-005', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-006', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-007', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+      { id: 'LOG-008', date: '2025.11.10', title: '카피바라의 돼지국밥 먹방' },
+    ],
     '승인 대기': [{ id: 'LOG-002', date: '2025.11.12', title: '카피바라표 김치볶음밥' }],
     진행중: [{ id: 'LOG-003', date: '2025.11.15', title: '카피바라의 양심선언' }],
     '출하 완료': [{ id: 'LOG-004', date: '2025.11.08', title: '황색요리사 카피바라' }],
@@ -61,15 +70,15 @@ export default function LogisticsHome() {
                     ))}
                   </div>
 
-                  <div className="flex flex-col gap-3">
+                  <div className="flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1">
                     {mockTasks[activeTab].map((task) => (
                       <div
                         key={task.id}
-                        className="flex cursor-pointer items-center"
+                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                         onClick={() => handleItemClick(task.id)}
                       >
-                        <div className="flex items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px] py-[5px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
+                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
                             {task.date}
                           </span>
                         </div>

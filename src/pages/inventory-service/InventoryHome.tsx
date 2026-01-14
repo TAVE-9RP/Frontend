@@ -12,7 +12,16 @@ export default function InventoryHome() {
   const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
 
   const mockTasks = {
-    '업무 할당': [{ id: 'INV-A1', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' }],
+    '업무 할당': [
+      { id: 'INV-A1', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A2', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A3', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A4', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A5', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A6', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A7', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+      { id: 'INV-A8', date: '2025.11.10', title: '카피바라가 먹고 남긴 당근' },
+    ],
     '승인 대기': [{ id: 'INV-A2', date: '2025.11.12', title: '카피바라 랜드' }],
     진행중: [{ id: 'INV-A3', date: '2025.11.15', title: '카피바라 쿠키' }],
     '입고 완료': [{ id: 'INV-A4', date: '2025.11.08', title: '카피바라 자켓' }],
@@ -60,15 +69,15 @@ export default function InventoryHome() {
                     ))}
                   </div>
 
-                  <div className="flex flex-col gap-3">
+                  <div className="flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1">
                     {mockTasks[activeTab].map((task) => (
                       <div
                         key={task.id}
-                        className="flex cursor-pointer items-center"
+                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                         onClick={() => handleItemClick(task.id)}
                       >
-                        <div className="flex items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px] py-[5px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
+                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
                             {task.date}
                           </span>
                         </div>

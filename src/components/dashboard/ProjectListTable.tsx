@@ -104,7 +104,7 @@ const ProjectListTable = () => {
   };
 
   return (
-    <div className="flex w-full flex-col items-start overflow-x-auto">
+    <div className="flex w-[980px] flex-col items-start">
       <div className={`flex w-[980px] border ${borderColor} ${headerBg}`}>
         <div
           className={`flex h-[40px] w-[180px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
