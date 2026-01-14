@@ -353,22 +353,19 @@ export default function InboundTaskDetailPage() {
                 {taskDetail.status === 'TASK_ASSIGNMENT' ? (
                   <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
                     <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-                      <div className="w-[112px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      <div className="w-[150px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                         재고 번호
                       </div>
-                      <div className="w-[130px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      <div className="w-[180px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                         물품명
                       </div>
-                      <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                        입고 요청 수량
-                      </div>
-                      <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      <div className="w-[180px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                         현재 입고 수량
                       </div>
-                      <div className="w-[140px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
+                      <div className="w-[180px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                         목표 입고 수량
                       </div>
-                      <div className="w-[150px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
+                      <div className="w-[180px] flex h-full items-center justify-center font-pretendard text-[14px] font-bold text-black">
                         처리 상태
                       </div>
                     </div>
