@@ -33,3 +33,23 @@ export interface MemberSignupResponse {
   message: string;
   result?: any;
 }
+
+export interface MemberMeResponse {
+  timestamp: string;
+  isSuccess: boolean;
+  status: number;
+  code: string;
+  message: string;
+  result: {
+    companyId: number;
+    memberId: number;
+    name: string;
+    email: string;
+    department: 'MANAGEMENT' | 'INVENTORY' | 'LOGISTICS';
+    position: 'OWNER' | 'DEPARTMENT_HEAD' | 'SENIOR_MANAGER' | 'MANAGER' | 'ASSISTANT_MANAGER' | 'INTERN';
+    requestStatus: string;
+    logisticsRole: string | null;
+    inventoryRole: string | null;
+    managementRole: string | null;
+  };
+}

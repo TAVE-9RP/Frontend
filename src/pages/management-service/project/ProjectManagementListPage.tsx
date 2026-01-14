@@ -5,6 +5,7 @@ import ProjectStatusButton from '../../../components/common/ProjectStatusButton'
 import ProjectListTable from '../../../components/common/ProjectListTable';
 import { useNavigate } from 'react-router-dom';
 import { getProjects } from '@/apis/admin';
+import { getMemberMe } from '@/apis/member';
 
 interface Project {
   id: number;
@@ -86,6 +87,8 @@ export default function ProjectManagementListPage() {
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]); // 전체 프로젝트 목록 저장
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [memberName, setMemberName] = useState<string>('');
+  const [memberPosition, setMemberPosition] = useState<string>('');
   const navigate = useNavigate();
 
   // 상태별 카운트를 allProjects 기반으로 계산
@@ -258,9 +261,26 @@ export default function ProjectManagementListPage() {
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
+  // 페이지 로드 시 회원 정보 조회
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await getMemberMe();
+        if (response.isSuccess && response.result) {
+          setMemberName(response.result.name);
+          setMemberPosition(response.result.position);
+        }
+      } catch (error) {
+        console.error('회원 정보 조회 실패:', error);
+      }
+    };
+
+    fetchMemberInfo();
+  }, []);
+
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
+      <SideBar memberName={memberName} memberPosition={memberPosition} />
 
       <main className="flex-1">
         <div className="pl-[70px] pr-10 pt-[60px]">

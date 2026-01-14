@@ -2,7 +2,25 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { decodeAccessToken } from '@/utils/jwt';
 
-export default function SideBar() {
+interface SideBarProps {
+  memberName?: string;
+  memberPosition?: string;
+}
+
+const mapPositionToKorean = (position?: string): string => {
+  const positionMap: Record<string, string> = {
+    INTERN: '인턴',
+    ASSISTANT_MANAGER: '주임',
+    MANAGER: '대리',
+    SENIOR_MANAGER: '과장',
+    DEPARTMENT_HEAD: '부장',
+    OWNER: '오너',
+  };
+
+  return position ? positionMap[position] || position : '오너';
+};
+
+export default function SideBar({ memberName, memberPosition }: SideBarProps = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -101,7 +119,7 @@ export default function SideBar() {
       <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
         <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
-          Owner | 홍길동
+          {mapPositionToKorean(memberPosition)} | {memberName || '홍길동'}
         </span>
       </div>
 
