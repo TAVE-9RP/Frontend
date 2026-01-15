@@ -65,7 +65,7 @@ export default function EmployeeRegisterSecondPage() {
   }, [searchTerm]);
 
   return (
-    <div className="mx-auto flex w-full max-w-[535px] flex-col items-center">
+    <div className="mx-auto flex min-h-screen w-full max-w-[535px] flex-col items-center">
       <Header title="회사를 선택해주세요" />
 
       <div className="mt-[49px] flex h-[69px] w-[535px] shrink-0 items-center gap-[14px] rounded-[10px] border border-greyColor-grey300 bg-[#F7F8F9] px-[15px]">
@@ -82,7 +82,7 @@ export default function EmployeeRegisterSecondPage() {
         />
       </div>
 
-      <div className="mt-[30px] flex w-full flex-col">
+      <div className="mt-[30px] flex w-full flex-1 flex-col overflow-y-auto">
         {isLoading && <p className="py-4 text-center text-gray-500">검색 중...</p>}
         {!isLoading && companies.length === 0 && searchTerm && (
           <p className="py-4 text-center text-gray-500">검색 결과가 없습니다.</p>
@@ -93,7 +93,7 @@ export default function EmployeeRegisterSecondPage() {
             <div
               key={company.id}
               onClick={() => setSelectedCompanyId(company.id)}
-              className="flex h-[75px] w-[535px] cursor-pointer items-center border-b border-greyColor-grey200 px-[10px] transition-colors hover:bg-gray-50"
+              className="flex h-[75px] w-[535px] shrink-0 cursor-pointer items-center border-b border-greyColor-grey200 px-[10px] transition-colors hover:bg-gray-50"
             >
               <img src={companyImage} alt="로고" className="h-[36px] w-[36px] shrink-0" />
 
@@ -119,40 +119,41 @@ export default function EmployeeRegisterSecondPage() {
         })}
       </div>
 
-      {selectedCompanyId && (
-        <div className="mb-10 mt-[100px] flex w-full justify-center gap-[31.5px]">
-          <Button
-            type="button"
-            variant="primary"
-            size="md"
-            onClick={() => navigate('/signup')}
-            className="h-[70px] w-[252px] rounded-[10px] border-[#63656C] px-[50px] py-[17px]"
-          >
-            이전 단계
-          </Button>
+      <div className="mb-[136px] mt-[40px] flex w-full shrink-0 justify-center gap-[31.5px]">
+        <Button
+          type="button"
+          variant="primary"
+          size="md"
+          onClick={() => navigate('/signup')}
+          // !를 추가하여 60x180 크기를 강제하고 leading-none으로 텍스트 줄바꿈 방지
+          className="flex !h-[60px] !w-[180px] items-center justify-center whitespace-nowrap rounded-[10px] border-[#63656C] font-pretendard text-[24px] font-bold leading-none text-greyColor-grey500"
+        >
+          이전 단계
+        </Button>
 
-          <Button
-            type="button"
-            variant="active"
-            onClick={() => {
-              const selectedCompany = companies.find((c) => c.id === selectedCompanyId);
-              navigate('/employeesignup/step4', {
-                state: {
-                  companyId: selectedCompanyId,
-                  companyName: selectedCompany?.name,
-                  name,
-                  userId,
-                  email,
-                  password,
-                },
-              });
-            }}
-            className="h-[70px] w-[252px] rounded-[10px] bg-mainColor-blue600 text-white"
-          >
-            다음
-          </Button>
-        </div>
-      )}
+        <Button
+          type="button"
+          variant={selectedCompanyId ? 'active' : 'secondary'}
+          disabled={!selectedCompanyId}
+          onClick={() => {
+            if (!selectedCompanyId) return;
+            const selectedCompany = companies.find((c) => c.id === selectedCompanyId);
+            navigate('/employeesignup/step4', {
+              state: {
+                companyId: selectedCompanyId,
+                companyName: selectedCompany?.name,
+                name,
+                userId,
+                email,
+                password,
+              },
+            });
+          }}
+          className="flex !h-[60px] !w-[180px] items-center justify-center whitespace-nowrap rounded-[10px] font-pretendard text-[24px] font-bold leading-none text-black"
+        >
+          다음
+        </Button>
+      </div>
     </div>
   );
 }

@@ -132,10 +132,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[535px] flex-col items-center">
+    <div className="mx-auto flex min-h-screen w-full max-w-[535px] flex-col items-center">
       <Header title="로그인" />
 
-      <form onSubmit={handleSubmit} className="mt-[49px] flex w-full flex-col gap-[20px]">
+      <form onSubmit={handleSubmit} className="mt-[49px] flex w-full flex-1 flex-col gap-[30px]">
         <div>
           <InputField
             label="아이디"
@@ -162,13 +162,13 @@ export default function LoginPage() {
           {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
         </div>
 
-        <div className="mt-[30px] flex w-full justify-center">
+        <div className="mb-[136px] mt-auto flex w-full justify-center">
           <Button
             type="submit"
             variant={isFormValid ? 'active' : 'secondary'}
             size="md"
             disabled={!isFormValid || isLoading}
-            className="h-[70px] w-full rounded-[10px] px-[50px] py-[17px] text-black"
+            className="h-[60px] w-[180px] rounded-[10px] px-[50px] py-[17px] font-pretendard text-[24px] font-bold leading-none text-black"
           >
             {isLoading ? '로그인 중...' : '로그인'}
           </Button>

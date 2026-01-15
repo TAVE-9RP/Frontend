@@ -41,7 +41,7 @@ export const InputField = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`h-[69px] w-[535px] items-center ${paddingClass} rounded-[10px] border border-[1px] bg-white text-[19px] font-normal text-black outline-none transition duration-150 ${defaultBorderClass} ${dynamicBorderClass} ${placeholderClass} `}
+        className={`h-[50px] w-[535px] items-center ${paddingClass} rounded-[10px] border border-[1px] bg-white text-[19px] font-normal text-black outline-none transition duration-150 ${defaultBorderClass} ${dynamicBorderClass} ${placeholderClass} `}
       />
 
       {guideText && (

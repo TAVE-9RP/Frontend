@@ -26,8 +26,8 @@ export default function SignupStartPage() {
   };
 
   return (
-    <div className="page min-h-screen bg-white pb-20">
-      <div className="w-full">
+    <div className="page flex min-h-screen flex-col bg-white">
+      <div className="flex w-full flex-1 flex-col">
         <Header title="NexERP와 함께 편리한 기업 프로세스를 관리해보세요" />
 
         <div className="mt-[98px] flex flex-col items-center gap-[29px]">
@@ -48,12 +48,12 @@ export default function SignupStartPage() {
           />
         </div>
 
-        <div className="mt-[120px] flex justify-center">
+        <div className="mb-[114px] mt-auto flex justify-center">
           <Button
             variant={isButtonEnabled ? 'active' : 'secondary'}
             onClick={handleNextClick}
             disabled={!isButtonEnabled}
-            className={`h-[60px] w-[180px] rounded-[10px] font-pretendard text-[18px] font-bold ${
+            className={`h-[50px] w-[180px] rounded-[10px] font-pretendard text-[24px] font-bold leading-none ${
               !isButtonEnabled ? 'cursor-not-allowed opacity-50' : ''
             }`}
           >
