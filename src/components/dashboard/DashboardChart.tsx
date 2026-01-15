@@ -45,7 +45,7 @@ const DashboardChart = ({ percent, label, colorType }: DashboardChartProps) => {
           className="absolute inset-0 flex items-center justify-center font-pretendard text-[17px] font-bold"
           style={{ color: selectedColor }}
         >
-          {percent}%
+          {percent % 1 === 0 ? percent : percent.toFixed(2)}%
         </div>
       </div>
       <p className="mt-[35px] text-center font-pretendard text-[15px] text-greyColor-grey500">

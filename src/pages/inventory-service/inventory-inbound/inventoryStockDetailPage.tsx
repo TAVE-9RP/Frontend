@@ -5,7 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
-import { getItems, getItemHistory } from '../../../apis/item';
+import { getItemDetail, getItemHistory, updateItemTargetStock, updateItemSafetyStock } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -73,7 +73,9 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ lab
 );
 
 export default function InventoryStockDetailPage() {
+  // URL 파라미터: inventoryNumber는 실제로 itemId (리스트 페이지의 itemId)
   const { inventoryNumber } = useParams<{ inventoryNumber: string }>();
+  const itemId = inventoryNumber; // itemId로 사용
 
   const [inventoryDetail, setInventoryDetail] = useState<any>(null);
   const [isChanged, setIsChanged] = useState(false);
@@ -94,55 +96,52 @@ export default function InventoryStockDetailPage() {
 
   useEffect(() => {
     const fetchInventoryDetail = async () => {
-      if (!inventoryNumber) return;
+      if (!itemId) return;
 
       try {
-        // 재고 번호로 검색
-        const response = await getItems(inventoryNumber);
+        // itemId로 상세 정보 가져오기
+        const response = await getItemDetail(itemId);
 
         if (response.isSuccess && response.result) {
-          const found = response.result.find((item: any) => item.code === inventoryNumber);
+          const result = response.result;
+          setInventoryDetail({
+            id: result.itemId,
+            inventoryNumber: result.code,
+            itemName: result.name,
+            quantity: result.quantity ?? 0,
+            itemPrice: result.price ? String(result.price) : '-',
+            location: result.location ?? '-',
+            creationDate: result.createdAt ?? '-',
+            targetQty: result.targetStock && result.targetStock !== '-' ? String(result.targetStock) : '',
+            safetyQty: result.safetyStock && result.safetyStock !== '-' ? String(result.safetyStock) : '',
+          });
 
-          if (found) {
-            setInventoryDetail({
-              id: found.itemId,
-              inventoryNumber: found.code,
-              itemName: found.name,
-              quantity: found.quantity ?? 0,
-              itemPrice: found.price ? String(found.price) : '-',
-              location: found.location ?? '-',
-              creationDate: found.createdAt ?? '-',
-              targetQty: found.targetQuantity && found.targetQuantity !== '-' ? String(found.targetQuantity) : '',
-              safetyQty: found.safetyQuantity && found.safetyQuantity !== '-' ? String(found.safetyQuantity) : '',
-            });
-
-            // 입출고 이력 API 호출
-            if (found.itemId) {
-              try {
-                const historyResponse = await getItemHistory(found.itemId);
-                if (historyResponse.isSuccess && historyResponse.result) {
-                  const mappedHistory = historyResponse.result.map((item: any) => ({
-                    id: item.itemHistoryId,
-                    type: item.taskType === 'INVENTORY' ? ('입고' as const) : ('출하' as const),
-                    manager: item.memberName || '-',
-                    date: formatDate(item.processedAt),
-                    quantity: item.changeQuantity || 0,
-                  }));
-                  setHistoryData(mappedHistory);
-                } else {
-                  setHistoryData([]);
-                }
-              } catch (error) {
-                console.error('입출고 이력 가져오기 실패:', error);
+          // 입출고 이력 API 호출
+          if (result.itemId) {
+            try {
+              const historyResponse = await getItemHistory(result.itemId);
+              if (historyResponse.isSuccess && historyResponse.result) {
+                const mappedHistory = historyResponse.result.map((item: any) => ({
+                  id: item.itemHistoryId,
+                  type: item.taskType === 'INVENTORY' ? ('입고' as const) : ('출하' as const),
+                  manager: item.memberName || '-',
+                  date: formatDate(item.processedAt),
+                  quantity: item.changeQuantity || 0,
+                }));
+                setHistoryData(mappedHistory);
+              } else {
                 setHistoryData([]);
               }
+            } catch (error) {
+              console.error('입출고 이력 가져오기 실패:', error);
+              setHistoryData([]);
             }
           }
         }
       } catch (error) {
         console.error('재고 정보 가져오기 실패:', error);
         // API 실패 시 MOCK 데이터에서 찾기 (fallback)
-        const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
+        const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === itemId);
         if (found) {
           setInventoryDetail({
             ...found,
@@ -154,7 +153,7 @@ export default function InventoryStockDetailPage() {
     };
 
     fetchInventoryDetail();
-  }, [inventoryNumber]);
+  }, [itemId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -168,10 +167,40 @@ export default function InventoryStockDetailPage() {
     setIsChanged(true);
   };
 
-  const handleApplyChange = (type: string) => {
-    alert('변경되었습니다.');
-    if (type === 'target') setIsTargetChanged(false);
-    if (type === 'safety') setIsSafetyChanged(false);
+  const handleApplyChange = async (type: string) => {
+    if (!itemId) return;
+
+    if (type === 'target') {
+      try {
+        const targetStock = Number(inventoryDetail.targetQty);
+        const response = await updateItemTargetStock(itemId, targetStock);
+        
+        if (response.isSuccess) {
+          alert('변경되었습니다.');
+          setIsTargetChanged(false);
+        } else {
+          alert('변경에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('목표재고 변경 실패:', error);
+        alert('변경에 실패했습니다.');
+      }
+    } else if (type === 'safety') {
+      try {
+        const safetyStock = Number(inventoryDetail.safetyQty);
+        const response = await updateItemSafetyStock(itemId, safetyStock);
+        
+        if (response.isSuccess) {
+          alert('변경되었습니다.');
+          setIsSafetyChanged(false);
+        } else {
+          alert('변경에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('안전재고 변경 실패:', error);
+        alert('변경에 실패했습니다.');
+      }
+    }
   };
 
   const handleEditSubmit = () => {
@@ -267,9 +296,9 @@ export default function InventoryStockDetailPage() {
                   />
                   <button
                     onClick={() => handleApplyChange('target')}
-                    disabled={!isTargetChanged || !inventoryDetail.targetQty || inventoryDetail.targetQty === '-' || inventoryDetail.targetQty.trim() === ''}
+                    disabled={!isTargetChanged || !inventoryDetail.targetQty || inventoryDetail.targetQty === '-' || inventoryDetail.targetQty.trim() === '' || Number(inventoryDetail.targetQty) === 0}
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isTargetChanged && inventoryDetail.targetQty && inventoryDetail.targetQty !== '-' && inventoryDetail.targetQty.trim() !== ''
+                      isTargetChanged && inventoryDetail.targetQty && inventoryDetail.targetQty !== '-' && inventoryDetail.targetQty.trim() !== '' && Number(inventoryDetail.targetQty) !== 0
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}
@@ -291,9 +320,9 @@ export default function InventoryStockDetailPage() {
                   />
                   <button
                     onClick={() => handleApplyChange('safety')}
-                    disabled={!isSafetyChanged || !inventoryDetail.safetyQty || inventoryDetail.safetyQty === '-' || inventoryDetail.safetyQty.trim() === ''}
+                    disabled={!isSafetyChanged || !inventoryDetail.safetyQty || inventoryDetail.safetyQty === '-' || inventoryDetail.safetyQty.trim() === '' || Number(inventoryDetail.safetyQty) === 0}
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isSafetyChanged && inventoryDetail.safetyQty && inventoryDetail.safetyQty !== '-' && inventoryDetail.safetyQty.trim() !== ''
+                      isSafetyChanged && inventoryDetail.safetyQty && inventoryDetail.safetyQty !== '-' && inventoryDetail.safetyQty.trim() !== '' && Number(inventoryDetail.safetyQty) !== 0
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}
@@ -310,20 +339,6 @@ export default function InventoryStockDetailPage() {
               입출고 이력
             </h2>
             <InventoryHistoryTable historyData={historyData} />
-          </div>
-
-          <div className="mt-auto flex justify-end pt-10">
-            <button
-              disabled={!isChanged}
-              onClick={handleEditSubmit}
-              className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-all ${
-                isChanged
-                  ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
-                  : 'cursor-not-allowed bg-greyColor-grey300'
-              }`}
-            >
-              수정하기
-            </button>
           </div>
         </div>
       </main>

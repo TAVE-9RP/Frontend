@@ -51,5 +51,10 @@ export const getMemberMe = async (): Promise<MemberMeResponse> => {
   return response.data;
 };
 
+export const postLogout = async () => {
+  const response = await memberApi.post('/member/logout');
+  return response.data;
+};
+
 export default memberApi;
 

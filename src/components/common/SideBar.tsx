@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { decodeAccessToken } from '@/utils/jwt';
-import { getMemberMe } from '@/apis/member';
+import { getMemberMe, postLogout } from '@/apis/member';
 
 const mapPositionToKorean = (position?: string): string => {
   const positionMap: Record<string, string> = {
@@ -180,6 +180,16 @@ export default function SideBar() {
       {menuSections.map((section) => {
         const isManagementSection = section.title === '관리 서비스';
         const isDisabled = isManagementSection && !isManagementUser;
+        
+        // 섹션 헤더 버튼 active 상태 확인 (서브 메뉴가 active가 아닐 때만)
+        const hasActiveSubMenu = section.subMenus.some((menu) => {
+          if (menu.path === '/project-management') {
+            return currentPath === '/project-create' || currentPath.startsWith('/project/');
+          }
+          return currentPath.startsWith(menu.path);
+        });
+        
+        const isSectionActive = currentPath === section.homePath && !hasActiveSubMenu;
 
         return (
           <div key={section.title}>
@@ -190,14 +200,22 @@ export default function SideBar() {
                 }
               }}
               disabled={isDisabled}
-              className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop} ${
-                isDisabled ? 'cursor-not-allowed opacity-50' : ''
+              className={`ml-[27px] flex w-[179px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${section.marginTop} ${
+                isDisabled
+                  ? 'cursor-not-allowed opacity-50'
+                  : isSectionActive
+                    ? 'bg-mainColor-blue050'
+                    : 'bg-transparent hover:bg-greyColor-grey100'
               }`}
             >
               <img src={section.icon} alt={section.title} width={20} height={20} />
               <span
                 className={`font-pretendard text-[17px] font-bold leading-normal ${
-                  isDisabled ? 'text-greyColor-grey400' : 'text-greyColor-grey900'
+                  isDisabled
+                    ? 'text-greyColor-grey400'
+                    : isSectionActive
+                      ? 'text-mainColor-blue600'
+                      : 'text-greyColor-grey900'
                 }`}
               >
                 {section.title}
@@ -208,6 +226,32 @@ export default function SideBar() {
           </div>
         );
       })}
+
+      <div className="mt-[54px] flex flex-col items-center">
+        <button
+          onClick={async () => {
+            try {
+              const response = await postLogout();
+              if (response.isSuccess) {
+                localStorage.removeItem('accessToken');
+                alert('로그아웃 되었습니다');
+                navigate('/');
+              } else {
+                alert('로그아웃에 실패했습니다.');
+              }
+            } catch (error) {
+              console.error('로그아웃 실패:', error);
+              alert('로그아웃에 실패했습니다.');
+            }
+          }}
+          className="flex items-center gap-[10px] text-left"
+        >
+          <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
+            로그아웃
+          </span>
+          <img src="/src/assets/logout.png" alt="arrow" width={16} height={16} />
+        </button>
+      </div>
     </aside>
   );
 }

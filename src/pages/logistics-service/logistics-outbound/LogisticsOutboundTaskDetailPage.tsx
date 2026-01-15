@@ -72,6 +72,14 @@ export default function LogisticsOutboundTaskDetailPage() {
 
   const isReadOnlyStatus = isApprovalPending || isInProgress || isCompleted;
 
+  // 승인 요청 버튼 활성화 조건: 모든 필수 필드 입력 및 물품 목록 존재
+  const canRequestApproval =
+    taskDetail.logisticsTitle?.trim() !== '' &&
+    taskDetail.logisticsDescription?.trim() !== '' &&
+    taskDetail.logisticsCarrier?.trim() !== '' &&
+    taskDetail.logisticsCarrierCompany?.trim() !== '' &&
+    items.length > 0;
+
   const isAllItemsCompleted =
     items.length > 0 && items.every((item) => item.logisticsProcessingStatus === 'COMPLETED');
 
@@ -395,6 +403,7 @@ export default function LogisticsOutboundTaskDetailPage() {
                 value={taskDetail.logisticsDescription ?? ''}
                 onChange={handleInputChange}
                 disabled={isReadOnlyStatus}
+                placeholder={taskDetail.logisticsStatus === 'ASSIGNED' ? '내용을 입력해주세요' : undefined}
                 className={`h-[160px] ${isInProgress || isCompleted ? 'bg-greyColor-grey100' : ''}`}
               />
             </FormGroup>
@@ -479,7 +488,12 @@ export default function LogisticsOutboundTaskDetailPage() {
                 taskDetail.logisticsStatus === 'REJECT') ? (
               <button
                 onClick={() => setIsApprovalModalOpen(true)}
-                className="h-[50px] w-[113px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white hover:bg-mainColor-blue700"
+                disabled={!canRequestApproval}
+                className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
+                  canRequestApproval
+                    ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
+                    : 'cursor-not-allowed bg-greyColor-grey300'
+                }`}
               >
                 승인 요청
               </button>

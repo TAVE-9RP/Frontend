@@ -32,4 +32,3 @@ export interface CompanySearchResponse {
   message: string;
   result: Company[];
 }
-
