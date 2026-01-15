@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { decodeAccessToken } from '@/utils/jwt';
-import { getMemberMe } from '@/apis/member';
+import { getMemberMe, postLogout } from '@/apis/member';
 
 const mapPositionToKorean = (position?: string): string => {
   const positionMap: Record<string, string> = {
@@ -229,6 +229,20 @@ export default function SideBar() {
 
       <div className="mt-[54px] flex flex-col items-center">
         <button
+          onClick={async () => {
+            try {
+              const response = await postLogout();
+              if (response.isSuccess) {
+                alert('로그아웃 되었습니다');
+                navigate('/');
+              } else {
+                alert('로그아웃에 실패했습니다.');
+              }
+            } catch (error) {
+              console.error('로그아웃 실패:', error);
+              alert('로그아웃에 실패했습니다.');
+            }
+          }}
           className="flex items-center gap-[10px] text-left"
         >
           <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
