@@ -13,7 +13,13 @@ const companyApi = axios.create({
 });
 
 // interceptor는 토큰이 있을 때만 Authorization 헤더 추가
+// 단, /companies GET 요청은 토큰이 필요 없으므로 제외
 companyApi.interceptors.request.use((config) => {
+  // /companies GET 요청은 토큰 없이 요청
+  if (config.method === 'get' && config.url === '/companies') {
+    return config;
+  }
+
   let token = localStorage.getItem('accessToken');
 
   if (token) {

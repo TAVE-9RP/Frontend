@@ -16,8 +16,10 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getLogisticsList = async () => {
-  const response = await api.get('/logistics');
+export const getLogisticsList = async (keyword: string = '') => {
+  const response = await api.get('/logistics', {
+    params: { keyword },
+  });
   return response.data;
 };
 

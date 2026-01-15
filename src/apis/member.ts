@@ -1,5 +1,11 @@
 import axios from 'axios';
-import type { LoginRequest, LoginResponse, MemberSignupRequest, MemberSignupResponse } from '../types/member';
+import type {
+  LoginRequest,
+  LoginResponse,
+  MemberSignupRequest,
+  MemberSignupResponse,
+  MemberMeResponse,
+} from '../types/member';
 
 const BASE_URL = 'https://nexerp.site';
 
@@ -37,6 +43,11 @@ export const postMemberSignup = async (payload: MemberSignupRequest): Promise<Me
     },
   });
 
+  return response.data;
+};
+
+export const getMemberMe = async (): Promise<MemberMeResponse> => {
+  const response = await memberApi.get('/member/me');
   return response.data;
 };
 

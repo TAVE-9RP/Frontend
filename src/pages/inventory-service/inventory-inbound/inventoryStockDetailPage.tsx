@@ -112,8 +112,8 @@ export default function InventoryStockDetailPage() {
               itemPrice: found.price ? String(found.price) : '-',
               location: found.location ?? '-',
               creationDate: found.createdAt ?? '-',
-              targetQty: '-',
-              safetyQty: '-',
+              targetQty: found.targetQuantity && found.targetQuantity !== '-' ? String(found.targetQuantity) : '',
+              safetyQty: found.safetyQuantity && found.safetyQuantity !== '-' ? String(found.safetyQuantity) : '',
             });
 
             // 입출고 이력 API 호출
@@ -144,7 +144,11 @@ export default function InventoryStockDetailPage() {
         // API 실패 시 MOCK 데이터에서 찾기 (fallback)
         const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
         if (found) {
-          setInventoryDetail(found);
+          setInventoryDetail({
+            ...found,
+            targetQty: found.targetQty === '-' ? '' : found.targetQty,
+            safetyQty: found.safetyQty === '-' ? '' : found.safetyQty,
+          });
         }
       }
     };
@@ -255,14 +259,17 @@ export default function InventoryStockDetailPage() {
                 <div className="flex items-end gap-[21px]">
                   <BasicInput
                     name="targetQty"
-                    value={inventoryDetail.targetQty}
+                    type="number"
+                    value={inventoryDetail.targetQty === '-' ? '' : inventoryDetail.targetQty}
+                    placeholder="목표재고를 입력하세요"
                     className="h-[50px] w-[275px]"
                     onChange={handleInputChange}
                   />
                   <button
                     onClick={() => handleApplyChange('target')}
+                    disabled={!isTargetChanged || !inventoryDetail.targetQty || inventoryDetail.targetQty === '-' || inventoryDetail.targetQty.trim() === ''}
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isTargetChanged
+                      isTargetChanged && inventoryDetail.targetQty && inventoryDetail.targetQty !== '-' && inventoryDetail.targetQty.trim() !== ''
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}
@@ -276,14 +283,17 @@ export default function InventoryStockDetailPage() {
                 <div className="flex items-end gap-[21px]">
                   <BasicInput
                     name="safetyQty"
-                    value={inventoryDetail.safetyQty}
+                    type="number"
+                    value={inventoryDetail.safetyQty === '-' ? '' : inventoryDetail.safetyQty}
+                    placeholder="안전재고를 입력하세요"
                     className="h-[50px] w-[275px]"
                     onChange={handleInputChange}
                   />
                   <button
                     onClick={() => handleApplyChange('safety')}
+                    disabled={!isSafetyChanged || !inventoryDetail.safetyQty || inventoryDetail.safetyQty === '-' || inventoryDetail.safetyQty.trim() === ''}
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isSafetyChanged
+                      isSafetyChanged && inventoryDetail.safetyQty && inventoryDetail.safetyQty !== '-' && inventoryDetail.safetyQty.trim() !== ''
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}

@@ -37,7 +37,10 @@ export default function CompanyRegisterPage() {
   };
 
   useEffect(() => {
-    const isValid = formData.companyName.trim() !== '' && formData.businessType.trim() !== '';
+    const isValid =
+      formData.companyName.trim() !== '' &&
+      formData.businessType.trim() !== '' &&
+      formData.companyDescription.trim() !== '';
     setIsFormValid(isValid);
   }, [formData]);
 
@@ -125,7 +128,7 @@ export default function CompanyRegisterPage() {
         <InputField
           label="회사 소개"
           name="companyDescription"
-          placeholder="회사 소개를 입력하세요. (선택)"
+          placeholder="회사 소개를 입력하세요."
           type="text"
           value={formData.companyDescription}
           onChange={handleChange}

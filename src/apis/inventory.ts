@@ -16,8 +16,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getInventoryList = async () => {
-  const response = await api.get('/inventory');
+export const getInventoryList = async (keyword: string = '') => {
+  const response = await api.get('/inventory', {
+    params: { keyword },
+  });
+  return response.data;
+};
+
+export const getInventoryAssignedList = async (keyword: string = '') => {
+  const response = await api.get('/inventory/assigned', {
+    params: { keyword },
+  });
   return response.data;
 };
 

@@ -203,12 +203,12 @@ export default function OutboundTaskDetailPage() {
           console.log('result:', result);
           const newTaskDetail = {
             projectNumber: formatNullValue(result.projectNumber),
-            taskName: formatNullValue(result.logisticsTitle),
+            taskName: result.logisticsTitle || '',
             assignees: result.logisticsAssignees || [],
             requestDate: formatDate(result.logisticsRequestedAt),
-            vehicle: formatNullValue(result.logisticsCarrier),
-            carrier: formatNullValue(result.logisticsCarrierCompany),
-            description: formatNullValue(result.logisticsDescription),
+            vehicle: result.logisticsCarrier || '',
+            carrier: result.logisticsCarrierCompany || '',
+            description: result.logisticsDescription || '',
             status: mapStatusForStepBar(result.logisticsStatus),
             logisticsStatus: result.logisticsStatus || '', // 원본 상태 저장
           };
@@ -369,7 +369,7 @@ export default function OutboundTaskDetailPage() {
             <div className="mb-[64px] flex justify-between">
               <FormGroup label="출하 업무명" className="w-[390px]">
                 <BasicInput
-                  value={taskDetail.taskName || '-'}
+                  value={taskDetail.taskName || ''}
                   disabled={true}
                   readOnly
                   placeholder=""
@@ -394,7 +394,7 @@ export default function OutboundTaskDetailPage() {
               <div className="w-[390px]">
                 <FormGroup label="운송수단">
                   <BasicInput
-                    value={taskDetail.vehicle || '-'}
+                    value={taskDetail.vehicle || ''}
                     disabled={true}
                     readOnly
                     placeholder=""
@@ -405,7 +405,7 @@ export default function OutboundTaskDetailPage() {
               <div className="w-[390px]">
                 <FormGroup label="운송업체">
                   <BasicInput
-                    value={taskDetail.carrier || '-'}
+                    value={taskDetail.carrier || ''}
                     disabled={true}
                     readOnly
                     placeholder=""
@@ -418,7 +418,7 @@ export default function OutboundTaskDetailPage() {
             <div className="mb-[40px]">
               <FormGroup label="업무 설명">
                 <LargeInput
-                  value={taskDetail.description || '-'}
+                  value={taskDetail.description || ''}
                   disabled={true}
                   readOnly
                   placeholder=""
@@ -429,7 +429,7 @@ export default function OutboundTaskDetailPage() {
 
             <div className="mt-[80px]">
               <FormGroup label="출하 물품 목록">
-                <OutboundItemList status={taskDetail.status} items={items} />
+                <OutboundItemList status={taskDetail.logisticsStatus || taskDetail.status} items={items} />
               </FormGroup>
             </div>
           </div>

@@ -16,7 +16,8 @@ interface OutboundItemListProps {
 }
 
 const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] }) => {
-  const isTaskAssignment = status === 'TASK_ASSIGNMENT';
+  const isTaskAssignment = status === 'TASK_ASSIGNMENT' || status === 'ASSIGNED';
+  const isApprovalPending = status === 'APPROVAL_PENDING' || status === 'PENDING';
   const hasItems = items && items.length > 0;
 
   // 총 판매액 계산 (모든 아이템의 processedQuantity * itemPrice 합계)
@@ -38,19 +39,29 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
     { label: '처리 상태', width: 'w-[122px]', key: 'status' },
   ];
   return (
-    <div className="box-border w-full overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+    <div className="box-border w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
       <div className="box-border flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-        {columns.map((col, idx) => (
-          <div
-            key={idx}
-            style={{ width: col.width.match(/\d+/)?.[0] + 'px' }}
-            className={`box-border flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold last:border-r-0 ${
-              isColumnAllHyphen(col.key) ? 'text-greyColor-grey300' : 'text-[#131517]'
-            }`}
-          >
-            {col.label}
-          </div>
-        ))}
+        {columns.map((col, idx) => {
+          const isCurrQtyHeader = col.key === 'currQty';
+          const headerColor = isCurrQtyHeader && isApprovalPending 
+            ? '#9CA3AF' 
+            : isColumnAllHyphen(col.key) 
+              ? '#9CA3AF' 
+              : '#131517';
+          
+          return (
+            <div
+              key={idx}
+              style={{ 
+                width: col.width.match(/\d+/)?.[0] + 'px',
+                color: headerColor
+              }}
+              className="box-border flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold last:border-r-0"
+            >
+              {col.label}
+            </div>
+          );
+        })}
       </div>
 
       {!hasItems && (
@@ -77,8 +88,10 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
                 <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
                   {item.itemName}
                 </div>
-                <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                  {item.currQty.toLocaleString()}
+                <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px]">
+                  <span style={{ color: isApprovalPending ? '#9CA3AF' : '#000000' }}>
+                    {isApprovalPending && item.currQty === 0 ? '-' : item.currQty.toLocaleString()}
+                  </span>
                 </div>
                 <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
                   {item.targetQty.toLocaleString()}

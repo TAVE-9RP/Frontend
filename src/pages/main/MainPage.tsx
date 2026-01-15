@@ -11,6 +11,9 @@ import registerBtnImg from '@/assets/mainpage/register.png';
 import personnelServiceBadge from '@/assets/mainpage/인사서비스icon.png';
 import inventoryServiceBadge from '@/assets/mainpage/재고서비스icon.png';
 import logisticsServiceBadge from '@/assets/mainpage/물류서비스icon.png';
+import managementServiceImg from '@/assets/mainpage/Frame 196.png';
+import inventoryServiceImg from '@/assets/mainpage/Frame 197.png';
+import logisticsServiceImg from '@/assets/mainpage/Frame 198.png';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -18,7 +21,7 @@ export default function Main() {
   return (
     <div className="min-h-screen w-full bg-white">
       {/* 헤더 */}
-      <header className="fixed top-0 z-50 flex w-full items-center justify-between bg-white px-[120px] py-[24px]">
+      <header className="fixed top-0 z-50 flex h-[157px] w-full items-center justify-between bg-white px-[120px]">
         <div className="flex items-center gap-[12px]">
           <img src={logoImg} alt="NexERP 로고" className="h-[54px] w-[191px] object-contain" />
         </div>
@@ -105,7 +108,7 @@ export default function Main() {
       </section>
 
       {/* What we offer 섹션 */}
-      <section className="bg-greyColor-grey50 px-[120px] py-[120px]">
+      <section className="bg-white px-[120px] py-[120px]">
         <div className="mx-auto max-w-[1200px]">
           <div className="mb-[16px] text-center">
             <span className="font-pretendard text-[16px] font-semibold uppercase tracking-wider text-subColor-orange800">
@@ -116,7 +119,7 @@ export default function Main() {
             Core Modules of NexERP
           </h2>
           <p className="mb-[80px] text-center font-pretendard text-[18px] font-normal leading-relaxed text-greyColor-grey600">
-            데이터 기반으로 연결하여 더 효율적인 인사, 물류, 재고 서비스를 지원합니다.
+            데이터 기반으로 연결하여 더 효율적인 관리, 물류, 재고 서비스를 지원합니다.
           </p>
         </div>
       </section>
@@ -124,7 +127,7 @@ export default function Main() {
       {/* Core Modules 상세 */}
       <section className="bg-white px-[120px] py-[120px]">
         <div className="mx-auto max-w-[1200px] space-y-[120px]">
-          {/* Personal Management */}
+          {/* Management Service */}
           <div className="flex items-center gap-[80px]">
             <div className="flex-1">
               <img
@@ -133,55 +136,41 @@ export default function Main() {
                 className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
-                Personal Management
+                Management Service
               </h3>
               <h4
                 className="mb-[48px] font-pretendard text-[20px] font-semibold"
                 style={{ color: 'rgb(0, 126, 244)' }}
               >
-                모든 구성원과 공정하게! 조직과 권한을 한눈에 관리하다
+                프로젝트부터 인사까지, 흩어져 있던 관리의 조각을 하나로 연결하다.
               </h4>
-              <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
-                인사서비스는 구성원의 정보와 근무 이력을 체계적으로 관리하고, 인사·급여·
-                <br />
-                평가 등의 업무를 자동화하여 조직 운영의 효율을 높이는 솔루션입니다.
+              <p className="font-pretendard text-[17px] font-normal leading-relaxed text-greyColor-grey600">
+                프로젝트 관리는 워크플로우 시각화, 유연한 업무 할당, 중앙 집중형 히스토리를 제공하여 비즈니스 진척도를 한눈에 파악하고, 지연 없는 프로젝트 관리가 가능하게 합니다.
                 <br />
                 <br />
-                이를 통해 기업은 복잡한 인사 업무를 간소화하고, 구성원은 보다 공정하고
+                인사 관리는 원클릭 가입 및 승인 프로세스, 정교한 역할 기반 제어, 중앙 집중 사원 관리를 통해 투명한 조직의 시작과 안전하고 체계적인 시스템을 보장합니다.
                 <br />
-                투명한 평가 및 보상을 경험할 수 있습니다.
+                <br />
+                이를 통해 기업은 실시간 현황 파악과 협업 효율을 강조하고, 보안성과 관리 편의성을 확보할 수 있습니다.
+                <br />
               </p>
             </div>
-            <div
-              className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
-              style={{
-                backgroundImage: `
-                  linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-              }}
-            ></div>
+            <img
+              src={managementServiceImg}
+              alt="Management Service"
+              className="flex-shrink-0 rounded-[16px] object-contain"
+              style={{ width: '581px', height: '382px' }}
+            />
           </div>
 
-          {/* Inventory Management */}
+          {/* Inventory Service */}
           <div className="flex items-center gap-[80px]">
-            <div
-              className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
-              style={{
-                backgroundImage: `
-                  linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-              }}
-            ></div>
+            <img
+              src={inventoryServiceImg}
+              alt="Inventory Service"
+              className="flex-shrink-0 rounded-[16px] object-contain"
+              style={{ width: '581px', height: '382px' }}
+            />
             <div className="flex-1">
               <img
                 src={inventoryServiceBadge}
@@ -189,7 +178,7 @@ export default function Main() {
                 className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
-                Inventory Management
+                Inventory Service
               </h3>
               <h4
                 className="mb-[48px] font-pretendard text-[20px] font-semibold"
@@ -197,7 +186,7 @@ export default function Main() {
               >
                 자원을 효율적으로! 재고를 줄이고 비용을 아끼다
               </h4>
-              <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
+              <p className="font-pretendard text-[17px] font-normal leading-relaxed text-greyColor-grey600">
                 재고 관리는 기업이 보유한 재고(제품, 원자재 등)를 효율적으로 조달, 보관,
                 <br />
                 추적하여 비용을 최적화하고 고객에게 적시에 공급하기 위한 활동입니다. 
@@ -210,7 +199,7 @@ export default function Main() {
             </div>
           </div>
 
-          {/* Logistics Management */}
+          {/* Logistics Service */}
           <div className="flex items-center gap-[80px]">
             <div className="flex-1">
               <img
@@ -219,7 +208,7 @@ export default function Main() {
                 className="mb-[16px] h-[34px] w-auto object-contain"
               />
               <h3 className="mb-[16px] font-pretendard text-[36px] font-bold text-black">
-                Logistics Management
+                Logistics Service
               </h3>
               <h4
                 className="mb-[48px] font-pretendard text-[20px] font-semibold"
@@ -227,7 +216,7 @@ export default function Main() {
               >
                 승인부터 출하까지 빠르게! 데이터로 움직이는 물류 관리
               </h4>
-              <p className="font-pretendard text-[16px] font-normal leading-relaxed text-greyColor-grey600">
+              <p className="font-pretendard text-[17px] font-normal leading-relaxed text-greyColor-grey600">
                 로지스틱스 관리는 원재료 조달부터 최종 제품이 소비자에게 전달되기까지의
                 <br />
                 모든 과정을 합리적으로 조정하고 효율성을 극대화하는 활동입니다. 
@@ -235,22 +224,15 @@ export default function Main() {
                 <br />
                 이는 운송, 보관, 하역, 포장, 정보 관리 등 다양한 요소를 통합적으로 관리하여,
                 <br />
-                기업이 자원을 효율적으로 활용하고 고객 만족도를 높이도록 돕습니다. 
+                기업이 자원을 효율적으로 활용하고 고객 만족도를 높이도록 돕습니다. 
               </p>
             </div>
-            <div
-              className="flex h-[400px] w-[500px] flex-shrink-0 items-center justify-center rounded-[16px] bg-white"
-              style={{
-                backgroundImage: `
-                  linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-                  linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-                  linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)
-                `,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-              }}
-            ></div>
+            <img
+              src={logisticsServiceImg}
+              alt="Logistics Service"
+              className="flex-shrink-0 rounded-[16px] object-contain"
+              style={{ width: '581px', height: '382px' }}
+            />
           </div>
         </div>
       </section>
