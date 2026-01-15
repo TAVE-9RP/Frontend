@@ -9,6 +9,7 @@ import circleMarkDark from '@/assets/circlemark_dark.png';
 import ellipse from '@/assets/ellipse.png';
 import nextIcon from '@/assets/next_1.png';
 import { getDashboard } from '@/apis/dashboard';
+import { getProjects } from '@/apis/admin';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type ProjectFilterStatus = '진행중' | '미진행' | '완료';
@@ -21,6 +22,17 @@ interface DashboardData {
   shipmentCompletionRate: number;
 }
 
+interface Project {
+  id: number;
+  projectNumber: string;
+  projectTitle: string;
+  projectDescription: string;
+  client: string;
+  creationDate: string;
+  manager: string;
+  status: 'IN_PROGRESS' | 'PENDING' | 'COMPLETED';
+}
+
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
@@ -28,6 +40,8 @@ export default function ManagementHome() {
   const [logisticsTab, setLogisticsTab] = useState<FilterStatus>('업무 할당');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [projectList, setProjectList] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
 
   const totalTasks = 10;
   const inventoryCount = 4;
@@ -64,6 +78,128 @@ export default function ManagementHome() {
 
     fetchDashboard();
   }, []);
+
+  const fetchProjects = async (keyword: string = '') => {
+    try {
+      const response = await getProjects(keyword);
+      const apiProjects = response.result || response.data || [];
+
+      // localStorage에서 저장된 프로젝트 가져오기
+      const savedProjectsString = localStorage.getItem('projects');
+      let savedProjects: any[] = [];
+
+      if (savedProjectsString) {
+        try {
+          const parsed = JSON.parse(savedProjectsString);
+          savedProjects = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          console.error('Failed to parse projects from localStorage', e);
+        }
+      }
+
+      // API 프로젝트를 Project 인터페이스에 맞게 변환
+      const formattedApiProjects: Project[] = apiProjects.map((p: any) => {
+        let managerDisplay = '미정';
+        if (p.projectMembers) {
+          managerDisplay = String(p.projectMembers);
+        }
+
+        let creationDate = '';
+        if (p.projectCreateDate) {
+          const date = new Date(p.projectCreateDate);
+          creationDate = date.toISOString().split('T')[0];
+        } else {
+          creationDate = new Date().toISOString().split('T')[0];
+        }
+
+        let mappedStatus: 'IN_PROGRESS' | 'PENDING' | 'COMPLETED' = 'IN_PROGRESS';
+        if (p.status === 'NOT_STARTED' || p.status === 'PENDING' || p.status === '미진행') {
+          mappedStatus = 'PENDING';
+        } else if (p.status === 'IN_PROGRESS' || p.status === '진행중') {
+          mappedStatus = 'IN_PROGRESS';
+        } else if (p.status === 'COMPLETED' || p.status === '완료') {
+          mappedStatus = 'COMPLETED';
+        }
+
+        return {
+          id: p.projectId || p.id || Date.now(),
+          projectNumber: p.projectNumber || 'NEW-PROJ',
+          projectTitle: p.projectTitle || '제목 없음',
+          projectDescription: p.projectDescription || '',
+          client: p.projectCustomer || p.client || '',
+          creationDate: creationDate,
+          manager: managerDisplay,
+          status: mappedStatus,
+        };
+      });
+
+      // localStorage에 저장된 프로젝트도 변환
+      const formattedSavedProjects: Project[] = savedProjects.map((p: any) => {
+        let managerDisplay = '미정';
+
+        if (Array.isArray(p.manager) && p.manager.length > 0) {
+          const firstManager = p.manager[0];
+          const firstName = firstManager.label || firstManager.name || String(firstManager);
+
+          if (p.manager.length > 1) {
+            managerDisplay = `${firstName} 외 ${p.manager.length - 1}명`;
+          } else {
+            managerDisplay = firstName;
+          }
+        } else if (typeof p.manager === 'object' && p.manager !== null) {
+          managerDisplay = p.manager.label || p.manager.name || '확인 필요';
+        } else if (p.manager) {
+          managerDisplay = String(p.manager);
+        }
+
+        return {
+          id: p.id || Date.now(),
+          projectNumber: p.projectNumber || 'NEW-PROJ',
+          projectTitle: p.title || p.projectTitle || '제목 없음',
+          projectDescription: p.description || p.projectDescription || '',
+          client: p.client || '',
+          creationDate: p.creationDate || new Date().toISOString().split('T')[0],
+          manager: managerDisplay,
+          status:
+            p.status === '진행중'
+              ? 'IN_PROGRESS'
+              : p.status === '미진행'
+                ? 'PENDING'
+                : p.status === '완료'
+                  ? 'COMPLETED'
+                  : 'IN_PROGRESS',
+        };
+      });
+
+      // API 프로젝트와 localStorage 프로젝트 합치기
+      const allProjectsList = [...formattedApiProjects, ...formattedSavedProjects.reverse()];
+      setAllProjects(allProjectsList);
+    } catch (error) {
+      console.error('프로젝트 목록 조회 실패:', error);
+      setAllProjects([]);
+    }
+  };
+
+  // 프로젝트 필터링 함수
+  const getFilteredProjects = (status: ProjectFilterStatus): Project[] => {
+    const statusMap: Record<ProjectFilterStatus, 'IN_PROGRESS' | 'PENDING' | 'COMPLETED'> = {
+      진행중: 'IN_PROGRESS',
+      미진행: 'PENDING',
+      완료: 'COMPLETED',
+    };
+
+    return allProjects.filter((project) => project.status === statusMap[status]);
+  };
+
+  // 초기 로드 및 activeTab 변경 시 프로젝트 조회 및 필터링
+  useEffect(() => {
+    fetchProjects('');
+  }, []);
+
+  useEffect(() => {
+    const filtered = getFilteredProjects(activeTab);
+    setProjectList(filtered);
+  }, [activeTab, allProjects]);
 
 
   const SafetyTasks = {
@@ -153,7 +289,24 @@ export default function ManagementHome() {
                     ))}
                   </div>
                   <div className={scrollContainerStyle}>
-                    {/* 데이터가 없을 때 빈 상태 표시 */}
+                    {projectList.map((project) => (
+                      <div
+                        key={project.id}
+                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                        onClick={() => handleDetailClick('project', project.projectNumber)}
+                      >
+                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                            {project.creationDate}
+                          </span>
+                        </div>
+                        <div className="ml-[13px] flex-1">
+                          <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                            {project.projectTitle}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
