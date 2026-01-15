@@ -138,6 +138,7 @@ export default function InventoryInboundTaskDetailPage() {
     projectNumber: '',
     taskName: '',
     manager: '',
+    assignees: [] as string[],
     requestDate: '',
     description: '',
     status: '',
@@ -174,6 +175,7 @@ export default function InventoryInboundTaskDetailPage() {
             projectNumber: formatNullValue(result.projectNumber),
             taskName: result.inventoryTitle || '',
             manager: formatAssignees(result.inventoryAssignees),
+            assignees: result.inventoryAssignees || [],
             requestDate: formatDate(result.inventoryRequestedAt),
             description: result.inventoryDescription || '',
             status: mapStatusForStepBar(result.inventoryStatus),
@@ -316,6 +318,7 @@ export default function InventoryInboundTaskDetailPage() {
               projectNumber: formatNullValue(result.projectNumber),
               taskName: result.inventoryTitle || '',
               manager: formatAssignees(result.inventoryAssignees),
+              assignees: result.inventoryAssignees || [],
               requestDate: formatDate(result.inventoryRequestedAt),
               description: result.inventoryDescription || '',
               status: mapStatusForStepBar(result.inventoryStatus),
@@ -436,6 +439,7 @@ export default function InventoryInboundTaskDetailPage() {
             projectNumber: formatNullValue(result.projectNumber),
             taskName: result.inventoryTitle || '',
             manager: formatAssignees(result.inventoryAssignees),
+            assignees: result.inventoryAssignees || [],
             requestDate: formatDate(result.inventoryRequestedAt),
             description: result.inventoryDescription || '',
             status: mapStatusForStepBar(result.inventoryStatus),
@@ -543,8 +547,10 @@ export default function InventoryInboundTaskDetailPage() {
               </FormGroup>
               <FormGroup label="입고 업무 담당자" className="w-[390px]">
                 <div className="flex h-[50px] w-[390px] items-center gap-[10px] rounded-[10px] border border-greyColor-grey400 bg-greyColor-grey100 px-[16px] py-[15px]">
-                  {taskDetail.manager && taskDetail.manager !== '-' ? (
-                    <ManagerChip name={taskDetail.manager} />
+                  {taskDetail.assignees && taskDetail.assignees.length > 0 ? (
+                    taskDetail.assignees.map((assignee, index) => (
+                      <ManagerChip key={index} name={assignee} />
+                    ))
                   ) : (
                     <span className="font-pretendard text-[17px] text-greyColor-grey500">-</span>
                   )}
