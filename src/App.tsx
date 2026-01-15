@@ -88,7 +88,7 @@ function App() {
         <Route
           path="/project/:id"
           element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
+            <ProtectedRoute>
               <ProjectEditPage />
             </ProtectedRoute>
           }

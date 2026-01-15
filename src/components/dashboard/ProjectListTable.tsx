@@ -123,7 +123,11 @@ const ProjectListTable = () => {
           </div>
         ) : (
           projectList.map((item) => (
-            <div key={item.id} className={`flex border-x border-b ${borderColor}`}>
+            <div
+              key={item.id}
+              className={`flex cursor-pointer border-x border-b transition-colors hover:opacity-70 ${borderColor}`}
+              onClick={() => handleNavigation(item.id)}
+            >
               <div
                 className={`flex h-[48px] w-[200px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
               >
