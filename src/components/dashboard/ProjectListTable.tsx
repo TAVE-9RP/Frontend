@@ -122,12 +122,9 @@ const ProjectListTable = () => {
           목표 완료일
         </div>
         <div
-          className={`flex h-[40px] w-[190px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+          className={`flex h-[40px] w-[190px] items-center justify-center font-pretendard text-[13px] font-bold text-black ${borderColor}`}
         >
           진행 상태
-        </div>
-        <div className="flex h-[40px] w-[180px] items-center justify-center font-pretendard text-[13px] font-bold text-black">
-          조회
         </div>
       </div>
 
@@ -150,7 +147,7 @@ const ProjectListTable = () => {
               {item.dueDate}
             </div>
             <div
-              className={`flex h-[48px] w-[190px] items-center justify-center border-r ${borderColor}`}
+              className={`flex h-[48px] w-[190px] items-center justify-center ${borderColor}`}
             >
               <div className={getStatusChipClasses(item.status)}>
                 <span
@@ -166,16 +163,6 @@ const ProjectListTable = () => {
                 />
                 {getStatusText(item.status)}
               </div>
-            </div>
-            <div className="flex h-[48px] w-[180px] items-center justify-center">
-              <button
-                onClick={() => handleNavigation(item.id)}
-                className="flex h-[28px] w-[61px] items-center justify-center gap-[15px] rounded-[50px] bg-mainColor-blue600 p-[8px] transition-colors hover:bg-mainColor-blue700"
-              >
-                <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-mainColor-blue050">
-                  조회하기
-                </span>
-              </button>
             </div>
           </div>
         ))}
