@@ -49,7 +49,7 @@ export default function LogisticsHome() {
               물류 대시보드
             </h2>
             <p className="mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
-              2025.11.01 ~ 2025.11.30
+              2025.12.01 ~ 2025.12.31
             </p>
 
             <div className="mt-[16px] flex flex-col pr-10">

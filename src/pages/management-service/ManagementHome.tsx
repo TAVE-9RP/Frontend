@@ -102,7 +102,7 @@ export default function ManagementHome() {
 
           <section className="ml-[10px] mt-[64px]">
             <h2 className={sectionTitleStyle}>프로젝트 대시보드</h2>
-            <p className={dateTextStyle}>2025.11.01 ~ 2025.11.30</p>
+            <p className={dateTextStyle}>2025.12.01 ~ 2025.12.31</p>
 
             <div className="mt-[15px] flex gap-[16px]">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
@@ -276,7 +276,7 @@ export default function ManagementHome() {
 
           <section className="ml-[10px] mt-[40px]">
             <h2 className={sectionTitleStyle}>재고 대시보드</h2>
-            <p className={dateTextStyle}>2025.11.01 ~ 2025.11.30</p>
+            <p className={dateTextStyle}>2025.12.01 ~ 2025.12.31</p>
             <div className="mt-[16px] flex gap-[16px]">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
@@ -333,7 +333,7 @@ export default function ManagementHome() {
             <div className="mt-[16px]">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart percent={85} label="물류 처리 효율(%)" colorType="blue" />
+                  <DashboardChart percent={85} label="출하 완료율(%)" colorType="blue" />
                 </div>
                 <div className="absolute left-[245px] right-[30px] top-[40px]">
                   <div className="mb-[25px] flex gap-2">
