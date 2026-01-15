@@ -104,50 +104,50 @@ const ProjectListTable = () => {
   };
 
   return (
-    <div className="flex w-[980px] flex-col items-start">
+    <div className="flex w-[980px] max-h-[240px] flex-col items-start overflow-y-auto overflow-x-hidden">
       <div className={`flex w-[980px] border ${borderColor} ${headerBg}`}>
         <div
-          className={`flex h-[40px] w-[180px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+          className={`flex h-[40px] w-[200px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
         >
           프로젝트 넘버
         </div>
         <div
-          className={`flex h-[40px] w-[210px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+          className={`flex h-[40px] w-[380px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
         >
           프로젝트 제목
         </div>
         <div
-          className={`flex h-[40px] w-[220px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+          className={`flex h-[40px] w-[200px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
         >
           목표 완료일
         </div>
         <div
-          className={`flex h-[40px] w-[190px] items-center justify-center font-pretendard text-[13px] font-bold text-black ${borderColor}`}
+          className={`flex h-[40px] w-[200px] items-center justify-center font-pretendard text-[13px] font-bold text-black ${borderColor}`}
         >
           진행 상태
         </div>
       </div>
 
-      <div className="flex max-h-[240px] w-[980px] flex-col overflow-y-auto">
+      <div className="flex w-[980px] flex-col">
         {MOCK_DATA.map((item) => (
           <div key={item.id} className={`flex border-x border-b ${borderColor}`}>
             <div
-              className={`flex h-[48px] w-[180px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
+              className={`flex h-[48px] w-[200px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
             >
               {item.number}
             </div>
             <div
-              className={`flex h-[48px] w-[210px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
+              className={`flex h-[48px] w-[380px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
             >
               {item.title}
             </div>
             <div
-              className={`flex h-[48px] w-[220px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
+              className={`flex h-[48px] w-[200px] items-center justify-center border-r font-pretendard text-[13px] text-black ${borderColor}`}
             >
               {item.dueDate}
             </div>
             <div
-              className={`flex h-[48px] w-[190px] items-center justify-center ${borderColor}`}
+              className={`flex h-[48px] w-[200px] items-center justify-center ${borderColor}`}
             >
               <div className={getStatusChipClasses(item.status)}>
                 <span
