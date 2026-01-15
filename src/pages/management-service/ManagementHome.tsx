@@ -10,6 +10,7 @@ import ellipse from '@/assets/ellipse.png';
 import nextIcon from '@/assets/next_1.png';
 import { getDashboard } from '@/apis/dashboard';
 import { getProjects } from '@/apis/admin';
+import { getInventoryList } from '@/apis/inventory';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type ProjectFilterStatus = '진행중' | '미진행' | '완료';
@@ -33,6 +34,13 @@ interface Project {
   status: 'IN_PROGRESS' | 'PENDING' | 'COMPLETED';
 }
 
+interface InboundTask {
+  id: number;
+  projectNumber: string;
+  taskName: string;
+  requestDate: string;
+}
+
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
@@ -42,6 +50,7 @@ export default function ManagementHome() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
+  const [pendingInboundTasks, setPendingInboundTasks] = useState<InboundTask[]>([]);
 
   const totalTasks = 10;
   const inventoryCount = 4;
@@ -231,12 +240,6 @@ export default function ManagementHome() {
   };
 
   const waitingProjects = {
-    incoming: [
-      { id: 'IN-1', date: '2025.10.10', title: '카피바라 전용 고당도 당근 1톤 입고' },
-      { id: 'IN-2', date: '2025.10.12', title: '온천욕용 히노끼 목재 욕조 자재' },
-      { id: 'IN-3', date: '2025.10.15', title: '동절기 대비 극세사 담요 500장' },
-      { id: 'IN-4', date: '2025.10.18', title: '카피바라 건강검진용 의료 소모품' },
-    ],
     outgoing: [
       { id: 'OUT-1', date: '2025.10.11', title: '카피바라 굿즈 세트(인형/스티커) 출하' },
       { id: 'OUT-2', date: '2025.10.14', title: '주말 체험장용 카피바라 간식 키트' },
@@ -244,6 +247,46 @@ export default function ManagementHome() {
       { id: 'OUT-4', date: '2025.10.19', title: '전국 카피바라 쉼터 배송용 사료' },
     ],
   };
+
+  // null 값을 "-"로 변환하는 헬퍼 함수
+  const formatNullValue = (value: string | null | undefined): string => {
+    return value ?? '-';
+  };
+
+  // 날짜를 ISO 형식에서 'YYYY-MM-DD' 형식으로 변환
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString || dateString === '-') return '-';
+    const datePart = dateString.split('T')[0];
+    if (!datePart) return '-';
+    return datePart;
+  };
+
+  // 승인 대기 입고 업무 가져오기
+  useEffect(() => {
+    const fetchPendingInboundTasks = async () => {
+      try {
+        const response = await getInventoryList('');
+        if (response.isSuccess && response.result) {
+          // API 응답을 InboundTask 형식으로 변환하고 PENDING 상태만 필터링
+          const mappedTasks: InboundTask[] = response.result
+            .filter((item: any) => item.inventoryStatus === 'PENDING')
+            .map((item: any) => ({
+              id: item.inventoryId,
+              projectNumber: formatNullValue(item.projectNumber),
+              taskName: formatNullValue(item.inventoryTitle),
+              requestDate: formatDate(item.requestedAt),
+            }));
+
+          setPendingInboundTasks(mappedTasks);
+        }
+      } catch (error) {
+        console.error('승인 대기 입고 업무 목록 가져오기 실패:', error);
+        setPendingInboundTasks([]);
+      }
+    };
+
+    fetchPendingInboundTasks();
+  }, []);
 
   const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
   const projectTabs: ProjectFilterStatus[] = ['진행중', '미진행', '완료'];
@@ -395,11 +438,11 @@ export default function ManagementHome() {
               </p>
               <div className="mt-[28px] flex gap-[46px]">
                 <ul className="flex flex-col">
-                  {waitingProjects.incoming.map((project, i) => (
+                  {pendingInboundTasks.map((task) => (
                     <li
-                      key={`in-${i}`}
-                      onClick={() => handleDetailClick('incoming', project.id)}
-                      className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] last:border-0"
+                      key={task.id}
+                      onClick={() => handleDetailClick('inbound-task', String(task.id))}
+                      className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px]"
                     >
                       <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-mainColor-blue050 px-[10px] py-[5px]">
                         <span className="font-pretendard text-[15px] font-bold text-mainColor-blue600">
@@ -407,10 +450,10 @@ export default function ManagementHome() {
                         </span>
                       </div>
                       <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
-                        {project.date}
+                        {task.requestDate}
                       </span>
                       <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
-                        {project.title}
+                        {task.taskName}
                       </span>
                       <img
                         src={nextIcon}
@@ -425,7 +468,7 @@ export default function ManagementHome() {
                     <li
                       key={`out-${i}`}
                       onClick={() => handleDetailClick('outgoing', project.id)}
-                      className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] last:border-0"
+                      className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px]"
                     >
                       <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
                         <span className="font-pretendard text-[15px] font-bold text-subColor-orange900">
