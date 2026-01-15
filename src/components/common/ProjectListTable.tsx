@@ -89,14 +89,20 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>
                       {project.projectNumber}
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
-                      {project.projectTitle}
+                    <td className={`${tableCellClasses} ${bottomBorderClass}`} title={project.projectTitle}>
+                      <div className="mx-auto max-w-[170px] truncate text-left">
+                        {project.projectTitle}
+                      </div>
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
-                      {project.projectDescription}
+                    <td className={`${tableCellClasses} ${bottomBorderClass}`} title={project.projectDescription}>
+                      <div className="mx-auto max-w-[180px] truncate text-left">
+                        {project.projectDescription}
+                      </div>
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
-                      {project.client}
+                    <td className={`${tableCellClasses} ${bottomBorderClass}`} title={project.client}>
+                      <div className="mx-auto max-w-[120px] truncate text-left">
+                        {project.client}
+                      </div>
                     </td>
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
                       {project.creationDate}

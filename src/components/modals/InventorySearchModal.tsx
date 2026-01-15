@@ -73,7 +73,7 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-[100] flex items-center justify-center bg-black/50">
       <div className="relative flex h-[609px] w-[981px] flex-col rounded-[30px] bg-white p-[64px] shadow-xl">
         <div className="flex items-start justify-between">
           <h2 className="font-pretendard text-[24px] font-bold leading-normal text-black">
