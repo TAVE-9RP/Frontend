@@ -11,6 +11,7 @@ import nextIcon from '@/assets/next_1.png';
 import { getDashboard } from '@/apis/dashboard';
 import { getProjects } from '@/apis/admin';
 import { getInventoryList } from '@/apis/inventory';
+import { getLogisticsList } from '@/apis/ownerLogistics';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type ProjectFilterStatus = '진행중' | '미진행' | '완료';
@@ -41,6 +42,13 @@ interface InboundTask {
   requestDate: string;
 }
 
+interface OutboundTask {
+  id: number;
+  projectNumber: string;
+  taskName: string;
+  requestDate: string;
+}
+
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
@@ -51,6 +59,7 @@ export default function ManagementHome() {
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [pendingInboundTasks, setPendingInboundTasks] = useState<InboundTask[]>([]);
+  const [pendingOutboundTasks, setPendingOutboundTasks] = useState<OutboundTask[]>([]);
 
   const totalTasks = 10;
   const inventoryCount = 4;
@@ -239,14 +248,6 @@ export default function ManagementHome() {
     '입고 완료': [{ id: 'L-4', date: '2025.11.25', title: '트럭 기사 카피바라' }],
   };
 
-  const waitingProjects = {
-    outgoing: [
-      { id: 'OUT-1', date: '2025.10.11', title: '카피바라 굿즈 세트(인형/스티커) 출하' },
-      { id: 'OUT-2', date: '2025.10.14', title: '주말 체험장용 카피바라 간식 키트' },
-      { id: 'OUT-3', date: '2025.10.16', title: '카피바라 생태 교육용 도서/교구' },
-      { id: 'OUT-4', date: '2025.10.19', title: '전국 카피바라 쉼터 배송용 사료' },
-    ],
-  };
 
   // null 값을 "-"로 변환하는 헬퍼 함수
   const formatNullValue = (value: string | null | undefined): string => {
@@ -286,6 +287,33 @@ export default function ManagementHome() {
     };
 
     fetchPendingInboundTasks();
+  }, []);
+
+  // 승인 대기 출하 업무 가져오기
+  useEffect(() => {
+    const fetchPendingOutboundTasks = async () => {
+      try {
+        const response = await getLogisticsList('');
+        if (response.isSuccess && response.result) {
+          // API 응답을 OutboundTask 형식으로 변환하고 PENDING 상태만 필터링
+          const mappedTasks: OutboundTask[] = response.result
+            .filter((item: any) => item.logisticsStatus === 'PENDING')
+            .map((item: any) => ({
+              id: item.logisticsId,
+              projectNumber: formatNullValue(item.projectNumber),
+              taskName: formatNullValue(item.logisticsTitle),
+              requestDate: formatDate(item.requestedAt),
+            }));
+
+          setPendingOutboundTasks(mappedTasks);
+        }
+      } catch (error) {
+        console.error('승인 대기 출하 업무 목록 가져오기 실패:', error);
+        setPendingOutboundTasks([]);
+      }
+    };
+
+    fetchPendingOutboundTasks();
   }, []);
 
   const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
@@ -464,10 +492,10 @@ export default function ManagementHome() {
                   ))}
                 </ul>
                 <ul className="flex flex-col">
-                  {waitingProjects.outgoing.map((project, i) => (
+                  {pendingOutboundTasks.map((task) => (
                     <li
-                      key={`out-${i}`}
-                      onClick={() => handleDetailClick('outgoing', project.id)}
+                      key={task.id}
+                      onClick={() => handleDetailClick('outbound-task', String(task.id))}
                       className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px]"
                     >
                       <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
@@ -476,10 +504,10 @@ export default function ManagementHome() {
                         </span>
                       </div>
                       <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
-                        {project.date}
+                        {task.requestDate}
                       </span>
                       <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
-                        {project.title}
+                        {task.taskName}
                       </span>
                       <img
                         src={nextIcon}
