@@ -233,6 +233,7 @@ export default function SideBar() {
             try {
               const response = await postLogout();
               if (response.isSuccess) {
+                localStorage.removeItem('accessToken');
                 alert('로그아웃 되었습니다');
                 navigate('/');
               } else {
