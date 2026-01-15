@@ -25,9 +25,10 @@ export default function EmployeeRegisterFourthPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { companyId, userId, email, password } =
+  const { companyId, name, userId, email, password } =
     (location.state as {
       companyId?: number;
+      name?: string;
       userId?: string;
       email?: string;
       password?: string;
@@ -90,7 +91,7 @@ export default function EmployeeRegisterFourthPage() {
       return;
     }
 
-    if (!companyId || !userId || !email || !password) {
+    if (!companyId || !name || !userId || !email || !password) {
       alert('필수 정보가 누락되었습니다. 이전 단계로 돌아가주세요.');
       return;
     }
@@ -100,7 +101,7 @@ export default function EmployeeRegisterFourthPage() {
       const requestData = {
         loginId: userId,
         password: password,
-        name: userId,
+        name: name,
         email: email,
         department: formData.department as 'LOGISTICS' | 'INVENTORY',
         position: formData.position as any,

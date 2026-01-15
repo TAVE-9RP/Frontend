@@ -13,8 +13,9 @@ export default function EmployeeRegisterSecondPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userId, email, password } =
+  const { name, userId, email, password } =
     (location.state as {
+      name?: string;
       userId?: string;
       email?: string;
       password?: string;
@@ -139,6 +140,7 @@ export default function EmployeeRegisterSecondPage() {
                 state: {
                   companyId: selectedCompanyId,
                   companyName: selectedCompany?.name,
+                  name,
                   userId,
                   email,
                   password,
