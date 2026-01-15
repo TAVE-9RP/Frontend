@@ -21,7 +21,7 @@ const ApproveModal: React.FC<ApproveModalProps> = ({ isOpen, onClose, type }) =>
     : "프로젝트의 진행 상태가 '업무 할당'으로 변경되었어요";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50">
       <div
         className="flex h-[230px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
         onClick={(e) => e.stopPropagation()}

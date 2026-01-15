@@ -22,7 +22,7 @@ const ProjectSuccessModal: React.FC<ProjectSuccessModalProps> = ({
     : '담당자에게 업무가 자동으로 할당되었어요';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50">
       <div
         className="flex h-[230px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
         onClick={(e) => e.stopPropagation()}
