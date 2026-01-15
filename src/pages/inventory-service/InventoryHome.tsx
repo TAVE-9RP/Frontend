@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/common/SideBar';
 import DashboardChart from '@/components/dashboard/DashboardChart';
 import ProjectListTable from '@/components/dashboard/ProjectListTable';
 import DashboardTab from '@/components/dashboard/DashboardTab';
+import { getDashboard } from '@/apis/dashboard';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
+
+interface DashboardData {
+  safetyStockRate: number;
+  turnOverRate: number;
+}
 
 export default function InventoryHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const mockTasks = {
     '업무 할당': [
@@ -28,6 +36,27 @@ export default function InventoryHome() {
   };
 
   const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getDashboard();
+        if (response.isSuccess && response.result) {
+          setDashboardData({
+            safetyStockRate: response.result.safetyStockRate || 0,
+            turnOverRate: response.result.turnOverRate || 0,
+          });
+        }
+      } catch (error) {
+        console.error('대시보드 데이터 가져오기 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
 
   const handleItemClick = (id: string) => {
     navigate(`/inventory/${id}`);
@@ -54,7 +83,15 @@ export default function InventoryHome() {
             <div className="mt-[16px] flex gap-[20px] pr-10">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart percent={80} label="안전 재고 확보율(%)" colorType="blue" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.safetyStockRate * 100) / 100
+                        : 80
+                    }
+                    label="안전 재고 확보율(%)"
+                    colorType="blue"
+                  />
                 </div>
 
                 <div className="absolute left-[245px] right-[30px] top-[40px]">
@@ -93,7 +130,15 @@ export default function InventoryHome() {
               </div>
 
               <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <DashboardChart percent={80} label="재고 회전율(%)" colorType="blue" />
+                <DashboardChart
+                  percent={
+                    dashboardData
+                      ? Math.floor(dashboardData.turnOverRate * 100) / 100
+                      : 80
+                  }
+                  label="재고 회전율(%)"
+                  colorType="blue"
+                />
               </div>
 
               <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
