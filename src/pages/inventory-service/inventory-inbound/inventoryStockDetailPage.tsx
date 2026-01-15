@@ -5,7 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
-import { getItemDetail, getItemHistory } from '../../../apis/item';
+import { getItemDetail, getItemHistory, updateItemTargetStock, updateItemSafetyStock } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -167,10 +167,40 @@ export default function InventoryStockDetailPage() {
     setIsChanged(true);
   };
 
-  const handleApplyChange = (type: string) => {
-    alert('변경되었습니다.');
-    if (type === 'target') setIsTargetChanged(false);
-    if (type === 'safety') setIsSafetyChanged(false);
+  const handleApplyChange = async (type: string) => {
+    if (!itemId) return;
+
+    if (type === 'target') {
+      try {
+        const targetStock = Number(inventoryDetail.targetQty);
+        const response = await updateItemTargetStock(itemId, targetStock);
+        
+        if (response.isSuccess) {
+          alert('변경되었습니다.');
+          setIsTargetChanged(false);
+        } else {
+          alert('변경에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('목표재고 변경 실패:', error);
+        alert('변경에 실패했습니다.');
+      }
+    } else if (type === 'safety') {
+      try {
+        const safetyStock = Number(inventoryDetail.safetyQty);
+        const response = await updateItemSafetyStock(itemId, safetyStock);
+        
+        if (response.isSuccess) {
+          alert('변경되었습니다.');
+          setIsSafetyChanged(false);
+        } else {
+          alert('변경에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('안전재고 변경 실패:', error);
+        alert('변경에 실패했습니다.');
+      }
+    }
   };
 
   const handleEditSubmit = () => {

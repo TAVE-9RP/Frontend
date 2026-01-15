@@ -45,5 +45,19 @@ export const getItemHistory = async (itemId: string | number) => {
   return response.data;
 };
 
+export const updateItemTargetStock = async (itemId: string | number, targetStock: number) => {
+  const response = await api.patch(`/items/${itemId}/target-stock`, {
+    targetStock: targetStock,
+  });
+  return response.data;
+};
+
+export const updateItemSafetyStock = async (itemId: string | number, safetyStock: number) => {
+  const response = await api.patch(`/items/${itemId}/safety-stock`, {
+    safetyStock: safetyStock,
+  });
+  return response.data;
+};
+
 export default api;
 
