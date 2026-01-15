@@ -55,7 +55,7 @@ export default function SideBar() {
     {
       title: '관리 서비스',
       icon: '/src/assets/management_service.png',
-      marginTop: 'mt-[50.77px]',
+      marginTop: 'mt-[69.77px]',
       homePath: '/management-home',
       subMenus: [
         { text: '전체 프로젝트 관리', path: '/project-management' },
@@ -67,7 +67,7 @@ export default function SideBar() {
     {
       title: '재고 서비스',
       icon: '/src/assets/box.png',
-      marginTop: 'mt-[24px]',
+      marginTop: 'mt-[32px]',
       homePath: '/inventory-home',
       subMenus: [
         { text: '입고 업무 관리', path: '/inventory-inbound-task' },
@@ -77,7 +77,7 @@ export default function SideBar() {
     {
       title: '물류 서비스',
       icon: '/src/assets/delivery.png',
-      marginTop: 'mt-[24px]',
+      marginTop: 'mt-[32px]',
       homePath: '/logistics-home',
       subMenus: [{ text: '출하 업무 관리', path: '/logistics-outbound-task' }],
     },
@@ -99,7 +99,7 @@ export default function SideBar() {
     isManagementSection: boolean,
   ) => {
     return (
-      <div className="mt-[8px] flex flex-col gap-[8px]">
+      <div className="mt-[16px] flex flex-col gap-[8px]">
         {subMenus.map((menu) => {
           const isProjectManagementActive =
             menu.path === '/project-management' &&
@@ -117,7 +117,7 @@ export default function SideBar() {
                 }
               }}
               disabled={isDisabled}
-              className={`ml-[50.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${
+              className={`ml-[61.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${
                 isDisabled
                   ? 'cursor-not-allowed opacity-50'
                   : isActive
@@ -230,7 +230,7 @@ export default function SideBar() {
         );
       })}
 
-      <div className="mt-[46px] flex flex-col items-center">
+      <div className="mt-[54px] flex flex-col items-center">
         <button
           onClick={async () => {
             try {
