@@ -72,3 +72,22 @@ export interface ApiResponse<T> {
   message: string;
   result: T;
 }
+
+export interface KpiDashboard {
+  companyId: number;
+  snapshotDate: string;
+  safetyStockRate: number;
+  shipmentLeadTimeAvg: number;
+  shipmentCompletionRate: number;
+  projectCompletionRate: number;
+  longTermTaskRate: number;
+  turnOverRate: number;
+  predShipmentLeadTime: number;
+  predTurnOverRate: number;
+  totalTaskCount: number;
+  logisticsTaskCount: number;
+  inventoryTaskCount: number;
+  totalDelayedCount: number;
+  logisticsDelayedCount: number;
+  inventoryDelayedCount: number;
+}
