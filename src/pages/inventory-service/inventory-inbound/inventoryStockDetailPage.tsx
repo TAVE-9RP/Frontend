@@ -266,9 +266,9 @@ export default function InventoryStockDetailPage() {
                   />
                   <button
                     onClick={() => handleApplyChange('target')}
-                    disabled={!isTargetChanged || !inventoryDetail.targetQty || inventoryDetail.targetQty === '-' || inventoryDetail.targetQty.trim() === ''}
+                    disabled={!isTargetChanged || !inventoryDetail.targetQty || inventoryDetail.targetQty === '-' || inventoryDetail.targetQty.trim() === '' || Number(inventoryDetail.targetQty) === 0}
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isTargetChanged && inventoryDetail.targetQty && inventoryDetail.targetQty !== '-' && inventoryDetail.targetQty.trim() !== ''
+                      isTargetChanged && inventoryDetail.targetQty && inventoryDetail.targetQty !== '-' && inventoryDetail.targetQty.trim() !== '' && Number(inventoryDetail.targetQty) !== 0
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}
@@ -290,9 +290,9 @@ export default function InventoryStockDetailPage() {
                   />
                   <button
                     onClick={() => handleApplyChange('safety')}
-                    disabled={!isSafetyChanged || !inventoryDetail.safetyQty || inventoryDetail.safetyQty === '-' || inventoryDetail.safetyQty.trim() === ''}
+                    disabled={!isSafetyChanged || !inventoryDetail.safetyQty || inventoryDetail.safetyQty === '-' || inventoryDetail.safetyQty.trim() === '' || Number(inventoryDetail.safetyQty) === 0}
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isSafetyChanged && inventoryDetail.safetyQty && inventoryDetail.safetyQty !== '-' && inventoryDetail.safetyQty.trim() !== ''
+                      isSafetyChanged && inventoryDetail.safetyQty && inventoryDetail.safetyQty !== '-' && inventoryDetail.safetyQty.trim() !== '' && Number(inventoryDetail.safetyQty) !== 0
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}
