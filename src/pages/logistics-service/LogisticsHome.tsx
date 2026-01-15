@@ -105,7 +105,7 @@ export default function LogisticsHome() {
             </h2>
             <div className="min-h-[400px] w-full max-w-[1070px] rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
               <p className="mb-[24px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
-                할당된 물류 프로젝트입니다
+                할당된 프로젝트입니다
               </p>
               <ProjectListTable />
             </div>
