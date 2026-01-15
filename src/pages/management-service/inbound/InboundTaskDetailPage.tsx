@@ -394,7 +394,7 @@ export default function InboundTaskDetailPage() {
                     : 'cursor-default bg-greyColor-grey300'
                 } `}
               >
-                결제 처리
+                결재 처리
               </button>
             )}
           </div>
