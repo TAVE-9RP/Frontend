@@ -16,6 +16,7 @@ import { getLogisticsList } from '@/apis/ownerLogistics';
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type ProjectFilterStatus = '진행중' | '미진행' | '완료';
 type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+type LogisticsStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 
 interface DashboardData {
   projectCompletionRate: number;
@@ -58,6 +59,14 @@ interface InventoryTask {
   status: InventoryStatus;
 }
 
+interface LogisticsTask {
+  id: number;
+  projectNumber: string;
+  taskName: string;
+  requestDate: string;
+  status: LogisticsStatus;
+}
+
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
@@ -71,6 +80,8 @@ export default function ManagementHome() {
   const [pendingOutboundTasks, setPendingOutboundTasks] = useState<OutboundTask[]>([]);
   const [inventoryTasks, setInventoryTasks] = useState<InventoryTask[]>([]);
   const [allInventoryTasks, setAllInventoryTasks] = useState<InventoryTask[]>([]);
+  const [logisticsTasks, setLogisticsTasks] = useState<LogisticsTask[]>([]);
+  const [allLogisticsTasks, setAllLogisticsTasks] = useState<LogisticsTask[]>([]);
 
   const totalTasks = 10;
   const inventoryCount = 4;
@@ -274,19 +285,48 @@ export default function ManagementHome() {
     setInventoryTasks(filtered);
   }, [safetyInventoryTab, allInventoryTasks]);
 
-  const logisticsTasks = {
-    '업무 할당': [
-      { id: 'L-1', date: '2025.11.26', title: '카피바라 간식 긴급 배송 중' },
-      { id: 'L-1-2', date: '2025.11.26', title: '트럭 시동 거는 카피바라' },
-      { id: 'L-1-3', date: '2025.11.26', title: '지도 확인하는 카피바라' },
-      { id: 'L-1-4', date: '2025.11.26', title: '휴게소 들린 카피바라' },
-      { id: 'L-1-5', date: '2025.11.26', title: '과속 방지턱 넘는 카피바라' },
-      { id: 'L-1-6', date: '2025.11.26', title: '목적지 도착한 카피바라' },
-    ],
-    '승인 대기': [{ id: 'L-2', date: '2025.11.27', title: '카피바라표 김밥' }],
-    진행중: [{ id: 'L-3', date: '2025.11.28', title: '두쫀쿠' }],
-    '입고 완료': [{ id: 'L-4', date: '2025.11.25', title: '트럭 기사 카피바라' }],
+  // 물류 대시보드 필터링 함수
+  const getFilteredLogisticsTasks = (status: FilterStatus): LogisticsTask[] => {
+    const statusMap: Record<FilterStatus, LogisticsStatus> = {
+      '업무 할당': 'ASSIGNED',
+      '승인 대기': 'PENDING',
+      진행중: 'IN_PROGRESS',
+      '입고 완료': 'COMPLETED',
+    };
+
+    return allLogisticsTasks.filter((task) => task.status === statusMap[status]);
   };
+
+  // 물류 대시보드 데이터 가져오기
+  useEffect(() => {
+    const fetchLogisticsTasks = async () => {
+      try {
+        const response = await getLogisticsList('');
+        if (response.isSuccess && response.result) {
+          const mappedTasks: LogisticsTask[] = response.result.map((item: any) => ({
+            id: item.logisticsId,
+            projectNumber: formatNullValue(item.projectNumber),
+            taskName: formatNullValue(item.logisticsTitle),
+            requestDate: formatDate(item.requestedAt),
+            status: item.logisticsStatus as LogisticsStatus,
+          }));
+
+          setAllLogisticsTasks(mappedTasks);
+        }
+      } catch (error) {
+        console.error('물류 업무 목록 가져오기 실패:', error);
+        setAllLogisticsTasks([]);
+      }
+    };
+
+    fetchLogisticsTasks();
+  }, []);
+
+  // 물류 대시보드 필터링
+  useEffect(() => {
+    const filtered = getFilteredLogisticsTasks(logisticsTab);
+    setLogisticsTasks(filtered);
+  }, [logisticsTab, allLogisticsTasks]);
 
 
   // null 값을 "-"로 변환하는 헬퍼 함수
@@ -666,24 +706,32 @@ export default function ManagementHome() {
                     ))}
                   </div>
                   <div className={scrollContainerStyle}>
-                    {logisticsTasks[logisticsTab].map((task, i) => (
-                      <div
-                        key={i}
-                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
-                        onClick={() => handleDetailClick('logistics', task.id)}
-                      >
-                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
-                            {task.date}
-                          </span>
-                        </div>
-                        <div className="ml-[13px] flex-1">
-                          <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
-                            {task.title}
-                          </span>
-                        </div>
+                    {logisticsTasks.length === 0 ? (
+                      <div className="flex items-center justify-center py-[20px]">
+                        <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
+                          없음
+                        </span>
                       </div>
-                    ))}
+                    ) : (
+                      logisticsTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                          onClick={() => handleDetailClick('outbound-task', String(task.id))}
+                        >
+                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                              {task.requestDate}
+                            </span>
+                          </div>
+                          <div className="ml-[13px] flex-1">
+                            <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                              {task.taskName}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
