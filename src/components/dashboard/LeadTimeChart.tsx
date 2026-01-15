@@ -14,10 +14,9 @@ const LeadTimeChart = () => {
     { month: '9월', value: 1.8, type: 'actual' },
     { month: '10월', value: 4.1, type: 'actual' },
     { month: '11월', value: 3.7, type: 'actual' },
-    { month: '12월', value: 4.1, type: 'actual' }, // 12월 실적 추가
-    // 주황색 그래프 구간: 12월(시작점) ~ 1월(내년)
+    { month: '12월', value: 4.1, type: 'actual' },
     { month: '12월', value: 4.1, type: 'predict' },
-    { month: '1월 ', value: 3.8, type: 'predict' }, // 내년 1월 예측값 (중복 방지를 위해 공백 추가)
+    { month: '1월 ', value: 3.8, type: 'predict' },
   ];
 
   const config = {
@@ -39,7 +38,6 @@ const LeadTimeChart = () => {
       x: {
         line: true,
         lineStroke: '#F0F0F0',
-        // x축 순서 고정 (데이터 순서대로 표시)
         labelFormatter: (val: string) => val.trim(),
       },
     },
