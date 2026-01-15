@@ -395,6 +395,7 @@ export default function LogisticsOutboundTaskDetailPage() {
                 value={taskDetail.logisticsDescription ?? ''}
                 onChange={handleInputChange}
                 disabled={isReadOnlyStatus}
+                placeholder={taskDetail.logisticsStatus === 'ASSIGNED' ? '내용을 입력해주세요' : undefined}
                 className={`h-[160px] ${isInProgress || isCompleted ? 'bg-greyColor-grey100' : ''}`}
               />
             </FormGroup>
