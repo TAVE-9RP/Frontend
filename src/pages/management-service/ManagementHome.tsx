@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/common/SideBar';
 import DashboardChart from '@/components/dashboard/DashboardChart';
@@ -8,14 +8,25 @@ import circleMark from '@/assets/circlemark.png';
 import circleMarkDark from '@/assets/circlemark_dark.png';
 import ellipse from '@/assets/ellipse.png';
 import nextIcon from '@/assets/next_1.png';
+import { getDashboard } from '@/apis/dashboard';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
+
+interface DashboardData {
+  projectCompletionRate: number;
+  longTermTaskRate: number;
+  safetyStockRate: number;
+  turnOverRate: number;
+  shipmentCompletionRate: number;
+}
 
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
   const [safetyInventoryTab, setSafetyInventoryTab] = useState<FilterStatus>('업무 할당');
   const [logisticsTab, setLogisticsTab] = useState<FilterStatus>('업무 할당');
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const totalTasks = 10;
   const inventoryCount = 4;
@@ -28,6 +39,30 @@ export default function ManagementHome() {
   const sectionTitleStyle = 'font-pretendard text-[19px] font-bold text-black';
 
   const scrollContainerStyle = 'flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1';
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getDashboard();
+        if (response.isSuccess && response.result) {
+          setDashboardData({
+            projectCompletionRate: response.result.projectCompletionRate || 0,
+            longTermTaskRate: response.result.longTermTaskRate || 0,
+            safetyStockRate: response.result.safetyStockRate || 0,
+            turnOverRate: response.result.turnOverRate || 0,
+            shipmentCompletionRate: response.result.shipmentCompletionRate || 0,
+          });
+        }
+      } catch (error) {
+        console.error('대시보드 데이터 가져오기 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
 
   const mockTasks = {
     '업무 할당': [
@@ -107,7 +142,15 @@ export default function ManagementHome() {
             <div className="mt-[15px] flex gap-[16px]">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart percent={80} label="프로젝트 처리 완료율(%)" colorType="blue" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.projectCompletionRate * 100) / 100
+                        : 80
+                    }
+                    label="프로젝트 처리 완료율(%)"
+                    colorType="blue"
+                  />
                 </div>
                 <div className="absolute left-[245px] right-[30px] top-[40px]">
                   <div className="mb-[25px] flex gap-2">
@@ -145,7 +188,15 @@ export default function ManagementHome() {
 
               <div className="relative h-[306px] w-[494px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[69px] top-[51.5px]">
-                  <DashboardChart percent={75} label="업무 장기 처리율(%)" colorType="black" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.longTermTaskRate * 100) / 100
+                        : 75
+                    }
+                    label="업무 장기 처리율(%)"
+                    colorType="black"
+                  />
                 </div>
                 <div className="absolute left-[315.5px] top-[75.25px] flex items-center">
                   <img
@@ -280,7 +331,15 @@ export default function ManagementHome() {
             <div className="mt-[16px] flex gap-[16px]">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart percent={92} label="안전 재고 확보율(%)" colorType="blue" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.safetyStockRate * 100) / 100
+                        : 92
+                    }
+                    label="안전 재고 확보율(%)"
+                    colorType="blue"
+                  />
                 </div>
                 <div className="absolute left-[245px] right-[30px] top-[40px]">
                   <div className="mb-[25px] flex gap-2">
@@ -317,7 +376,15 @@ export default function ManagementHome() {
               </div>
               <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[45px] top-[47.5px]">
-                  <DashboardChart percent={65} label="재고 회전율(%)" colorType="blue" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.turnOverRate * 100) / 100
+                        : 65
+                    }
+                    label="재고 회전율(%)"
+                    colorType="blue"
+                  />
                 </div>
               </div>
               <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
@@ -333,7 +400,15 @@ export default function ManagementHome() {
             <div className="mt-[16px]">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart percent={85} label="출하 완료율(%)" colorType="blue" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.shipmentCompletionRate * 100) / 100
+                        : 85
+                    }
+                    label="출하 완료율(%)"
+                    colorType="blue"
+                  />
                 </div>
                 <div className="absolute left-[245px] right-[30px] top-[40px]">
                   <div className="mb-[25px] flex gap-2">
