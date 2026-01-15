@@ -20,8 +20,8 @@ interface InventoryStockListTableProps {
 export default function InventoryStockListTable({ data, isLoading }: InventoryStockListTableProps) {
   const navigate = useNavigate();
 
-  const handleRowClick = (inventoryNumber: string) => {
-    navigate(`/inventory-stock/${inventoryNumber}`);
+  const handleRowClick = (itemId: number) => {
+    navigate(`/inventory-stock/${itemId}`);
   };
 
   const commonCellClasses =
@@ -81,7 +81,7 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
               <tr
                 key={stock.id}
                 className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
-                onClick={() => handleRowClick(stock.inventoryNumber)}
+                onClick={() => handleRowClick(stock.id)}
               >
                 <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
                   {stock.inventoryNumber}

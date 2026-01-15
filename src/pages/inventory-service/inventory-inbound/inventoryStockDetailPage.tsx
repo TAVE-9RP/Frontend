@@ -5,7 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
-import { getItems, getItemHistory } from '../../../apis/item';
+import { getItemDetail, getItemHistory } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -73,7 +73,9 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ lab
 );
 
 export default function InventoryStockDetailPage() {
+  // URL 파라미터: inventoryNumber는 실제로 itemId (리스트 페이지의 itemId)
   const { inventoryNumber } = useParams<{ inventoryNumber: string }>();
+  const itemId = inventoryNumber; // itemId로 사용
 
   const [inventoryDetail, setInventoryDetail] = useState<any>(null);
   const [isChanged, setIsChanged] = useState(false);
@@ -94,55 +96,52 @@ export default function InventoryStockDetailPage() {
 
   useEffect(() => {
     const fetchInventoryDetail = async () => {
-      if (!inventoryNumber) return;
+      if (!itemId) return;
 
       try {
-        // 재고 번호로 검색
-        const response = await getItems(inventoryNumber);
+        // itemId로 상세 정보 가져오기
+        const response = await getItemDetail(itemId);
 
         if (response.isSuccess && response.result) {
-          const found = response.result.find((item: any) => item.code === inventoryNumber);
+          const result = response.result;
+          setInventoryDetail({
+            id: result.itemId,
+            inventoryNumber: result.code,
+            itemName: result.name,
+            quantity: result.quantity ?? 0,
+            itemPrice: result.price ? String(result.price) : '-',
+            location: result.location ?? '-',
+            creationDate: result.createdAt ?? '-',
+            targetQty: result.targetStock && result.targetStock !== '-' ? String(result.targetStock) : '',
+            safetyQty: result.safetyStock && result.safetyStock !== '-' ? String(result.safetyStock) : '',
+          });
 
-          if (found) {
-            setInventoryDetail({
-              id: found.itemId,
-              inventoryNumber: found.code,
-              itemName: found.name,
-              quantity: found.quantity ?? 0,
-              itemPrice: found.price ? String(found.price) : '-',
-              location: found.location ?? '-',
-              creationDate: found.createdAt ?? '-',
-              targetQty: found.targetQuantity && found.targetQuantity !== '-' ? String(found.targetQuantity) : '',
-              safetyQty: found.safetyQuantity && found.safetyQuantity !== '-' ? String(found.safetyQuantity) : '',
-            });
-
-            // 입출고 이력 API 호출
-            if (found.itemId) {
-              try {
-                const historyResponse = await getItemHistory(found.itemId);
-                if (historyResponse.isSuccess && historyResponse.result) {
-                  const mappedHistory = historyResponse.result.map((item: any) => ({
-                    id: item.itemHistoryId,
-                    type: item.taskType === 'INVENTORY' ? ('입고' as const) : ('출하' as const),
-                    manager: item.memberName || '-',
-                    date: formatDate(item.processedAt),
-                    quantity: item.changeQuantity || 0,
-                  }));
-                  setHistoryData(mappedHistory);
-                } else {
-                  setHistoryData([]);
-                }
-              } catch (error) {
-                console.error('입출고 이력 가져오기 실패:', error);
+          // 입출고 이력 API 호출
+          if (result.itemId) {
+            try {
+              const historyResponse = await getItemHistory(result.itemId);
+              if (historyResponse.isSuccess && historyResponse.result) {
+                const mappedHistory = historyResponse.result.map((item: any) => ({
+                  id: item.itemHistoryId,
+                  type: item.taskType === 'INVENTORY' ? ('입고' as const) : ('출하' as const),
+                  manager: item.memberName || '-',
+                  date: formatDate(item.processedAt),
+                  quantity: item.changeQuantity || 0,
+                }));
+                setHistoryData(mappedHistory);
+              } else {
                 setHistoryData([]);
               }
+            } catch (error) {
+              console.error('입출고 이력 가져오기 실패:', error);
+              setHistoryData([]);
             }
           }
         }
       } catch (error) {
         console.error('재고 정보 가져오기 실패:', error);
         // API 실패 시 MOCK 데이터에서 찾기 (fallback)
-        const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === inventoryNumber);
+        const found = MOCK_INVENTORY_LIST.find((item) => item.inventoryNumber === itemId);
         if (found) {
           setInventoryDetail({
             ...found,
@@ -154,7 +153,7 @@ export default function InventoryStockDetailPage() {
     };
 
     fetchInventoryDetail();
-  }, [inventoryNumber]);
+  }, [itemId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

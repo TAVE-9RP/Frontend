@@ -35,6 +35,11 @@ export const createItem = async (data: {
   return response.data;
 };
 
+export const getItemDetail = async (itemId: string | number) => {
+  const response = await api.get(`/items/${itemId}`);
+  return response.data;
+};
+
 export const getItemHistory = async (itemId: string | number) => {
   const response = await api.get(`/items/${itemId}/history`);
   return response.data;
