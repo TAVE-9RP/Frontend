@@ -430,7 +430,7 @@ export default function ManagementHome() {
                     percent={
                       dashboardData
                         ? Math.floor(dashboardData.projectCompletionRate * 100) / 100
-                        : 80
+                        : 0
                     }
                     label="프로젝트 처리 완료율(%)"
                     colorType="blue"
@@ -476,7 +476,7 @@ export default function ManagementHome() {
                     percent={
                       dashboardData
                         ? Math.floor(dashboardData.longTermTaskRate * 100) / 100
-                        : 75
+                        : 0
                     }
                     label="업무 장기 처리율(%)"
                     colorType="black"
@@ -619,7 +619,7 @@ export default function ManagementHome() {
                     percent={
                       dashboardData
                         ? Math.floor(dashboardData.safetyStockRate * 100) / 100
-                        : 92
+                        : 0
                     }
                     label="안전 재고 확보율(%)"
                     colorType="blue"
@@ -672,7 +672,7 @@ export default function ManagementHome() {
                     percent={
                       dashboardData
                         ? Math.floor(dashboardData.turnOverRate * 100) / 100
-                        : 65
+                        : 0
                     }
                     label="재고 회전율(%)"
                     colorType="blue"
@@ -696,7 +696,7 @@ export default function ManagementHome() {
                     percent={
                       dashboardData
                         ? Math.floor(dashboardData.shipmentCompletionRate * 100) / 100
-                        : 85
+                        : 0
                     }
                     label="출하 완료율(%)"
                     colorType="blue"

@@ -181,15 +181,15 @@ export default function SideBar() {
         const isManagementSection = section.title === '관리 서비스';
         const isDisabled = isManagementSection && !isManagementUser;
         
-        // 섹션 헤더 버튼 active 상태 확인
-        const isSectionActive = 
-          currentPath === section.homePath ||
-          section.subMenus.some((menu) => {
-            if (menu.path === '/project-management') {
-              return currentPath === '/project-create' || currentPath.startsWith('/project/');
-            }
-            return currentPath.startsWith(menu.path);
-          });
+        // 섹션 헤더 버튼 active 상태 확인 (서브 메뉴가 active가 아닐 때만)
+        const hasActiveSubMenu = section.subMenus.some((menu) => {
+          if (menu.path === '/project-management') {
+            return currentPath === '/project-create' || currentPath.startsWith('/project/');
+          }
+          return currentPath.startsWith(menu.path);
+        });
+        
+        const isSectionActive = currentPath === section.homePath && !hasActiveSubMenu;
 
         return (
           <div key={section.title}>

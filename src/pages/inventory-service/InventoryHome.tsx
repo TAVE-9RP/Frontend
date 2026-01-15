@@ -139,7 +139,7 @@ export default function InventoryHome() {
                     percent={
                       dashboardData
                         ? Math.floor(dashboardData.safetyStockRate * 100) / 100
-                        : 80
+                        : 0
                     }
                     label="안전 재고 확보율(%)"
                     colorType="blue"
@@ -194,7 +194,7 @@ export default function InventoryHome() {
                   percent={
                     dashboardData
                       ? Math.floor(dashboardData.turnOverRate * 100) / 100
-                      : 80
+                      : 0
                   }
                   label="재고 회전율(%)"
                   colorType="blue"
