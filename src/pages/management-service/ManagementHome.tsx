@@ -402,6 +402,10 @@ export default function ManagementHome() {
   const handleDetailClick = (type: string, id: string) => {
     if (type === 'project') {
       navigate(`/project/${id}`);
+    } else if (type === 'inbound-task') {
+      navigate(`/inbound-task/${id}`);
+    } else if (type === 'outbound-task') {
+      navigate(`/outbound-task/${id}`);
     } else {
       navigate(`/management/${type}/${id}`);
     }
