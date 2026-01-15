@@ -15,6 +15,7 @@ import { getLogisticsList } from '@/apis/ownerLogistics';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type ProjectFilterStatus = '진행중' | '미진행' | '완료';
+type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 
 interface DashboardData {
   projectCompletionRate: number;
@@ -49,6 +50,14 @@ interface OutboundTask {
   requestDate: string;
 }
 
+interface InventoryTask {
+  id: number;
+  projectNumber: string;
+  taskName: string;
+  requestDate: string;
+  status: InventoryStatus;
+}
+
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
@@ -60,6 +69,8 @@ export default function ManagementHome() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [pendingInboundTasks, setPendingInboundTasks] = useState<InboundTask[]>([]);
   const [pendingOutboundTasks, setPendingOutboundTasks] = useState<OutboundTask[]>([]);
+  const [inventoryTasks, setInventoryTasks] = useState<InventoryTask[]>([]);
+  const [allInventoryTasks, setAllInventoryTasks] = useState<InventoryTask[]>([]);
 
   const totalTasks = 10;
   const inventoryCount = 4;
@@ -220,19 +231,48 @@ export default function ManagementHome() {
   }, [activeTab, allProjects]);
 
 
-  const SafetyTasks = {
-    '업무 할당': [
-      { id: 'S-1', date: '2025.11.20', title: '카피바라 전용 당근' },
-      { id: 'S-1-2', date: '2025.11.20', title: '당근 씻는 카피바라' },
-      { id: 'S-1-3', date: '2025.11.20', title: '당근 쟁여두는 카피바라' },
-      { id: 'S-1-4', date: '2025.11.20', title: '당근 나르는 카피바라' },
-      { id: 'S-1-5', date: '2025.11.20', title: '당근 품질 검사' },
-      { id: 'S-1-6', date: '2025.11.20', title: '당근 박스 포장' },
-    ],
-    '승인 대기': [{ id: 'S-2', date: '2025.11.22', title: '카피바라 낮잠용 볏집' }],
-    진행중: [{ id: 'S-3', date: '2025.11.25', title: '카피바라 밥먹을시간' }],
-    '입고 완료': [{ id: 'S-4', date: '2025.11.18', title: '특급 당근' }],
+  // 재고 대시보드 필터링 함수
+  const getFilteredInventoryTasks = (status: FilterStatus): InventoryTask[] => {
+    const statusMap: Record<FilterStatus, InventoryStatus> = {
+      '업무 할당': 'ASSIGNED',
+      '승인 대기': 'PENDING',
+      진행중: 'IN_PROGRESS',
+      '입고 완료': 'COMPLETED',
+    };
+
+    return allInventoryTasks.filter((task) => task.status === statusMap[status]);
   };
+
+  // 재고 대시보드 데이터 가져오기
+  useEffect(() => {
+    const fetchInventoryTasks = async () => {
+      try {
+        const response = await getInventoryList('');
+        if (response.isSuccess && response.result) {
+          const mappedTasks: InventoryTask[] = response.result.map((item: any) => ({
+            id: item.inventoryId,
+            projectNumber: formatNullValue(item.projectNumber),
+            taskName: formatNullValue(item.inventoryTitle),
+            requestDate: formatDate(item.requestedAt),
+            status: item.inventoryStatus as InventoryStatus,
+          }));
+
+          setAllInventoryTasks(mappedTasks);
+        }
+      } catch (error) {
+        console.error('재고 업무 목록 가져오기 실패:', error);
+        setAllInventoryTasks([]);
+      }
+    };
+
+    fetchInventoryTasks();
+  }, []);
+
+  // 재고 대시보드 필터링
+  useEffect(() => {
+    const filtered = getFilteredInventoryTasks(safetyInventoryTab);
+    setInventoryTasks(filtered);
+  }, [safetyInventoryTab, allInventoryTasks]);
 
   const logisticsTasks = {
     '업무 할당': [
@@ -549,24 +589,32 @@ export default function ManagementHome() {
                     ))}
                   </div>
                   <div className={scrollContainerStyle}>
-                    {SafetyTasks[safetyInventoryTab].map((task, i) => (
-                      <div
-                        key={i}
-                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
-                        onClick={() => handleDetailClick('safety', task.id)}
-                      >
-                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
-                            {task.date}
-                          </span>
-                        </div>
-                        <div className="ml-[13px] flex-1">
-                          <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
-                            {task.title}
-                          </span>
-                        </div>
+                    {inventoryTasks.length === 0 ? (
+                      <div className="flex items-center justify-center py-[20px]">
+                        <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
+                          없음
+                        </span>
                       </div>
-                    ))}
+                    ) : (
+                      inventoryTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                          onClick={() => handleDetailClick('inbound-task', String(task.id))}
+                        >
+                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                              {task.requestDate}
+                            </span>
+                          </div>
+                          <div className="ml-[13px] flex-1">
+                            <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                              {task.taskName}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
