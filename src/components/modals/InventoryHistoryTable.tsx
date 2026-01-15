@@ -20,7 +20,7 @@ export default function InventoryHistoryTable({ historyData }: InventoryHistoryT
   const bodyTextClasses = 'font-pretendard text-[17px] font-normal text-black';
 
   return (
-    <div className="w-fit overflow-hidden rounded-[10px] border-[2px] border-greyColor-grey200">
+    <div className="w-fit overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
       <div className="flex bg-greyColor-grey100">
         <div className={`${cellClasses} ${headerTextClasses}`}>구분</div>
         <div className={`${cellClasses} ${headerTextClasses}`}>담당자</div>

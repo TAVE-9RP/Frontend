@@ -170,6 +170,7 @@ export default function ProjectCreatePage() {
         projectName: formData.projectTitle,
         projectDescription: formData.projectDescription,
         projectCustomer: formData.client,
+        projectTaskDescription: formData.jobDescription,
         projectExpectedEndDate: formattedDate,
         assigneeIds: assigneeIds,
       };

@@ -1,12 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { decodeAccessToken } from '@/utils/jwt';
+import { getMemberMe } from '@/apis/member';
+
+const mapPositionToKorean = (position?: string): string => {
+  const positionMap: Record<string, string> = {
+    INTERN: '인턴',
+    ASSISTANT_MANAGER: '주임',
+    MANAGER: '대리',
+    SENIOR_MANAGER: '과장',
+    DEPARTMENT_HEAD: '부장',
+    OWNER: '오너',
+  };
+
+  return position ? positionMap[position] || position : '';
+};
 
 export default function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
   const [departmentFromToken, setDepartmentFromToken] = useState<string | null>(null);
+  const [memberName, setMemberName] = useState<string>('');
+  const [memberPosition, setMemberPosition] = useState<string>('');
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -16,6 +32,23 @@ export default function SideBar() {
     if (payload?.department) {
       setDepartmentFromToken(payload.department);
     }
+  }, []);
+
+  // 회원 정보 조회
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await getMemberMe();
+        if (response.isSuccess && response.result) {
+          setMemberName(response.result.name);
+          setMemberPosition(response.result.position);
+        }
+      } catch (error) {
+        console.error('회원 정보 조회 실패:', error);
+      }
+    };
+
+    fetchMemberInfo();
   }, []);
 
   const menuSections = [
@@ -50,7 +83,18 @@ export default function SideBar() {
     },
   ];
 
-  const renderSubMenus = (subMenus: { text: string; path: string }[]) => {
+  const isManagementUser = departmentFromToken === 'MANAGEMENT';
+  const managementPaths = [
+    '/project-management',
+    '/project-create',
+    '/project/',
+    '/inbound-task',
+    '/outbound-task',
+    '/hrmanagement',
+    '/management-home',
+  ];
+
+  const renderSubMenus = (subMenus: { text: string; path: string }[], isManagementSection: boolean) => {
     return (
       <div className="mt-[16px] flex flex-col gap-[8px]">
         {subMenus.map((menu) => {
@@ -59,18 +103,32 @@ export default function SideBar() {
             (currentPath === '/project-create' || currentPath.startsWith('/project/'));
 
           const isActive = currentPath.startsWith(menu.path) || isProjectManagementActive;
+          const isDisabled = isManagementSection && !isManagementUser;
 
           return (
             <button
               key={menu.text + menu.path}
-              onClick={() => navigate(menu.path)}
+              onClick={() => {
+                if (!isDisabled) {
+                  navigate(menu.path);
+                }
+              }}
+              disabled={isDisabled}
               className={`ml-[61.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${
-                isActive ? 'bg-mainColor-blue050' : 'bg-transparent hover:bg-greyColor-grey100'
+                isDisabled
+                  ? 'cursor-not-allowed opacity-50'
+                  : isActive
+                    ? 'bg-mainColor-blue050'
+                    : 'bg-transparent hover:bg-greyColor-grey100'
               }`}
             >
               <span
                 className={`whitespace-nowrap font-pretendard text-[15px] font-bold leading-normal ${
-                  isActive ? 'text-mainColor-blue600' : 'text-greyColor-grey600'
+                  isDisabled
+                    ? 'text-greyColor-grey400'
+                    : isActive
+                      ? 'text-mainColor-blue600'
+                      : 'text-greyColor-grey600'
                 }`}
               >
                 {menu.text}
@@ -85,7 +143,17 @@ export default function SideBar() {
   return (
     <aside className="sticky top-0 flex h-screen w-[220px] flex-col overflow-x-hidden border-r border-greyColor-grey200 bg-white">
       <button
-        onClick={() => navigate('/management-home')}
+        onClick={() => {
+          if (isManagementUser) {
+            navigate('/management-home');
+          } else if (departmentFromToken === 'LOGISTICS') {
+            navigate('/logistics-home');
+          } else if (departmentFromToken === 'INVENTORY') {
+            navigate('/inventory-home');
+          } else {
+            navigate('/');
+          }
+        }}
         className="ml-[27px] mt-[33px] flex items-center"
       >
         <img src="/src/assets/logo.png" alt="logo" width={129} height={36.47} />
@@ -100,29 +168,43 @@ export default function SideBar() {
 
       <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
         <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
-        <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
-          Owner | 홍길동
-        </span>
+        {(memberPosition || memberName) && (
+          <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
+            {memberPosition ? mapPositionToKorean(memberPosition) : ''}
+            {memberPosition && memberName ? ' | ' : ''}
+            {memberName || ''}
+          </span>
+        )}
       </div>
 
       {menuSections.map((section) => {
+        const isManagementSection = section.title === '관리 서비스';
+        const isDisabled = isManagementSection && !isManagementUser;
+
         return (
           <div key={section.title}>
             <button
               onClick={() => {
-                if (section.homePath) {
+                if (section.homePath && !isDisabled) {
                   navigate(section.homePath);
                 }
               }}
-              className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop}`}
+              disabled={isDisabled}
+              className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop} ${
+                isDisabled ? 'cursor-not-allowed opacity-50' : ''
+              }`}
             >
               <img src={section.icon} alt={section.title} width={20} height={20} />
-              <span className="font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey900">
+              <span
+                className={`font-pretendard text-[17px] font-bold leading-normal ${
+                  isDisabled ? 'text-greyColor-grey400' : 'text-greyColor-grey900'
+                }`}
+              >
                 {section.title}
               </span>
             </button>
 
-            {renderSubMenus(section.subMenus)}
+            {renderSubMenus(section.subMenus, isManagementSection)}
           </div>
         );
       })}

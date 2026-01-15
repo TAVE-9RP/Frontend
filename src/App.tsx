@@ -29,6 +29,7 @@ import LogisticsOutboundTaskDetailPage from './pages/logistics-service/logistics
 import InventoryHome from './pages/inventory-service/InventoryHome';
 import LogisticsHome from './pages/logistics-service/LogisticsHome';
 import ManagementHome from './pages/management-service/ManagementHome';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 const queryClient = new QueryClient();
 
@@ -47,13 +48,62 @@ function App() {
         <Route path="signupfailure" element={<SignupFailurePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sidebartest" element={<Sidebartest />} />
-        <Route path="/project-management" element={<ProjectManagementListPage />} />
-        <Route path="/project-create" element={<ProjectCreatePage />} />
-        <Route path="/project/:id" element={<ProjectEditPage />} />
-        <Route path="/inbound-task" element={<InboundTaskListPage />} />
-        <Route path="/inbound-task/:inventoryId" element={<InboundTaskDetailPage />} />
-        <Route path="/outbound-task" element={<OutBoundTaskListPage />} />
-        <Route path="/outbound-task/:logisticsId" element={<OutboundTaskDetailPage />} />
+        <Route
+          path="/project-management"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <ProjectManagementListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/project-create"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <ProjectCreatePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/project/:id"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <ProjectEditPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inbound-task"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <InboundTaskListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inbound-task/:inventoryId"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <InboundTaskDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/outbound-task"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <OutBoundTaskListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/outbound-task/:logisticsId"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <OutboundTaskDetailPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/inventory-inbound-task" element={<InventoryInboundTaskListPage />} />
         <Route path="/inventory-home" element={<InventoryHome />} />
         <Route
@@ -66,8 +116,22 @@ function App() {
         <Route path="inventory-stock" element={<InventoryStockListPage />} />
         <Route path="/inventory-stock/:inventoryNumber" element={<InventoryDetailPage />} />
 
-        <Route path="hrmanagement" element={<HRManagementPage />} />
-        <Route path="management-home" element={<ManagementHome />} />
+        <Route
+          path="hrmanagement"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <HRManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="management-home"
+          element={
+            <ProtectedRoute requiredDepartment="MANAGEMENT">
+              <ManagementHome />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="test" element={<TestPage />} />
       </Routes>

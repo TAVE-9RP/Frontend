@@ -96,6 +96,11 @@ const calculateStatusCounts = (tasks: InboundTask[]) => {
       count: tasks.filter((t) => t.status === 'PENDING').length,
     },
     {
+      status: 'REJECT' as const,
+      label: '승인 반려',
+      count: tasks.filter((t) => t.status === 'REJECT').length,
+    },
+    {
       status: 'IN_PROGRESS' as const,
       label: '진행중',
       count: tasks.filter((t) => t.status === 'IN_PROGRESS').length,
@@ -135,12 +140,12 @@ export default function InboundTaskListPage() {
     return datePart;
   };
 
-  // API에서 데이터 가져오기
+  // API에서 데이터 가져오기 (검색어 포함)
   useEffect(() => {
     const fetchInventoryList = async () => {
       setIsLoading(true);
       try {
-        const response = await getInventoryList();
+        const response = await getInventoryList(searchTerm);
         if (response.isSuccess && response.result) {
           // API 응답을 InboundTask 형식으로 변환
           const mappedTasks: InboundTask[] = response.result.map((item: any) => ({
@@ -166,9 +171,9 @@ export default function InboundTaskListPage() {
     };
 
     fetchInventoryList();
-  }, []);
+  }, [searchTerm]);
 
-  // 상태 및 검색어에 따라 필터링
+  // 상태에 따라 필터링 (검색어는 API에서 처리)
   useEffect(() => {
     let filteredList: InboundTask[];
 
@@ -178,15 +183,8 @@ export default function InboundTaskListPage() {
       filteredList = allTasks.filter((task) => task.status === activeStatus);
     }
 
-    // 검색어 필터링
-    const finalFilteredList = filteredList.filter(
-      (task) =>
-        task.projectNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.taskName.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-
-    setTaskList(finalFilteredList);
-  }, [activeStatus, searchTerm, allTasks]);
+    setTaskList(filteredList);
+  }, [activeStatus, allTasks]);
 
   const handleStatusClick = (status: InboundTask['status']) => {
     if (activeStatus === status) return;

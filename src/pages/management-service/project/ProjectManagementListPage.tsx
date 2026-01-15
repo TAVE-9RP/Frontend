@@ -82,7 +82,7 @@ const MOCK_PROJECT_LIST: Project[] = [
 
 export default function ProjectManagementListPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeStatus, setActiveStatus] = useState<string>('PENDING'); // 기본값을 PENDING으로 변경 (NOT_STARTED -> PENDING)
+  const [activeStatus, setActiveStatus] = useState<string>('IN_PROGRESS'); // 기본값을 IN_PROGRESS로 변경 (진행중)
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]); // 전체 프로젝트 목록 저장
   const [isLoading, setIsLoading] = useState<boolean>(false);

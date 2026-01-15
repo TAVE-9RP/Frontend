@@ -57,6 +57,7 @@ export interface CreateProjectRequest {
   projectNumber: string;
   projectName: string;
   projectDescription: string;
+  projectTaskDescription: string;
   projectCustomer: string;
   projectExpectedEndDate: string;
   assigneeIds: number[];
