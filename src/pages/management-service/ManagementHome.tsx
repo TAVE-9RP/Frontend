@@ -400,7 +400,11 @@ export default function ManagementHome() {
   const projectTabs: ProjectFilterStatus[] = ['진행중', '미진행', '완료'];
 
   const handleDetailClick = (type: string, id: string) => {
-    navigate(`/management/${type}/${id}`);
+    if (type === 'project') {
+      navigate(`/project/${id}`);
+    } else {
+      navigate(`/management/${type}/${id}`);
+    }
   };
 
   return (
@@ -444,7 +448,7 @@ export default function ManagementHome() {
                       <div
                         key={project.id}
                         className="flex cursor-pointer items-center transition-colors hover:opacity-70"
-                        onClick={() => handleDetailClick('project', project.projectNumber)}
+                        onClick={() => handleDetailClick('project', String(project.id))}
                       >
                         <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
                           <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
