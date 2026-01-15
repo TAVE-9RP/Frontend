@@ -180,6 +180,16 @@ export default function SideBar() {
       {menuSections.map((section) => {
         const isManagementSection = section.title === '관리 서비스';
         const isDisabled = isManagementSection && !isManagementUser;
+        
+        // 섹션 헤더 버튼 active 상태 확인
+        const isSectionActive = 
+          currentPath === section.homePath ||
+          section.subMenus.some((menu) => {
+            if (menu.path === '/project-management') {
+              return currentPath === '/project-create' || currentPath.startsWith('/project/');
+            }
+            return currentPath.startsWith(menu.path);
+          });
 
         return (
           <div key={section.title}>
@@ -190,14 +200,22 @@ export default function SideBar() {
                 }
               }}
               disabled={isDisabled}
-              className={`ml-[27px] flex w-full items-center gap-[10px] text-left ${section.marginTop} ${
-                isDisabled ? 'cursor-not-allowed opacity-50' : ''
+              className={`ml-[27px] flex w-[179px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${section.marginTop} ${
+                isDisabled
+                  ? 'cursor-not-allowed opacity-50'
+                  : isSectionActive
+                    ? 'bg-mainColor-blue050'
+                    : 'bg-transparent hover:bg-greyColor-grey100'
               }`}
             >
               <img src={section.icon} alt={section.title} width={20} height={20} />
               <span
                 className={`font-pretendard text-[17px] font-bold leading-normal ${
-                  isDisabled ? 'text-greyColor-grey400' : 'text-greyColor-grey900'
+                  isDisabled
+                    ? 'text-greyColor-grey400'
+                    : isSectionActive
+                      ? 'text-mainColor-blue600'
+                      : 'text-greyColor-grey900'
                 }`}
               >
                 {section.title}
