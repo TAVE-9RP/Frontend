@@ -71,11 +71,11 @@ export default function InventoryInboundTaskListPage() {
   // 날짜를 ISO 형식에서 'YYYY-MM-DD' 형식으로 변환
   const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString || dateString === '-') return '-';
-    
+
     // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
     const datePart = dateString.split('T')[0];
     if (!datePart) return '-';
-    
+
     return datePart;
   };
 
@@ -163,7 +163,7 @@ export default function InventoryInboundTaskListPage() {
               ))}
             </div>
 
-            <div className="ml-[160px] w-[500px]">
+            <div className="ml-[54px] w-[450px]">
               <SearchBar
                 placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."
                 value={searchTerm}
