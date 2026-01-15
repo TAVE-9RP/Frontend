@@ -311,20 +311,6 @@ export default function InventoryStockDetailPage() {
             </h2>
             <InventoryHistoryTable historyData={historyData} />
           </div>
-
-          <div className="mt-auto flex justify-end pt-10">
-            <button
-              disabled={!isChanged}
-              onClick={handleEditSubmit}
-              className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-all ${
-                isChanged
-                  ? 'bg-mainColor-blue600 hover:bg-mainColor-blue700'
-                  : 'cursor-not-allowed bg-greyColor-grey300'
-              }`}
-            >
-              수정하기
-            </button>
-          </div>
         </div>
       </main>
       <StockEditConfirmModal
