@@ -103,10 +103,10 @@ export default function CompanyRegisterPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[535px] flex-col items-center">
+    <div className="mx-auto flex min-h-screen w-full max-w-[535px] flex-col items-center">
       <Header title="회사 신규 등록하기" />
 
-      <form onSubmit={handleSubmit} className="mt-[49px] flex w-full flex-col gap-[20px]">
+      <form onSubmit={handleSubmit} className="mt-[58px] flex w-full flex-1 flex-col gap-[30px]">
         <InputField
           label="회사명"
           name="companyName"
@@ -135,27 +135,18 @@ export default function CompanyRegisterPage() {
         />
 
         <div className="flex flex-col gap-[10px]">
-          <label
-            htmlFor="logoUpload"
-            className="font-pretendard text-[19px] font-bold leading-normal text-black"
-          >
+          <label htmlFor="logoUpload" className="font-pretendard text-[19px] font-bold text-black">
             회사 로고
           </label>
-
           <label
             htmlFor="logoUpload"
             className="flex h-[103px] w-[535px] cursor-pointer flex-col items-center justify-center gap-[10px] rounded-[10px] bg-[#F7F8F9]"
           >
-            <img
-              src={addCircle}
-              alt="파일 추가 아이콘"
-              className="h-[32px] w-[32px] object-contain"
-            />
-            <span className="font-pretendard text-[19px] font-normal leading-normal text-[#63656C]">
+            <img src={addCircle} alt="아이콘" className="h-[32px] w-[32px] object-contain" />
+            <span className="font-pretendard text-[19px] font-normal text-[#63656C]">
               파일을 선택해주세요
             </span>
           </label>
-
           <input
             id="logoUpload"
             type="file"
@@ -165,13 +156,13 @@ export default function CompanyRegisterPage() {
           />
         </div>
 
-        <div className="mt-[30px] flex w-full justify-center gap-[31.5px]">
+        <div className="mb-[114px] mt-auto flex w-full justify-center gap-[31px]">
           <Button
             type="button"
             variant="primary"
             size="md"
             onClick={handlePrevStep}
-            className="h-[70px] w-[252px] rounded-[10px] border-[#63656C] px-[50px] py-[17px]"
+            className="h-[50px] w-[180px] rounded-[10px] border-[#63656C] px-[10px] font-pretendard text-[24px] font-bold leading-none text-greyColor-grey500"
           >
             이전 단계
           </Button>
@@ -181,7 +172,7 @@ export default function CompanyRegisterPage() {
             variant={isFormValid ? 'active' : 'secondary'}
             size="md"
             disabled={!isFormValid || isLoading}
-            className="h-[70px] w-[252px] rounded-[10px] px-[50px] py-[17px] text-black"
+            className="h-[50px] w-[180px] rounded-[10px] px-[10px] font-pretendard text-[24px] font-bold leading-none text-black"
           >
             {isLoading ? '등록 중...' : '다음'}
           </Button>

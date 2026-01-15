@@ -94,7 +94,10 @@ export default function SideBar() {
     '/management-home',
   ];
 
-  const renderSubMenus = (subMenus: { text: string; path: string }[], isManagementSection: boolean) => {
+  const renderSubMenus = (
+    subMenus: { text: string; path: string }[],
+    isManagementSection: boolean,
+  ) => {
     return (
       <div className="mt-[16px] flex flex-col gap-[8px]">
         {subMenus.map((menu) => {
@@ -180,7 +183,7 @@ export default function SideBar() {
       {menuSections.map((section) => {
         const isManagementSection = section.title === '관리 서비스';
         const isDisabled = isManagementSection && !isManagementUser;
-        
+
         // 섹션 헤더 버튼 active 상태 확인 (서브 메뉴가 active가 아닐 때만)
         const hasActiveSubMenu = section.subMenus.some((menu) => {
           if (menu.path === '/project-management') {
@@ -188,7 +191,7 @@ export default function SideBar() {
           }
           return currentPath.startsWith(menu.path);
         });
-        
+
         const isSectionActive = currentPath === section.homePath && !hasActiveSubMenu;
 
         return (

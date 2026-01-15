@@ -14,8 +14,9 @@ const LeadTimeChart = () => {
     { month: '9월', value: 1.8, type: 'actual' },
     { month: '10월', value: 4.1, type: 'actual' },
     { month: '11월', value: 3.7, type: 'actual' },
-    { month: '11월', value: 3.7, type: 'predict' },
+    { month: '12월', value: 4.1, type: 'actual' },
     { month: '12월', value: 4.1, type: 'predict' },
+    { month: '1월 ', value: 3.8, type: 'predict' },
   ];
 
   const config = {
@@ -34,7 +35,11 @@ const LeadTimeChart = () => {
     },
     axis: {
       y: { grid: true, gridLineDash: [0, 0], gridStroke: '#F0F0F0' },
-      x: { line: true, lineStroke: '#F0F0F0' },
+      x: {
+        line: true,
+        lineStroke: '#F0F0F0',
+        labelFormatter: (val: string) => val.trim(),
+      },
     },
     point: {
       shapeField: 'circle',
@@ -80,7 +85,7 @@ const LeadTimeChart = () => {
       </span>
 
       <div className="absolute left-1/2 top-[35px] -translate-x-1/2 text-[16px] font-bold text-greyColor-grey600">
-        2025년
+        2025년 - 2026년
       </div>
 
       <Line {...config} />

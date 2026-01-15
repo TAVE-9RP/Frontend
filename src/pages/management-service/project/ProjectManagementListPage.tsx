@@ -216,10 +216,10 @@ export default function ProjectManagementListPage() {
       console.log('=== 변환된 전체 프로젝트 ===');
       console.log('allProjects:', allProjectsList);
       console.log('현재 필터링할 status:', status);
-      
+
       // 전체 프로젝트 목록 저장 (카운트 계산용)
       setAllProjects(allProjectsList);
-      
+
       const filteredList = allProjectsList.filter((project) => project.status === status);
       console.log('=== 필터링된 프로젝트 ===');
       console.log('filteredList:', filteredList);
@@ -293,7 +293,7 @@ export default function ProjectManagementListPage() {
               ))}
             </div>
 
-            <div className="ml-[362px]">
+            <div className="ml-[382px]">
               <SearchBar
                 placeholder="프로젝트 넘버 또는 프로젝트 제목을 입력하세요."
                 value={searchTerm}

@@ -132,7 +132,7 @@ export default function EmployeeRegisterFourthPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[535px] flex-col items-center">
+    <div className="mx-auto flex min-h-screen w-full max-w-[535px] flex-col items-center">
       <Header title="회사의 소속부서와 직급을 입력해주세요" />
 
       <div className="mt-[82px] flex flex-col items-center">
@@ -153,7 +153,7 @@ export default function EmployeeRegisterFourthPage() {
         />
       </div>
 
-      <div className="mt-[49px] flex w-full flex-col gap-[20px]">
+      <div className="mt-[49px] flex w-full flex-1 flex-col gap-[20px]">
         {/* 부서 드롭다운 */}
         <div className="flex w-full flex-col">
           <label className="mb-2 text-[19px] font-bold text-black">부서</label>
@@ -161,7 +161,7 @@ export default function EmployeeRegisterFourthPage() {
             name="department"
             value={formData.department}
             onChange={handleDepartmentChange}
-            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
+            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
           >
             <option value="">부서를 선택하세요.</option>
             {DEPARTMENT_OPTIONS.map((option) => (
@@ -179,7 +179,7 @@ export default function EmployeeRegisterFourthPage() {
             name="position"
             value={formData.position}
             onChange={handlePositionChange}
-            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] py-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
+            className="h-[69px] w-[535px] rounded-[10px] border border-[1px] border-gray-400 bg-white px-[23px] text-[19px] font-normal text-black outline-none transition duration-150 focus:border-blue-500"
           >
             <option value="">직급을 선택하세요.</option>
             {POSITION_OPTIONS.map((option) => (
@@ -191,13 +191,13 @@ export default function EmployeeRegisterFourthPage() {
         </div>
       </div>
 
-      <div className="mt-[31px] flex w-full justify-center gap-[31.5px]">
+      <div className="mb-[136px] mt-auto flex w-full justify-center gap-[31.5px]">
         <Button
           type="button"
           variant="primary"
           size="md"
           onClick={() => navigate('/employeesignup/step3')}
-          className="h-[70px] w-[252px] rounded-[10px] border-[#63656C] px-[50px] py-[17px]"
+          className="!flex !h-[60px] !w-[180px] items-center justify-center whitespace-nowrap rounded-[10px] border-[#63656C] font-pretendard text-[24px] font-bold leading-none"
         >
           이전 단계
         </Button>
@@ -208,7 +208,7 @@ export default function EmployeeRegisterFourthPage() {
           size="md"
           disabled={!formData.department || !formData.position || isLoading}
           onClick={handleSubmit}
-          className="h-[70px] w-[252px] rounded-[10px] px-[50px] py-[17px] text-black"
+          className="!flex !h-[60px] !w-[180px] items-center justify-center whitespace-nowrap rounded-[10px] font-pretendard text-[24px] font-bold leading-none text-black"
         >
           {isLoading ? '등록 중...' : '다음'}
         </Button>

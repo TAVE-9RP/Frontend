@@ -10,7 +10,7 @@ export default function SignupSuccessPage() {
   const name = (location.state as { name?: string })?.name || '회원';
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex min-h-screen flex-col items-center">
       <Header title="" />
 
       <h1
@@ -30,11 +30,11 @@ export default function SignupSuccessPage() {
         className="mt-[46px] h-[254px] w-[254px] flex-shrink-0 object-contain"
       />
 
-      <div className="mt-[163px]">
+      <div className="mb-[136px] mt-auto">
         <Button
           variant="active"
           size="md"
-          className="h-[70px] w-[252px] rounded-[10px]"
+          className="h-[60px] w-[180px] rounded-[10px] px-[10px] font-pretendard text-[24px] font-bold leading-none text-black"
           onClick={() => navigate('/')}
         >
           홈 바로가기

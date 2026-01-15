@@ -156,7 +156,7 @@ export default function OutboundTaskListPage() {
     // ISO 형식의 날짜 문자열에서 날짜 부분만 추출 (YYYY-MM-DD)
     const datePart = dateString.split('T')[0];
     if (!datePart) return '-';
-    
+
     return datePart;
   };
 
@@ -235,7 +235,7 @@ export default function OutboundTaskListPage() {
                 />
               ))}
             </div>
-            <div className="ml-[162px] w-[500px]">
+            <div className="ml-[48px] w-[500px]">
               <SearchBar placeholder="검색" value={searchTerm} onChange={handleSearchChange} />
             </div>
           </div>

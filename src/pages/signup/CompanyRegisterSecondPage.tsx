@@ -126,10 +126,10 @@ export default function CompanyRegisterSecondPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[535px] flex-col items-center">
+    <div className="mx-auto flex min-h-screen w-full max-w-[535px] flex-col items-center">
       <Header title="회사 신규 등록하기" />
 
-      <form onSubmit={handleSubmit} className="mt-[49px] flex w-full flex-col gap-[20px]">
+      <form onSubmit={handleSubmit} className="mt-[58px] flex w-full flex-1 flex-col gap-[30px]">
         <InputField
           label="아이디"
           name="userId"
@@ -180,13 +180,13 @@ export default function CompanyRegisterSecondPage() {
           )}
         </div>
 
-        <div className="mt-[30px] flex w-full justify-center gap-[31.5px]">
+        <div className="mb-[114px] mt-auto flex w-full justify-center gap-[31px]">
           <Button
             type="button"
             variant="primary"
             size="md"
             onClick={() => navigate('/companysignup')}
-            className="h-[70px] w-[252px] rounded-[10px] border-[#63656C] px-[50px] py-[17px]"
+            className="h-[50px] w-[180px] rounded-[10px] border-[#63656C] px-[10px] font-pretendard text-[24px] font-bold leading-none text-greyColor-grey500"
           >
             이전 단계
           </Button>
@@ -196,7 +196,7 @@ export default function CompanyRegisterSecondPage() {
             variant={isFormValid ? 'active' : 'secondary'}
             size="md"
             disabled={!isFormValid || isLoading}
-            className="h-[70px] w-[252px] rounded-[10px] px-[50px] py-[17px] text-black"
+            className="h-[50px] w-[180px] rounded-[10px] px-[10px] font-pretendard text-[24px] font-bold leading-none text-black"
           >
             {isLoading ? '가입 중...' : '가입 완료'}
           </Button>
