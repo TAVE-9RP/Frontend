@@ -208,6 +208,17 @@ export default function SideBar() {
           </div>
         );
       })}
+
+      <div className="mt-[54px] flex flex-col items-center">
+        <button
+          className="flex items-center gap-[10px] text-left"
+        >
+          <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
+            로그아웃
+          </span>
+          <img src="/src/assets/logout.png" alt="arrow" width={16} height={16} />
+        </button>
+      </div>
     </aside>
   );
 }
