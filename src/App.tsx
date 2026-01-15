@@ -44,10 +44,31 @@ function App() {
         <Route path="employeesignup" element={<EmployeeRegisterPage />} />
         <Route path="employeesignup/step2" element={<EmployeeRegisterSecondPage />} />
         <Route path="employeesignup/step4" element={<EmployeeRegisterFourthPage />} />
-        <Route path="signupsuccess" element={<SignupSuccessPage />} />
-        <Route path="signupfailure" element={<SignupFailurePage />} />
+        <Route
+          path="signupsuccess"
+          element={
+            <ProtectedRoute>
+              <SignupSuccessPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="signupfailure"
+          element={
+            <ProtectedRoute>
+              <SignupFailurePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="login" element={<LoginPage />} />
-        <Route path="sidebartest" element={<Sidebartest />} />
+        <Route
+          path="sidebartest"
+          element={
+            <ProtectedRoute>
+              <Sidebartest />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/project-management"
           element={
@@ -104,17 +125,70 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/inventory-inbound-task" element={<InventoryInboundTaskListPage />} />
-        <Route path="/inventory-home" element={<InventoryHome />} />
+        <Route
+          path="/inventory-inbound-task"
+          element={
+            <ProtectedRoute>
+              <InventoryInboundTaskListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inventory-home"
+          element={
+            <ProtectedRoute>
+              <InventoryHome />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/inventory-inbound-task/:projectNumber"
-          element={<InventoryInboundTaskDetailPage />}
+          element={
+            <ProtectedRoute>
+              <InventoryInboundTaskDetailPage />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/logistics-outbound-task" element={<LogisticsOutboundTaskListPage />} />
-        <Route path="logistics-home" element={<LogisticsHome />} />
-        <Route path="/logistics-outbound-task/:id" element={<LogisticsOutboundTaskDetailPage />} />
-        <Route path="inventory-stock" element={<InventoryStockListPage />} />
-        <Route path="/inventory-stock/:inventoryNumber" element={<InventoryDetailPage />} />
+        <Route
+          path="/logistics-outbound-task"
+          element={
+            <ProtectedRoute>
+              <LogisticsOutboundTaskListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="logistics-home"
+          element={
+            <ProtectedRoute>
+              <LogisticsHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/logistics-outbound-task/:id"
+          element={
+            <ProtectedRoute>
+              <LogisticsOutboundTaskDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="inventory-stock"
+          element={
+            <ProtectedRoute>
+              <InventoryStockListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inventory-stock/:inventoryNumber"
+          element={
+            <ProtectedRoute>
+              <InventoryDetailPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="hrmanagement"
@@ -133,7 +207,14 @@ function App() {
           }
         />
 
-        <Route path="test" element={<TestPage />} />
+        <Route
+          path="test"
+          element={
+            <ProtectedRoute>
+              <TestPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </QueryClientProvider>
   );
