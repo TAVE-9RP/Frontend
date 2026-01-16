@@ -77,8 +77,8 @@ interface LogisticsTask {
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
-  const [safetyInventoryTab, setSafetyInventoryTab] = useState<FilterStatus>('업무 할당');
-  const [logisticsTab, setLogisticsTab] = useState<FilterStatus>('업무 할당');
+  const [safetyInventoryTab, setSafetyInventoryTab] = useState<FilterStatus>('승인 대기');
+  const [logisticsTab, setLogisticsTab] = useState<FilterStatus>('승인 대기');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [projectList, setProjectList] = useState<Project[]>([]);
@@ -403,7 +403,7 @@ export default function ManagementHome() {
     fetchPendingOutboundTasks();
   }, []);
 
-  const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
+  const tabs: FilterStatus[] = ['승인 대기', '진행중', '입고 완료'];
   const projectTabs: ProjectFilterStatus[] = ['진행중', '미진행', '완료'];
 
   const handleDetailClick = (type: string, id: string) => {
