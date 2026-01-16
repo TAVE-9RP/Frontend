@@ -14,7 +14,7 @@ type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '출하 �
 
 export default function LogisticsHome() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
+  const [activeTab, setActiveTab] = useState<FilterStatus>('승인 대기');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [tasksByStatus, setTasksByStatus] = useState<Record<FilterStatus, any[]>>({
@@ -39,7 +39,7 @@ export default function LogisticsHome() {
       if (logisticsRes.isSuccess && logisticsRes.result) {
         const rawData: LogisticsSummary[] = logisticsRes.result;
         setTasksByStatus({
-          '업무 할당': rawData.filter((t) => t.logisticsStatus === 'ASSIGNED').map(formatTask),
+          '업무 할당': [],
           '승인 대기': rawData.filter((t) => t.logisticsStatus === 'PENDING').map(formatTask),
           진행중: rawData.filter((t) => t.logisticsStatus === 'IN_PROGRESS').map(formatTask),
           '출하 완료': rawData.filter((t) => t.logisticsStatus === 'COMPLETED').map(formatTask),
@@ -76,7 +76,7 @@ export default function LogisticsHome() {
     fetchData();
   }, []);
 
-  const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '출하 완료'];
+  const tabs: FilterStatus[] = ['승인 대기', '진행중', '출하 완료'];
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-greyColor-grey100">
