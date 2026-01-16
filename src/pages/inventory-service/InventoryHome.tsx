@@ -164,7 +164,7 @@ export default function InventoryHome() {
                     {inventoryTasks.length === 0 ? (
                       <div className="flex items-center justify-center py-[20px]">
                         <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
-                          없음
+                          해당 업무가 없습니다.
                         </span>
                       </div>
                     ) : (
