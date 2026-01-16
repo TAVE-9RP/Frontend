@@ -147,10 +147,22 @@ export default function ManagementHome() {
         ]);
 
         if (chartResponse.isSuccess && chartResponse.result?.history) {
+          const year = chartResponse.result.year || 2025;
+          
+          // "1월", "2월" 형식을 "2025-01", "2025-02" 형식으로 변환
+          const convertMonthFormat = (monthStr: string, year: number): string => {
+            // "1월", "2월" 등에서 숫자 추출
+            const monthNum = parseInt(monthStr.replace('월', '').trim());
+            if (!isNaN(monthNum)) {
+              return `${year}-${String(monthNum).padStart(2, '0')}`;
+            }
+            return monthStr; // 변환 실패 시 원본 반환
+          };
+
           let chartData: LeadTimeChartData[] = chartResponse.result.history
             .filter((item: { month: string; value: number }) => item.value != null && !isNaN(item.value))
             .map((item: { month: string; value: number }) => ({
-              month: item.month,
+              month: convertMonthFormat(item.month, year),
               value: Number(item.value),
               type: 'actual' as const,
             }));
