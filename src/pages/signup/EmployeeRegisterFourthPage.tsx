@@ -108,13 +108,7 @@ export default function EmployeeRegisterFourthPage() {
         companyId: String(companyId),
       };
 
-      console.log('=== 사원 등록 API 요청 ===');
-      console.log('요청 데이터:', requestData);
-
       const response = await postMemberSignup(requestData);
-
-      console.log('=== 사원 등록 API 응답 ===');
-      console.log('응답:', response);
 
       if (response.isSuccess) {
         alert('사원 등록이 완료되었습니다.');
@@ -124,8 +118,14 @@ export default function EmployeeRegisterFourthPage() {
       }
     } catch (error: any) {
       console.error('사원 등록 실패:', error);
-      const errorMessage = error?.response?.data?.message || '사원 등록에 실패했습니다.';
-      alert(errorMessage);
+
+      const serverErrorMessage = error?.response?.data?.message;
+
+      if (serverErrorMessage) {
+        alert(serverErrorMessage);
+      } else {
+        alert('요청 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsLoading(false);
     }

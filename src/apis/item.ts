@@ -1,23 +1,7 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'https://nexerp.site',
-  withCredentials: true,
-});
-
-api.interceptors.request.use((config) => {
-  let token = localStorage.getItem('accessToken');
-
-  if (token) {
-    const cleanToken = token.replace(/^"(.*)"$/, '$1');
-    config.headers.Authorization = `Bearer ${cleanToken}`;
-  }
-
-  return config;
-});
+import memberApi from './member';
 
 export const getItems = async (keyword: string = '') => {
-  const response = await api.get('/items', {
+  const response = await memberApi.get('/items', {
     params: {
       keyword: keyword,
     },
@@ -31,33 +15,32 @@ export const createItem = async (data: {
   location: string;
   price: number;
 }) => {
-  const response = await api.post('/items', data);
+  const response = await memberApi.post('/items', data);
   return response.data;
 };
 
 export const getItemDetail = async (itemId: string | number) => {
-  const response = await api.get(`/items/${itemId}`);
+  const response = await memberApi.get(`/items/${itemId}`);
   return response.data;
 };
 
 export const getItemHistory = async (itemId: string | number) => {
-  const response = await api.get(`/items/${itemId}/history`);
+  const response = await memberApi.get(`/items/${itemId}/history`);
   return response.data;
 };
 
 export const updateItemTargetStock = async (itemId: string | number, targetStock: number) => {
-  const response = await api.patch(`/items/${itemId}/target-stock`, {
+  const response = await memberApi.patch(`/items/${itemId}/target-stock`, {
     targetStock: targetStock,
   });
   return response.data;
 };
 
 export const updateItemSafetyStock = async (itemId: string | number, safetyStock: number) => {
-  const response = await api.patch(`/items/${itemId}/safety-stock`, {
+  const response = await memberApi.patch(`/items/${itemId}/safety-stock`, {
     safetyStock: safetyStock,
   });
   return response.data;
 };
 
-export default api;
-
+export default memberApi;

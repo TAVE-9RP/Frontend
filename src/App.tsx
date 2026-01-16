@@ -8,10 +8,8 @@ import EmployeeRegisterSecondPage from './pages/signup/EmployeeRegisterSecondPag
 import EmployeeRegisterFourthPage from './pages/signup/EmployeeRegisterFourthPage';
 import SignupSuccessPage from './pages/signup/SignupSuccesspage';
 import SignupFailurePage from './pages/signup/SignupFailurePage';
-import TestPage from './pages/test/test';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import LoginPage from './pages/login/LoginPage';
-import Sidebartest from './pages/test/sidebartest';
 import ProjectManagementListPage from './pages/management-service/project/ProjectManagementListPage';
 import ProjectCreatePage from './pages/management-service/project/ProjectCreatePage';
 import InboundTaskListPage from './pages/management-service/inbound/InboundTaskListPage';
@@ -61,14 +59,6 @@ function App() {
           }
         />
         <Route path="login" element={<LoginPage />} />
-        <Route
-          path="sidebartest"
-          element={
-            <ProtectedRoute>
-              <Sidebartest />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/project-management"
           element={
@@ -203,15 +193,6 @@ function App() {
           element={
             <ProtectedRoute requiredDepartment="MANAGEMENT">
               <ManagementHome />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="test"
-          element={
-            <ProtectedRoute>
-              <TestPage />
             </ProtectedRoute>
           }
         />

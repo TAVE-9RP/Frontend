@@ -148,7 +148,7 @@ export default function ManagementHome() {
 
         if (chartResponse.isSuccess && chartResponse.result?.history) {
           const year = chartResponse.result.year || 2025;
-          
+
           // "1월", "2월" 형식을 "2025-01", "2025-02" 형식으로 변환
           const convertMonthFormat = (monthStr: string, year: number): string => {
             // "1월", "2월" 등에서 숫자 추출
@@ -160,7 +160,9 @@ export default function ManagementHome() {
           };
 
           let chartData: LeadTimeChartData[] = chartResponse.result.history
-            .filter((item: { month: string; value: number }) => item.value != null && !isNaN(item.value))
+            .filter(
+              (item: { month: string; value: number }) => item.value != null && !isNaN(item.value),
+            )
             .map((item: { month: string; value: number }) => ({
               month: convertMonthFormat(item.month, year),
               value: Number(item.value),
@@ -336,7 +338,6 @@ export default function ManagementHome() {
     setProjectList(filtered);
   }, [activeTab, allProjects]);
 
-
   // 재고 대시보드 필터링 함수
   const getFilteredInventoryTasks = (status: FilterStatus): InventoryTask[] => {
     const statusMap: Record<FilterStatus, InventoryStatus> = {
@@ -422,7 +423,6 @@ export default function ManagementHome() {
     const filtered = getFilteredLogisticsTasks(logisticsTab);
     setLogisticsTasks(filtered);
   }, [logisticsTab, allLogisticsTasks]);
-
 
   // null 값을 "-"로 변환하는 헬퍼 함수
   const formatNullValue = (value: string | null | undefined): string => {
@@ -569,9 +569,7 @@ export default function ManagementHome() {
                 <div className="absolute left-[69px] top-[51.5px]">
                   <DashboardChart
                     percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.longTermTaskRate * 100) / 100
-                        : 0
+                      dashboardData ? Math.floor(dashboardData.longTermTaskRate * 100) / 100 : 0
                     }
                     label="업무 장기 처리율(%)"
                     colorType="black"
@@ -712,9 +710,7 @@ export default function ManagementHome() {
                 <div className="absolute left-[40px] top-[47px]">
                   <DashboardChart
                     percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.safetyStockRate * 100) / 100
-                        : 0
+                      dashboardData ? Math.floor(dashboardData.safetyStockRate * 100) / 100 : 0
                     }
                     label="안전 재고 확보율(%)"
                     colorType="blue"
@@ -764,11 +760,7 @@ export default function ManagementHome() {
               <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[45px] top-[47.5px]">
                   <DashboardChart
-                    percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.turnOverRate * 100) / 100
-                        : 0
-                    }
+                    percent={dashboardData ? Math.floor(dashboardData.turnOverRate * 100) / 100 : 0}
                     label="재고 회전율(%)"
                     colorType="blue"
                   />
@@ -778,9 +770,7 @@ export default function ManagementHome() {
                 <div className="absolute left-[45px] top-[47.5px]">
                   <DashboardChart
                     percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.predTurnOverRate * 100) / 100
-                        : 0
+                      dashboardData ? Math.floor(dashboardData.predTurnOverRate * 100) / 100 : 0
                     }
                     label="재고 회전율 익월(%)"
                     colorType="orange"

@@ -199,8 +199,15 @@ export default function LogisticsOutboundTaskDetailPage() {
 
         fetchData();
       }
-    } catch (error) {
-      alert('출하 수량 반영에 실패했습니다.');
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        alert(
+          '이미 출하 처리가 완료된 항목이 있거나, 재고 수량이 변경되었습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.',
+        );
+      } else {
+        alert('출하 수량 반영에 실패했습니다. 입력값을 다시 확인해주세요.');
+      }
+      console.error('출하 에러:', error);
     }
   };
 
@@ -403,7 +410,9 @@ export default function LogisticsOutboundTaskDetailPage() {
                 value={taskDetail.logisticsDescription ?? ''}
                 onChange={handleInputChange}
                 disabled={isReadOnlyStatus}
-                placeholder={taskDetail.logisticsStatus === 'ASSIGNED' ? '내용을 입력해주세요' : undefined}
+                placeholder={
+                  taskDetail.logisticsStatus === 'ASSIGNED' ? '내용을 입력해주세요' : undefined
+                }
                 className={`h-[160px] ${isInProgress || isCompleted ? 'bg-greyColor-grey100' : ''}`}
               />
             </FormGroup>

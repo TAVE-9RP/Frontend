@@ -1,29 +1,13 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'https://nexerp.site',
-  withCredentials: true,
-});
-
-api.interceptors.request.use((config) => {
-  let token = localStorage.getItem('accessToken');
-
-  if (token) {
-    const cleanToken = token.replace(/^"(.*)"$/, '$1');
-    config.headers.Authorization = `Bearer ${cleanToken}`;
-  }
-
-  return config;
-});
+import memberApi from './member';
 
 export const getDashboard = async () => {
-  const response = await api.get('/kpi/dashboard');
+  const response = await memberApi.get('/kpi/dashboard');
   return response.data;
 };
 
 export const getShipmentLeadTimeChart = async () => {
-  const response = await api.get('/kpi/chart/shipment-lead-time');
+  const response = await memberApi.get('/kpi/chart/shipment-lead-time');
   return response.data;
 };
 
-export default api;
+export default memberApi;

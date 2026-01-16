@@ -125,10 +125,21 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   value={tempInputQty === 0 ? '' : tempInputQty}
                   onChange={(e) => {
                     const value = e.target.value.replace(/[^0-9]/g, '');
-                    onProcessedQuantityChange?.(
-                      item.logisticsItemId,
-                      value === '' ? 0 : Number(value),
-                    );
+                    const inputQty = value === '' ? 0 : Number(value);
+
+                    const currentProcessed = item.processedQuantity ?? 0;
+                    const targetQty = item.targetedQuantity ?? 0;
+                    const remainingQty = targetQty - currentProcessed;
+
+                    if (inputQty > remainingQty) {
+                      alert(
+                        `처리 가능한 수량을 초과했습니다.\n` + `남은 수량: ${remainingQty}개\n`,
+                      );
+                      onProcessedQuantityChange?.(item.logisticsItemId, 0);
+                      return;
+                    }
+
+                    onProcessedQuantityChange?.(item.logisticsItemId, inputQty);
                   }}
                   disabled={!isSelected || isItemCompleted}
                   className={`h-[30px] w-[80%] rounded border border-greyColor-grey300 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue600 focus:outline-none ${
@@ -181,31 +192,19 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             <div className="flex h-full w-[97px] items-center justify-center font-pretendard text-[14px]">
               {item.logisticsProcessingStatus === 'IN_PROGRESS' ? (
                 <div className="flex items-center justify-center">
-                  <img
-                    src={진행중Img}
-                    alt="진행 중"
-                    className="h-auto w-[71px] object-contain"
-                  />
+                  <img src={진행중Img} alt="진행 중" className="h-auto w-[71px] object-contain" />
                 </div>
               ) : item.logisticsProcessingStatus === 'NOT_STARTED' ? (
                 <div className="flex items-center justify-center">
-                  <img
-                    src={미진행Img}
-                    alt="미진행"
-                    className="h-auto w-[71px] object-contain"
-                  />
+                  <img src={미진행Img} alt="미진행" className="h-auto w-[71px] object-contain" />
                 </div>
               ) : item.logisticsProcessingStatus === 'COMPLETED' ? (
                 <div className="flex items-center justify-center">
-                  <img
-                    src={완료Img}
-                    alt="완료"
-                    className="h-auto w-[71px] object-contain"
-                  />
+                  <img src={완료Img} alt="완료" className="h-auto w-[71px] object-contain" />
                 </div>
               ) : (
                 <div
-                  className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] text-[13px] font-bold leading-none bg-greyColor-grey200 text-greyColor-grey600`}
+                  className={`flex h-[24px] items-center justify-center rounded-[50px] bg-greyColor-grey200 px-[8px] text-[13px] font-bold leading-none text-greyColor-grey600`}
                 >
                   {statusMap[item.logisticsProcessingStatus] || '미진행'}
                 </div>
