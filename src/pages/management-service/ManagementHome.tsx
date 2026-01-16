@@ -8,7 +8,7 @@ import circleMark from '@/assets/circlemark.png';
 import circleMarkDark from '@/assets/circlemark_dark.png';
 import ellipse from '@/assets/ellipse.png';
 import nextIcon from '@/assets/next_1.png';
-import { getDashboard } from '@/apis/dashboard';
+import { getDashboard, getShipmentLeadTimeChart } from '@/apis/dashboard';
 import { getProjects } from '@/apis/admin';
 import { getInventoryList } from '@/apis/inventory';
 import { getLogisticsList } from '@/apis/ownerLogistics';
@@ -31,6 +31,14 @@ interface DashboardData {
   inventoryDelayedCount: number;
   logisticsDelayedCount: number;
   predTurnOverRate: number;
+  predShipmentLeadTime?: number;
+  timestamp?: string;
+}
+
+interface LeadTimeChartData {
+  month: string;
+  value: number;
+  type: 'actual' | 'predict';
 }
 
 interface Project {
@@ -89,6 +97,7 @@ export default function ManagementHome() {
   const [allInventoryTasks, setAllInventoryTasks] = useState<InventoryTask[]>([]);
   const [logisticsTasks, setLogisticsTasks] = useState<LogisticsTask[]>([]);
   const [allLogisticsTasks, setAllLogisticsTasks] = useState<LogisticsTask[]>([]);
+  const [leadTimeChartData, setLeadTimeChartData] = useState<LeadTimeChartData[]>([]);
 
   const dateTextStyle = 'mt-[8px] font-pretendard text-[15px] font-normal text-greyColor-grey500';
   const sectionTitleStyle = 'font-pretendard text-[19px] font-bold text-black';
@@ -114,6 +123,8 @@ export default function ManagementHome() {
             inventoryDelayedCount: response.result.inventoryDelayedCount || 0,
             logisticsDelayedCount: response.result.logisticsDelayedCount || 0,
             predTurnOverRate: response.result.predTurnOverRate || 0,
+            predShipmentLeadTime: response.result.predShipmentLeadTime,
+            timestamp: response.timestamp,
           });
         }
       } catch (error) {
@@ -124,6 +135,61 @@ export default function ManagementHome() {
     };
 
     fetchDashboard();
+  }, []);
+
+  // 출하 리드타임 차트 데이터 가져오기
+  useEffect(() => {
+    const fetchLeadTimeChart = async () => {
+      try {
+        const [chartResponse, dashboardResponse] = await Promise.all([
+          getShipmentLeadTimeChart(),
+          getDashboard(),
+        ]);
+
+        if (chartResponse.isSuccess && chartResponse.result?.history) {
+          let chartData: LeadTimeChartData[] = chartResponse.result.history
+            .filter((item: { month: string; value: number }) => item.value != null && !isNaN(item.value))
+            .map((item: { month: string; value: number }) => ({
+              month: item.month,
+              value: Number(item.value),
+              type: 'actual' as const,
+            }));
+
+          // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
+          if (
+            dashboardResponse.isSuccess &&
+            dashboardResponse.result?.predShipmentLeadTime != null &&
+            !isNaN(dashboardResponse.result.predShipmentLeadTime) &&
+            dashboardResponse.timestamp
+          ) {
+            const timestamp = dashboardResponse.timestamp;
+            // timestamp에서 년도와 월 추출 (예: "2026-01-16T06:42:20.113894867Z" -> "2026-01")
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const monthLabel = `${year}-${month}`;
+
+            chartData.push({
+              month: monthLabel,
+              value: Number(dashboardResponse.result.predShipmentLeadTime),
+              type: 'predict' as const,
+            });
+          }
+
+          if (chartData.length > 0) {
+            setLeadTimeChartData(chartData);
+          } else {
+            console.warn('출하 리드타임 차트 데이터가 없습니다.');
+          }
+        } else {
+          console.warn('출하 리드타임 차트 API 응답이 올바르지 않습니다:', chartResponse);
+        }
+      } catch (error) {
+        console.error('출하 리드타임 차트 데이터 가져오기 실패:', error);
+      }
+    };
+
+    fetchLeadTimeChart();
   }, []);
 
   const fetchProjects = async (keyword: string = '') => {
@@ -759,7 +825,9 @@ export default function ManagementHome() {
                 </div>
               </div>
               <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <LeadTimeChart />
+                <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                  <LeadTimeChart data={leadTimeChartData} />
+                </div>
               </div>
             </div>
           </section>

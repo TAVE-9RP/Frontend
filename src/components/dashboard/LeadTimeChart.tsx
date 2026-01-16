@@ -1,8 +1,18 @@
 import React from 'react';
 import { Line } from '@ant-design/plots';
 
-const LeadTimeChart = () => {
-  const data = [
+interface LeadTimeChartData {
+  month: string;
+  value: number;
+  type: 'actual' | 'predict';
+}
+
+interface LeadTimeChartProps {
+  data?: LeadTimeChartData[];
+}
+
+const LeadTimeChart: React.FC<LeadTimeChartProps> = ({ data: propData }) => {
+  const defaultData: LeadTimeChartData[] = [
     { month: '1월', value: 1.1, type: 'actual' },
     { month: '2월', value: 2.1, type: 'actual' },
     { month: '3월', value: 1.5, type: 'actual' },
@@ -19,19 +29,57 @@ const LeadTimeChart = () => {
     { month: '1월 ', value: 3.8, type: 'predict' },
   ];
 
+  const data = propData && propData.length > 0 ? propData : defaultData;
+
+  // y축 scale 계산 (5 단위로)
+  const getYScaleDomain = () => {
+    if (!data || data.length === 0) {
+      return { min: 0, max: 10, tickCount: 3 };
+    }
+
+    const values = data.map((d) => d.value).filter((v) => !isNaN(v) && v !== null && v !== undefined);
+    
+    if (values.length === 0) {
+      return { min: 0, max: 10, tickCount: 3 };
+    }
+
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+
+    // 5 단위로 반올림
+    const min = Math.floor(minValue / 5) * 5;
+    const max = Math.ceil(maxValue / 5) * 5;
+
+    // 최소값이 0보다 작으면 0으로 설정
+    const adjustedMin = Math.max(0, min);
+
+    // 최대값이 0이면 기본값 10으로 설정
+    const adjustedMax = adjustedMin === 0 && max === 0 ? 10 : max;
+
+    // tickCount 계산 (5 단위 간격)
+    const range = adjustedMax - adjustedMin;
+    const tickCount = Math.max(2, Math.ceil(range / 5) + 1);
+
+    return { min: adjustedMin, max: adjustedMax, tickCount };
+  };
+
+  const yScale = getYScaleDomain();
+
   const config = {
     data,
     xField: 'month',
     yField: 'value',
     colorField: 'type',
-    autoFit: true,
+    width: 1070,
+    height: 363,
+    autoFit: false,
     paddingLeft: 50,
     paddingRight: 50,
     paddingTop: 80,
     paddingBottom: 90,
     scale: {
       color: { range: ['#2688FF', '#FFB13B'] },
-      y: { domain: [0, 5], tickCount: 6 },
+      y: { domain: [yScale.min, yScale.max], tickCount: yScale.tickCount },
     },
     axis: {
       y: { grid: true, gridLineDash: [0, 0], gridStroke: '#F0F0F0' },
@@ -79,7 +127,7 @@ const LeadTimeChart = () => {
   };
 
   return (
-    <div className="relative h-full w-full font-pretendard">
+    <div className="relative h-full w-full font-pretendard" style={{ minWidth: 0, minHeight: 0 }}>
       <span className="absolute left-[35px] top-[45px] text-[12px] text-greyColor-grey500">
         Days
       </span>
@@ -88,7 +136,13 @@ const LeadTimeChart = () => {
         2025년 - 2026년
       </div>
 
-      <Line {...config} />
+      {data && data.length > 0 ? (
+        <Line {...config} />
+      ) : (
+        <div className="flex h-full items-center justify-center text-greyColor-grey500">
+          데이터를 불러오는 중...
+        </div>
+      )}
     </div>
   );
 };

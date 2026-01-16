@@ -21,4 +21,9 @@ export const getDashboard = async () => {
   return response.data;
 };
 
+export const getShipmentLeadTimeChart = async () => {
+  const response = await api.get('/kpi/chart/shipment-lead-time');
+  return response.data;
+};
+
 export default api;
