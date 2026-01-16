@@ -29,7 +29,8 @@ const LeadTimeChart: React.FC<LeadTimeChartProps> = ({ data: propData }) => {
     { month: '1월 ', value: 3.8, type: 'predict' },
   ];
 
-  const data = propData && propData.length > 0 ? propData : defaultData;
+  // API 연동 전에는 디폴트 값이 보이지 않도록 propData만 사용
+  const data = propData && propData.length > 0 ? propData : [];
 
   // y축 scale 계산 (5 단위로)
   const getYScaleDomain = () => {
