@@ -26,7 +26,7 @@ interface InventoryTask {
 
 export default function InventoryHome() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
+  const [activeTab, setActiveTab] = useState<FilterStatus>('승인 대기');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [inventoryTasks, setInventoryTasks] = useState<InventoryTask[]>([]);
@@ -88,7 +88,7 @@ export default function InventoryHome() {
     setInventoryTasks(filtered);
   }, [activeTab, allInventoryTasks]);
 
-  const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
+  const tabs: FilterStatus[] = ['승인 대기', '진행중', '입고 완료'];
 
   useEffect(() => {
     const fetchDashboard = async () => {
