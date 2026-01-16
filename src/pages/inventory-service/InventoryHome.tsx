@@ -5,7 +5,7 @@ import DashboardChart from '@/components/dashboard/DashboardChart';
 import ProjectListTable from '@/components/dashboard/ProjectListTable';
 import DashboardTab from '@/components/dashboard/DashboardTab';
 import { getDashboard } from '@/apis/dashboard';
-import { getInventoryList } from '@/apis/inventory';
+import { getInventoryAssignedList } from '@/apis/inventory';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
@@ -61,7 +61,7 @@ export default function InventoryHome() {
   useEffect(() => {
     const fetchInventoryTasks = async () => {
       try {
-        const response = await getInventoryList('');
+        const response = await getInventoryAssignedList('');
         if (response.isSuccess && response.result) {
           const mappedTasks: InventoryTask[] = response.result.map((item: any) => ({
             id: item.inventoryId,
