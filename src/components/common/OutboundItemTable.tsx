@@ -123,28 +123,22 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   type="text"
                   inputMode="numeric"
                   value={tempInputQty === 0 ? '' : tempInputQty}
-                  // 108번 라인 근처 <input> 태그 안의 onChange 부분입니다.
                   onChange={(e) => {
                     const value = e.target.value.replace(/[^0-9]/g, '');
-                    const inputQty = value === '' ? 0 : Number(value); // 현재 사용자가 입력 중인 숫자
+                    const inputQty = value === '' ? 0 : Number(value);
 
-                    // 1. 계산에 필요한 변수들 정의
-                    const currentProcessed = item.processedQuantity ?? 0; // 서버에 이미 반영된 수량 (현재 출하 수량)
-                    const targetQty = item.targetedQuantity ?? 0; // 목표 출하 수량
-                    const remainingQty = targetQty - currentProcessed; // 남은 출하 가능 수량
+                    const currentProcessed = item.processedQuantity ?? 0;
+                    const targetQty = item.targetedQuantity ?? 0;
+                    const remainingQty = targetQty - currentProcessed;
 
-                    // 2. 마이너스 방지 로직 (핵심)
-                    // 입력한 값이 '남은 수량'보다 크면 계산 결과가 마이너스가 되므로 차단합니다.
                     if (inputQty > remainingQty) {
                       alert(
                         `처리 가능한 수량을 초과했습니다.\n` + `남은 수량: ${remainingQty}개\n`,
                       );
-                      // 입력값을 0으로 초기화하거나 이전 값으로 유지
                       onProcessedQuantityChange?.(item.logisticsItemId, 0);
                       return;
                     }
 
-                    // 3. 통과 시 부모 컴포넌트에게 값 전달
                     onProcessedQuantityChange?.(item.logisticsItemId, inputQty);
                   }}
                   disabled={!isSelected || isItemCompleted}

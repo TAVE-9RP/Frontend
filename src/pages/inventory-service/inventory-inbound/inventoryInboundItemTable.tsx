@@ -69,8 +69,16 @@ export default function InboundItemTable({
         <div className={`${cell110} ${getHeaderTextColor('id')}`}>재고 번호</div>
         <div className={`${cell110} ${getHeaderTextColor('name')}`}>물품명</div>
         <div className={`${cell110} ${getHeaderTextColor('price')}`}>물품 가격</div>
-        <div className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('inboundQty')}`}>입고 수량</div>
-        <div className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('currentQty')}`}>현재 입고 수량</div>
+        <div
+          className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('inboundQty')}`}
+        >
+          입고 수량
+        </div>
+        <div
+          className={`${cell110} ${isProgress ? 'text-greyColor-grey900' : getHeaderTextColor('currentQty')}`}
+        >
+          현재 입고 수량
+        </div>
         <div className={`${cell110} text-greyColor-grey900`}>목표 입고 수량</div>
         <div className={`${cell110} text-greyColor-grey900`}>처리 상태</div>
       </div>
@@ -122,25 +130,31 @@ export default function InboundItemTable({
                       value={item.inboundQty === '-' ? '' : item.inboundQty}
                       onChange={(e) => onInboundQtyChange?.(item.id, e.target.value)}
                       disabled={!isSelected || item.status === '완료'}
-                      className={`h-[30px] w-[100px] border border-greyColor-grey300 rounded-[5px] px-2 text-center font-pretendard text-[14px] text-black focus:outline-none focus:border-mainColor-blue600 ${
-                        !isSelected || item.status === '완료' ? 'cursor-not-allowed bg-greyColor-grey100' : ''
+                      className={`h-[30px] w-[100px] rounded-[5px] border border-greyColor-grey300 px-2 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue600 focus:outline-none ${
+                        !isSelected || item.status === '완료'
+                          ? 'cursor-not-allowed bg-greyColor-grey100'
+                          : ''
                       }`}
                       min="0"
                     />
                   ) : (
-                    <span className="text-greyColor-grey900">{item.inboundQty === '-' ? '' : item.inboundQty}</span>
+                    <span className="text-greyColor-grey900">
+                      {item.inboundQty === '-' ? '' : item.inboundQty}
+                    </span>
                   )}
                 </div>
                 <div className={`${cell110} text-greyColor-grey900`}>{item.currentQty}</div>
                 <div className={`${cell110} flex items-center justify-center`}>
                   {isDisabled ? (
-                    <span className="text-greyColor-grey900">{item.targetQty === '-' ? '' : item.targetQty}</span>
+                    <span className="text-greyColor-grey900">
+                      {item.targetQty === '-' ? '' : item.targetQty}
+                    </span>
                   ) : (
                     <input
                       type="number"
                       value={item.targetQty === '-' ? '' : item.targetQty}
                       onChange={(e) => onTargetQtyChange?.(item.id, e.target.value)}
-                      className="h-[30px] w-[100px] border border-greyColor-grey300 rounded-[5px] px-2 text-center font-pretendard text-[14px] text-black focus:outline-none focus:border-mainColor-blue600"
+                      className="h-[30px] w-[100px] rounded-[5px] border border-greyColor-grey300 px-2 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue600 focus:outline-none"
                       min="0"
                     />
                   )}
@@ -164,15 +178,11 @@ export default function InboundItemTable({
                     </div>
                   ) : item.status === '완료' ? (
                     <div className="flex items-center justify-center">
-                      <img
-                        src={완료Img}
-                        alt="완료"
-                        className="h-auto w-[71px] object-contain"
-                      />
+                      <img src={완료Img} alt="완료" className="h-auto w-[71px] object-contain" />
                     </div>
                   ) : (
                     <div
-                      className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium bg-greyColor-grey200 text-greyColor-grey600`}
+                      className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] bg-greyColor-grey200 text-[12px] font-medium text-greyColor-grey600`}
                     >
                       {item.status}
                     </div>
