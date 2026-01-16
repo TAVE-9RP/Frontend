@@ -13,6 +13,7 @@ type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 interface DashboardData {
   safetyStockRate: number;
   turnOverRate: number;
+  predTurnOverRate: number;
 }
 
 interface InventoryTask {
@@ -98,6 +99,7 @@ export default function InventoryHome() {
           setDashboardData({
             safetyStockRate: response.result.safetyStockRate || 0,
             turnOverRate: response.result.turnOverRate || 0,
+            predTurnOverRate: response.result.predTurnOverRate || 0,
           });
         }
       } catch (error) {
@@ -202,7 +204,15 @@ export default function InventoryHome() {
               </div>
 
               <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <DashboardChart percent={80} label="익월 재고 회전율(%)" colorType="orange" />
+                <DashboardChart
+                  percent={
+                    dashboardData
+                      ? Math.floor(dashboardData.predTurnOverRate * 100) / 100
+                      : 0
+                  }
+                  label="익월 재고 회전율(%)"
+                  colorType="orange"
+                />
               </div>
             </div>
           </section>
