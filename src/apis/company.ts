@@ -1,41 +1,15 @@
-import axios from 'axios';
+import memberApi from './member';
 import type {
   CompanyRegisterRequest,
   CompanyRegisterResponse,
   CompanySearchResponse,
 } from '../types/company';
 
-const BASE_URL = 'https://nexerp.site';
-
-const companyApi = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-});
-
-// interceptor는 토큰이 있을 때만 Authorization 헤더 추가
-// 단, /companies GET 요청은 토큰이 필요 없으므로 제외
-companyApi.interceptors.request.use((config) => {
-  // /companies GET 요청은 토큰 없이 요청
-  if (config.method === 'get' && config.url === '/companies') {
-    return config;
-  }
-
-  let token = localStorage.getItem('accessToken');
-
-  if (token) {
-    const cleanToken = token.replace(/^"(.*)"$/, '$1');
-    config.headers.Authorization = `Bearer ${cleanToken}`;
-  }
-
-  return config;
-});
-
-export const postCompany = async (payload: CompanyRegisterRequest): Promise<CompanyRegisterResponse> => {
+export const postCompany = async (
+  payload: CompanyRegisterRequest,
+): Promise<CompanyRegisterResponse> => {
   console.log('=== postCompany 함수 실행 ===');
-  console.log('요청 URL:', `${BASE_URL}/companies`);
-  console.log('요청 payload:', payload);
-  
-  const response = await companyApi.post('/companies', payload, {
+  const response = await memberApi.post('/companies', payload, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -49,14 +23,16 @@ export const postCompany = async (payload: CompanyRegisterRequest): Promise<Comp
 };
 
 export const getCompanies = async (keyword: string = ''): Promise<CompanySearchResponse> => {
-  const response = await companyApi.get('/companies', {
+  const response = await memberApi.get('/companies', {
     params: {
       keyword,
+    },
+    headers: {
+      Authorization: '',
     },
   });
 
   return response.data;
 };
 
-export default companyApi;
-
+export default memberApi;
