@@ -167,6 +167,16 @@ export default function ManagementHome() {
               type: 'actual' as const,
             }));
 
+          // 마지막 항목(12월)을 predict 타입으로 한 번 더 추가
+          if (chartData.length > 0) {
+            const lastItem = chartData[chartData.length - 1];
+            chartData.push({
+              month: lastItem.month, // "2025-12"
+              value: lastItem.value,
+              type: 'predict' as const,
+            });
+          }
+
           // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
           if (
             dashboardResponse.isSuccess &&
@@ -182,7 +192,7 @@ export default function ManagementHome() {
             const monthLabel = `${year}-${month}`;
 
             chartData.push({
-              month: monthLabel,
+              month: monthLabel, // "2026-01"
               value: Number(dashboardResponse.result.predShipmentLeadTime),
               type: 'predict' as const,
             });
