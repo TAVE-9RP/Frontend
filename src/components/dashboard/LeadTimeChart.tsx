@@ -106,13 +106,20 @@ const LeadTimeChart: React.FC<LeadTimeChartProps> = ({ data: propData }) => {
         layout: { justifyContent: 'center' },
         itemMarker: 'circle',
         itemMarkerSize: 8,
-        labelFormatter: () => '평균 출하 리드타임',
+        labelFormatter: (text: string, item: any) => {
+          const value = item?.value || text;
+          if (value === 'actual') {
+            return '평균 출하 리드타임';
+          } else if (value === 'predict') {
+            return '예측 평균 출하 리드타임';
+          }
+          return text || value;
+        },
         labelFontSize: 16,
         labelFontFamily: 'Pretendard',
         labelFontWeight: 500,
         labelFill: 'var(--greyColor-grey600)',
         labelLetterSpacing: -0.32,
-        filter: (item: any) => item.value === 'actual',
       },
     },
     state: {
