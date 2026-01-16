@@ -1,4 +1,7 @@
 import React from 'react';
+import 진행중Img from '@/assets/management/진행중.png';
+import 미진행Img from '@/assets/management/미진행.png';
+import 완료Img from '@/assets/management/완료.png';
 
 export interface InboundItem {
   id: string;
@@ -143,15 +146,37 @@ export default function InboundItemTable({
                   )}
                 </div>
                 <div className={cell110}>
-                  <div
-                    className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium ${
-                      item.status === '완료'
-                        ? 'bg-mainColor-blue050 text-mainColor-blue600'
-                        : 'bg-greyColor-grey200 text-greyColor-grey600'
-                    }`}
-                  >
-                    {item.status}
-                  </div>
+                  {item.status === '진행중' ? (
+                    <div className="flex items-center justify-center">
+                      <img
+                        src={진행중Img}
+                        alt="진행 중"
+                        className="h-auto w-[71px] object-contain"
+                      />
+                    </div>
+                  ) : item.status === '미진행' ? (
+                    <div className="flex items-center justify-center">
+                      <img
+                        src={미진행Img}
+                        alt="미진행"
+                        className="h-auto w-[71px] object-contain"
+                      />
+                    </div>
+                  ) : item.status === '완료' ? (
+                    <div className="flex items-center justify-center">
+                      <img
+                        src={완료Img}
+                        alt="완료"
+                        className="h-auto w-[71px] object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className={`flex h-[24px] w-[50px] items-center justify-center rounded-[100px] text-[12px] font-medium bg-greyColor-grey200 text-greyColor-grey600`}
+                    >
+                      {item.status}
+                    </div>
+                  )}
                 </div>
               </div>
             );
