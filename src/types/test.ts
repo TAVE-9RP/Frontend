@@ -32,7 +32,7 @@ export interface TestUnexpectedErrorResponse {
 
 export type TestSystemErrorResponse = string;
 
-export type TestErrorResponse {
+export type TestErrorResponse = {
   timestamp: string;
   isSuccess: boolean;
   status: number;
