@@ -24,6 +24,13 @@ interface DashboardData {
   safetyStockRate: number;
   turnOverRate: number;
   shipmentCompletionRate: number;
+  totalTaskCount: number;
+  inventoryTaskCount: number;
+  logisticsTaskCount: number;
+  totalDelayedCount: number;
+  inventoryDelayedCount: number;
+  logisticsDelayedCount: number;
+  predTurnOverRate: number;
 }
 
 interface Project {
@@ -83,13 +90,6 @@ export default function ManagementHome() {
   const [logisticsTasks, setLogisticsTasks] = useState<LogisticsTask[]>([]);
   const [allLogisticsTasks, setAllLogisticsTasks] = useState<LogisticsTask[]>([]);
 
-  const totalTasks = 10;
-  const inventoryCount = 4;
-  const shippingCount = 6;
-  const delayedTasks = 8;
-  const delayedInventory = 2;
-  const delayedShipping = 7;
-
   const dateTextStyle = 'mt-[8px] font-pretendard text-[15px] font-normal text-greyColor-grey500';
   const sectionTitleStyle = 'font-pretendard text-[19px] font-bold text-black';
 
@@ -107,6 +107,13 @@ export default function ManagementHome() {
             safetyStockRate: response.result.safetyStockRate || 0,
             turnOverRate: response.result.turnOverRate || 0,
             shipmentCompletionRate: response.result.shipmentCompletionRate || 0,
+            totalTaskCount: response.result.totalTaskCount || 0,
+            inventoryTaskCount: response.result.inventoryTaskCount || 0,
+            logisticsTaskCount: response.result.logisticsTaskCount || 0,
+            totalDelayedCount: response.result.totalDelayedCount || 0,
+            inventoryDelayedCount: response.result.inventoryDelayedCount || 0,
+            logisticsDelayedCount: response.result.logisticsDelayedCount || 0,
+            predTurnOverRate: response.result.predTurnOverRate || 0,
           });
         }
       } catch (error) {
@@ -489,7 +496,7 @@ export default function ManagementHome() {
                     className="mr-[8px] h-[14px] w-[14px] object-contain"
                   />
                   <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
-                    전체 업무 : {totalTasks}
+                    전체 업무 : {dashboardData?.totalTaskCount ?? 0}
                   </span>
                 </div>
                 <div className="absolute left-[311px] top-[111.25px] flex gap-[8px]">
@@ -499,7 +506,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-mainColor-blue600">
-                      재고 {inventoryCount}
+                      재고 {dashboardData?.inventoryTaskCount ?? 0}
                     </span>
                   </div>
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
@@ -508,7 +515,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-subColor-orange900">
-                      출하 {shippingCount}
+                      출하 {dashboardData?.logisticsTaskCount ?? 0}
                     </span>
                   </div>
                 </div>
@@ -519,7 +526,7 @@ export default function ManagementHome() {
                     className="mr-[8px] h-[12px] w-[12px] object-contain"
                   />
                   <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
-                    지연 업무 : {delayedTasks}
+                    지연 업무 : {dashboardData?.totalDelayedCount ?? 0}
                   </span>
                 </div>
                 <div className="absolute left-[311px] top-[209.75px] flex gap-[8px]">
@@ -529,7 +536,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
-                      재고 {delayedInventory}
+                      재고 {dashboardData?.inventoryDelayedCount ?? 0}
                     </span>
                   </div>
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
@@ -538,7 +545,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
-                      출하 {delayedShipping}
+                      출하 {dashboardData?.logisticsDelayedCount ?? 0}
                     </span>
                   </div>
                 </div>
@@ -681,7 +688,15 @@ export default function ManagementHome() {
               </div>
               <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[45px] top-[47.5px]">
-                  <DashboardChart percent={72} label="재고 회전율 익월(%)" colorType="orange" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.predTurnOverRate * 100) / 100
+                        : 0
+                    }
+                    label="재고 회전율 익월(%)"
+                    colorType="orange"
+                  />
                 </div>
               </div>
             </div>
