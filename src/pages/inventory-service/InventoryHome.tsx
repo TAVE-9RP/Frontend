@@ -5,7 +5,7 @@ import DashboardChart from '@/components/dashboard/DashboardChart';
 import ProjectListTable from '@/components/dashboard/ProjectListTable';
 import DashboardTab from '@/components/dashboard/DashboardTab';
 import { getDashboard } from '@/apis/dashboard';
-import { getInventoryList } from '@/apis/inventory';
+import { getInventoryAssignedList } from '@/apis/inventory';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '입고 완료';
 type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
@@ -13,6 +13,7 @@ type InventoryStatus = 'ASSIGNED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 interface DashboardData {
   safetyStockRate: number;
   turnOverRate: number;
+  predTurnOverRate: number;
 }
 
 interface InventoryTask {
@@ -25,7 +26,7 @@ interface InventoryTask {
 
 export default function InventoryHome() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
+  const [activeTab, setActiveTab] = useState<FilterStatus>('승인 대기');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [inventoryTasks, setInventoryTasks] = useState<InventoryTask[]>([]);
@@ -60,7 +61,7 @@ export default function InventoryHome() {
   useEffect(() => {
     const fetchInventoryTasks = async () => {
       try {
-        const response = await getInventoryList('');
+        const response = await getInventoryAssignedList('');
         if (response.isSuccess && response.result) {
           const mappedTasks: InventoryTask[] = response.result.map((item: any) => ({
             id: item.inventoryId,
@@ -87,7 +88,7 @@ export default function InventoryHome() {
     setInventoryTasks(filtered);
   }, [activeTab, allInventoryTasks]);
 
-  const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
+  const tabs: FilterStatus[] = ['승인 대기', '진행중', '입고 완료'];
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -98,6 +99,7 @@ export default function InventoryHome() {
           setDashboardData({
             safetyStockRate: response.result.safetyStockRate || 0,
             turnOverRate: response.result.turnOverRate || 0,
+            predTurnOverRate: response.result.predTurnOverRate || 0,
           });
         }
       } catch (error) {
@@ -162,7 +164,7 @@ export default function InventoryHome() {
                     {inventoryTasks.length === 0 ? (
                       <div className="flex items-center justify-center py-[20px]">
                         <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
-                          없음
+                          해당 업무가 없습니다.
                         </span>
                       </div>
                     ) : (
@@ -202,7 +204,15 @@ export default function InventoryHome() {
               </div>
 
               <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <DashboardChart percent={80} label="익월 재고 회전율(%)" colorType="orange" />
+                <DashboardChart
+                  percent={
+                    dashboardData
+                      ? Math.floor(dashboardData.predTurnOverRate * 100) / 100
+                      : 0
+                  }
+                  label="익월 재고 회전율(%)"
+                  colorType="orange"
+                />
               </div>
             </div>
           </section>

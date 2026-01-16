@@ -8,7 +8,7 @@ import circleMark from '@/assets/circlemark.png';
 import circleMarkDark from '@/assets/circlemark_dark.png';
 import ellipse from '@/assets/ellipse.png';
 import nextIcon from '@/assets/next_1.png';
-import { getDashboard } from '@/apis/dashboard';
+import { getDashboard, getShipmentLeadTimeChart } from '@/apis/dashboard';
 import { getProjects } from '@/apis/admin';
 import { getInventoryList } from '@/apis/inventory';
 import { getLogisticsList } from '@/apis/ownerLogistics';
@@ -24,6 +24,21 @@ interface DashboardData {
   safetyStockRate: number;
   turnOverRate: number;
   shipmentCompletionRate: number;
+  totalTaskCount: number;
+  inventoryTaskCount: number;
+  logisticsTaskCount: number;
+  totalDelayedCount: number;
+  inventoryDelayedCount: number;
+  logisticsDelayedCount: number;
+  predTurnOverRate: number;
+  predShipmentLeadTime?: number;
+  timestamp?: string;
+}
+
+interface LeadTimeChartData {
+  month: string;
+  value: number;
+  type: 'actual' | 'predict';
 }
 
 interface Project {
@@ -70,8 +85,8 @@ interface LogisticsTask {
 export default function ManagementHome() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ProjectFilterStatus>('진행중');
-  const [safetyInventoryTab, setSafetyInventoryTab] = useState<FilterStatus>('업무 할당');
-  const [logisticsTab, setLogisticsTab] = useState<FilterStatus>('업무 할당');
+  const [safetyInventoryTab, setSafetyInventoryTab] = useState<FilterStatus>('승인 대기');
+  const [logisticsTab, setLogisticsTab] = useState<FilterStatus>('승인 대기');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [projectList, setProjectList] = useState<Project[]>([]);
@@ -82,13 +97,7 @@ export default function ManagementHome() {
   const [allInventoryTasks, setAllInventoryTasks] = useState<InventoryTask[]>([]);
   const [logisticsTasks, setLogisticsTasks] = useState<LogisticsTask[]>([]);
   const [allLogisticsTasks, setAllLogisticsTasks] = useState<LogisticsTask[]>([]);
-
-  const totalTasks = 10;
-  const inventoryCount = 4;
-  const shippingCount = 6;
-  const delayedTasks = 8;
-  const delayedInventory = 2;
-  const delayedShipping = 7;
+  const [leadTimeChartData, setLeadTimeChartData] = useState<LeadTimeChartData[]>([]);
 
   const dateTextStyle = 'mt-[8px] font-pretendard text-[15px] font-normal text-greyColor-grey500';
   const sectionTitleStyle = 'font-pretendard text-[19px] font-bold text-black';
@@ -107,6 +116,15 @@ export default function ManagementHome() {
             safetyStockRate: response.result.safetyStockRate || 0,
             turnOverRate: response.result.turnOverRate || 0,
             shipmentCompletionRate: response.result.shipmentCompletionRate || 0,
+            totalTaskCount: response.result.totalTaskCount || 0,
+            inventoryTaskCount: response.result.inventoryTaskCount || 0,
+            logisticsTaskCount: response.result.logisticsTaskCount || 0,
+            totalDelayedCount: response.result.totalDelayedCount || 0,
+            inventoryDelayedCount: response.result.inventoryDelayedCount || 0,
+            logisticsDelayedCount: response.result.logisticsDelayedCount || 0,
+            predTurnOverRate: response.result.predTurnOverRate || 0,
+            predShipmentLeadTime: response.result.predShipmentLeadTime,
+            timestamp: response.timestamp,
           });
         }
       } catch (error) {
@@ -117,6 +135,83 @@ export default function ManagementHome() {
     };
 
     fetchDashboard();
+  }, []);
+
+  // 출하 리드타임 차트 데이터 가져오기
+  useEffect(() => {
+    const fetchLeadTimeChart = async () => {
+      try {
+        const [chartResponse, dashboardResponse] = await Promise.all([
+          getShipmentLeadTimeChart(),
+          getDashboard(),
+        ]);
+
+        if (chartResponse.isSuccess && chartResponse.result?.history) {
+          const year = chartResponse.result.year || 2025;
+          
+          // "1월", "2월" 형식을 "2025-01", "2025-02" 형식으로 변환
+          const convertMonthFormat = (monthStr: string, year: number): string => {
+            // "1월", "2월" 등에서 숫자 추출
+            const monthNum = parseInt(monthStr.replace('월', '').trim());
+            if (!isNaN(monthNum)) {
+              return `${year}-${String(monthNum).padStart(2, '0')}`;
+            }
+            return monthStr; // 변환 실패 시 원본 반환
+          };
+
+          let chartData: LeadTimeChartData[] = chartResponse.result.history
+            .filter((item: { month: string; value: number }) => item.value != null && !isNaN(item.value))
+            .map((item: { month: string; value: number }) => ({
+              month: convertMonthFormat(item.month, year),
+              value: Number(item.value),
+              type: 'actual' as const,
+            }));
+
+          // 마지막 항목(12월)을 predict 타입으로 한 번 더 추가
+          if (chartData.length > 0) {
+            const lastItem = chartData[chartData.length - 1];
+            chartData.push({
+              month: lastItem.month, // "2025-12"
+              value: lastItem.value,
+              type: 'predict' as const,
+            });
+          }
+
+          // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
+          if (
+            dashboardResponse.isSuccess &&
+            dashboardResponse.result?.predShipmentLeadTime != null &&
+            !isNaN(dashboardResponse.result.predShipmentLeadTime) &&
+            dashboardResponse.timestamp
+          ) {
+            const timestamp = dashboardResponse.timestamp;
+            // timestamp에서 년도와 월 추출 (예: "2026-01-16T06:42:20.113894867Z" -> "2026-01")
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const monthLabel = `${year}-${month}`;
+
+            chartData.push({
+              month: monthLabel, // "2026-01"
+              value: Number(dashboardResponse.result.predShipmentLeadTime),
+              type: 'predict' as const,
+            });
+          }
+
+          if (chartData.length > 0) {
+            setLeadTimeChartData(chartData);
+          } else {
+            console.warn('출하 리드타임 차트 데이터가 없습니다.');
+          }
+        } else {
+          console.warn('출하 리드타임 차트 API 응답이 올바르지 않습니다:', chartResponse);
+        }
+      } catch (error) {
+        console.error('출하 리드타임 차트 데이터 가져오기 실패:', error);
+      }
+    };
+
+    fetchLeadTimeChart();
   }, []);
 
   const fetchProjects = async (keyword: string = '') => {
@@ -396,7 +491,7 @@ export default function ManagementHome() {
     fetchPendingOutboundTasks();
   }, []);
 
-  const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '입고 완료'];
+  const tabs: FilterStatus[] = ['승인 대기', '진행중', '입고 완료'];
   const projectTabs: ProjectFilterStatus[] = ['진행중', '미진행', '완료'];
 
   const handleDetailClick = (type: string, id: string) => {
@@ -489,7 +584,7 @@ export default function ManagementHome() {
                     className="mr-[8px] h-[14px] w-[14px] object-contain"
                   />
                   <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
-                    전체 업무 : {totalTasks}
+                    전체 업무 : {dashboardData?.totalTaskCount ?? 0}
                   </span>
                 </div>
                 <div className="absolute left-[311px] top-[111.25px] flex gap-[8px]">
@@ -499,7 +594,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-mainColor-blue600">
-                      재고 {inventoryCount}
+                      재고 {dashboardData?.inventoryTaskCount ?? 0}
                     </span>
                   </div>
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
@@ -508,7 +603,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-subColor-orange900">
-                      출하 {shippingCount}
+                      출하 {dashboardData?.logisticsTaskCount ?? 0}
                     </span>
                   </div>
                 </div>
@@ -519,7 +614,7 @@ export default function ManagementHome() {
                     className="mr-[8px] h-[12px] w-[12px] object-contain"
                   />
                   <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
-                    지연 업무 : {delayedTasks}
+                    지연 업무 : {dashboardData?.totalDelayedCount ?? 0}
                   </span>
                 </div>
                 <div className="absolute left-[311px] top-[209.75px] flex gap-[8px]">
@@ -529,7 +624,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
-                      재고 {delayedInventory}
+                      재고 {dashboardData?.inventoryDelayedCount ?? 0}
                     </span>
                   </div>
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
@@ -538,7 +633,7 @@ export default function ManagementHome() {
                       style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
-                      출하 {delayedShipping}
+                      출하 {dashboardData?.logisticsDelayedCount ?? 0}
                     </span>
                   </div>
                 </div>
@@ -681,7 +776,15 @@ export default function ManagementHome() {
               </div>
               <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[45px] top-[47.5px]">
-                  <DashboardChart percent={72} label="재고 회전율 익월(%)" colorType="orange" />
+                  <DashboardChart
+                    percent={
+                      dashboardData
+                        ? Math.floor(dashboardData.predTurnOverRate * 100) / 100
+                        : 0
+                    }
+                    label="재고 회전율 익월(%)"
+                    colorType="orange"
+                  />
                 </div>
               </div>
             </div>
@@ -744,7 +847,9 @@ export default function ManagementHome() {
                 </div>
               </div>
               <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <LeadTimeChart />
+                <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                  <LeadTimeChart data={leadTimeChartData} />
+                </div>
               </div>
             </div>
           </section>

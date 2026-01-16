@@ -1,5 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import 진행중Img from '@/assets/management/진행중.png';
+import 미진행Img from '@/assets/management/미진행.png';
+import 완료Img from '@/assets/management/완료.png';
 
 interface Project {
   id: number;
@@ -32,16 +35,16 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
 
   const tableCellClasses = `${commonCellClasses} text-greyColor-grey800`;
 
-  const statusChipClasses = (status: Project['status']) => {
+  const getStatusImage = (status: Project['status']) => {
     switch (status) {
       case 'IN_PROGRESS':
-        return 'bg-mainColor-blue050 text-mainColor-blue600 px-2 py-1 rounded-full text-xs font-medium';
+        return 진행중Img;
       case 'PENDING':
-        return 'bg-greyColor-grey200 text-greyColor-grey600 px-2 py-1 rounded-full text-xs font-medium';
+        return 미진행Img;
       case 'COMPLETED':
-        return 'bg-subColor-orange050 text-subColor-orange600 px-2 py-1 rounded-full text-xs font-medium';
+        return 완료Img;
       default:
-        return 'bg-greyColor-grey200 text-greyColor-grey600 px-2 py-1 rounded-full text-xs font-medium';
+        return 미진행Img;
     }
   };
 
@@ -111,13 +114,19 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
                       {project.manager}
                     </td>
                     <td className={`${tableCellClasses} ${bottomBorderClass}`}>
-                      <span className={statusChipClasses(project.status)}>
-                        {project.status === 'IN_PROGRESS'
-                          ? '진행중'
-                          : project.status === 'PENDING'
-                            ? '미진행'
-                            : '완료'}
-                      </span>
+                      <div className="flex justify-center">
+                        <img
+                          src={getStatusImage(project.status)}
+                          alt={
+                            project.status === 'IN_PROGRESS'
+                              ? '진행 중'
+                              : project.status === 'PENDING'
+                                ? '미진행'
+                                : '완료'
+                          }
+                          className="h-auto w-[71px] object-contain"
+                        />
+                      </div>
                     </td>
                   </tr>
                 );

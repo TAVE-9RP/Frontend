@@ -7,14 +7,20 @@ import DashboardTab from '@/components/dashboard/DashboardTab';
 import LeadTimeChart from '@/components/dashboard/LeadTimeChart';
 
 import { getMyAssignedLogistics } from '@/apis/logistics';
-import { getDashboard } from '@/apis/dashboard';
+import { getDashboard, getShipmentLeadTimeChart } from '@/apis/dashboard';
 import { LogisticsSummary } from '@/types/logistics';
 
 type FilterStatus = '업무 할당' | '승인 대기' | '진행중' | '출하 완료';
 
+interface LeadTimeChartData {
+  month: string;
+  value: number;
+  type: 'actual' | 'predict';
+}
+
 export default function LogisticsHome() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FilterStatus>('업무 할당');
+  const [activeTab, setActiveTab] = useState<FilterStatus>('승인 대기');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [tasksByStatus, setTasksByStatus] = useState<Record<FilterStatus, any[]>>({
@@ -27,6 +33,7 @@ export default function LogisticsHome() {
   const [dashboardData, setDashboardData] = useState<{ shipmentCompletionRate: number } | null>(
     null,
   );
+  const [leadTimeChartData, setLeadTimeChartData] = useState<LeadTimeChartData[]>([]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -39,7 +46,7 @@ export default function LogisticsHome() {
       if (logisticsRes.isSuccess && logisticsRes.result) {
         const rawData: LogisticsSummary[] = logisticsRes.result;
         setTasksByStatus({
-          '업무 할당': rawData.filter((t) => t.logisticsStatus === 'ASSIGNED').map(formatTask),
+          '업무 할당': [],
           '승인 대기': rawData.filter((t) => t.logisticsStatus === 'PENDING').map(formatTask),
           진행중: rawData.filter((t) => t.logisticsStatus === 'IN_PROGRESS').map(formatTask),
           '출하 완료': rawData.filter((t) => t.logisticsStatus === 'COMPLETED').map(formatTask),
@@ -76,7 +83,84 @@ export default function LogisticsHome() {
     fetchData();
   }, []);
 
-  const tabs: FilterStatus[] = ['업무 할당', '승인 대기', '진행중', '출하 완료'];
+  // 출하 리드타임 차트 데이터 가져오기
+  useEffect(() => {
+    const fetchLeadTimeChart = async () => {
+      try {
+        const [chartResponse, dashboardResponse] = await Promise.all([
+          getShipmentLeadTimeChart(),
+          getDashboard(),
+        ]);
+
+        if (chartResponse.isSuccess && chartResponse.result?.history) {
+          const year = chartResponse.result.year || 2025;
+          
+          // "1월", "2월" 형식을 "2025-01", "2025-02" 형식으로 변환
+          const convertMonthFormat = (monthStr: string, year: number): string => {
+            // "1월", "2월" 등에서 숫자 추출
+            const monthNum = parseInt(monthStr.replace('월', '').trim());
+            if (!isNaN(monthNum)) {
+              return `${year}-${String(monthNum).padStart(2, '0')}`;
+            }
+            return monthStr; // 변환 실패 시 원본 반환
+          };
+
+          let chartData: LeadTimeChartData[] = chartResponse.result.history
+            .filter((item: { month: string; value: number }) => item.value != null && !isNaN(item.value))
+            .map((item: { month: string; value: number }) => ({
+              month: convertMonthFormat(item.month, year),
+              value: Number(item.value),
+              type: 'actual' as const,
+            }));
+
+          // 마지막 항목(12월)을 predict 타입으로 한 번 더 추가
+          if (chartData.length > 0) {
+            const lastItem = chartData[chartData.length - 1];
+            chartData.push({
+              month: lastItem.month, // "2025-12"
+              value: lastItem.value,
+              type: 'predict' as const,
+            });
+          }
+
+          // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
+          if (
+            dashboardResponse.isSuccess &&
+            dashboardResponse.result?.predShipmentLeadTime != null &&
+            !isNaN(dashboardResponse.result.predShipmentLeadTime) &&
+            dashboardResponse.timestamp
+          ) {
+            const timestamp = dashboardResponse.timestamp;
+            // timestamp에서 년도와 월 추출 (예: "2026-01-16T06:42:20.113894867Z" -> "2026-01")
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const monthLabel = `${year}-${month}`;
+
+            chartData.push({
+              month: monthLabel, // "2026-01"
+              value: Number(dashboardResponse.result.predShipmentLeadTime),
+              type: 'predict' as const,
+            });
+          }
+
+          if (chartData.length > 0) {
+            setLeadTimeChartData(chartData);
+          } else {
+            console.warn('출하 리드타임 차트 데이터가 없습니다.');
+          }
+        } else {
+          console.warn('출하 리드타임 차트 API 응답이 올바르지 않습니다:', chartResponse);
+        }
+      } catch (error) {
+        console.error('출하 리드타임 차트 데이터 가져오기 실패:', error);
+      }
+    };
+
+    fetchLeadTimeChart();
+  }, []);
+
+  const tabs: FilterStatus[] = ['승인 대기', '진행중', '출하 완료'];
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-greyColor-grey100">
@@ -154,7 +238,9 @@ export default function LogisticsHome() {
                 </div>
               </div>
               <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <LeadTimeChart />
+                <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                  <LeadTimeChart data={leadTimeChartData} />
+                </div>
               </div>
             </div>
           </section>

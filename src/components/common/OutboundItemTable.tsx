@@ -1,6 +1,9 @@
 import React from 'react';
 import checkboxImg from '@/assets/checkbox.png';
 import checkboxCheckImg from '@/assets/checkbox_check.png';
+import 진행중Img from '@/assets/management/진행중.png';
+import 미진행Img from '@/assets/management/미진행.png';
+import 완료Img from '@/assets/management/완료.png';
 import { OutboundItem, LogisticsStatus, ItemProcessingStatus } from '@/types/logistics';
 
 interface ExtendedOutboundItem extends OutboundItem {
@@ -176,17 +179,37 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center font-pretendard text-[14px]">
-              <div
-                className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] text-[13px] font-bold leading-none ${
-                  isItemCompleted || isCompletedStatus
-                    ? 'bg-mainColor-blue050 text-mainColor-blue600'
-                    : isItemProcessing
-                      ? 'bg-[#FFEEBC] text-[#FF803B]'
-                      : 'bg-greyColor-grey200 text-greyColor-grey600'
-                }`}
-              >
-                {statusMap[item.logisticsProcessingStatus] || '미진행'}
-              </div>
+              {item.logisticsProcessingStatus === 'IN_PROGRESS' ? (
+                <div className="flex items-center justify-center">
+                  <img
+                    src={진행중Img}
+                    alt="진행 중"
+                    className="h-auto w-[71px] object-contain"
+                  />
+                </div>
+              ) : item.logisticsProcessingStatus === 'NOT_STARTED' ? (
+                <div className="flex items-center justify-center">
+                  <img
+                    src={미진행Img}
+                    alt="미진행"
+                    className="h-auto w-[71px] object-contain"
+                  />
+                </div>
+              ) : item.logisticsProcessingStatus === 'COMPLETED' ? (
+                <div className="flex items-center justify-center">
+                  <img
+                    src={완료Img}
+                    alt="완료"
+                    className="h-auto w-[71px] object-contain"
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`flex h-[24px] items-center justify-center rounded-[50px] px-[8px] text-[13px] font-bold leading-none bg-greyColor-grey200 text-greyColor-grey600`}
+                >
+                  {statusMap[item.logisticsProcessingStatus] || '미진행'}
+                </div>
+              )}
             </div>
           </div>
         );

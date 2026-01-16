@@ -16,7 +16,7 @@ export default function TestPage() {
   const {
     mutate,
     data: postData,
-    isLoading: postLoading,
+    isPending: postLoading,
     isError: postError,
     error: postErr,
   } = useTestValidation();
@@ -120,7 +120,7 @@ export default function TestPage() {
 
       {/* GET /test */}
       <h2>GET /api/test</h2>
-      <button onClick={refetchGet} style={{ padding: '10px 20px', margin: '10px' }}>
+      <button onClick={() => refetchGet()} style={{ padding: '10px 20px', margin: '10px' }}>
         GET 테스트
       </button>
       {getLoading && <p>GET 요청 중...</p>}
@@ -136,7 +136,7 @@ export default function TestPage() {
 
       {/* GET /test/unexpected-error */}
       <h2>GET /api/test/unexpected-error</h2>
-      <button onClick={refetchUnexpected} style={{ padding: '10px 20px', margin: '10px' }}>
+      <button onClick={() => refetchUnexpected()} style={{ padding: '10px 20px', margin: '10px' }}>
         GET Unexpected Error 테스트
       </button>
       {unexpectedLoading && <p>요청 중...</p>}
@@ -154,7 +154,7 @@ export default function TestPage() {
 
       {/* GET /test/system-error */}
       <h2>GET /api/test/system-error</h2>
-      <button onClick={refetchSystem} style={{ padding: '10px 20px', margin: '10px' }}>
+      <button onClick={() => refetchSystem()} style={{ padding: '10px 20px', margin: '10px' }}>
         GET System Error 테스트
       </button>
       {systemLoading && <p>요청 중...</p>}
