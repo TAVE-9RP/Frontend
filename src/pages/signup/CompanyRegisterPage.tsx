@@ -142,7 +142,7 @@ export default function CompanyRegisterPage() {
                   className="h-[32px] w-[32px] object-contain"
                 />
                 <span className="font-pretendard text-[19px] font-normal text-[#63656C]">
-                  ファイルを選択해주세요
+                  파일을 선택해주세요
                 </span>
               </>
             )}
