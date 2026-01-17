@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import APPROVAL_ICON_SRC from '../../assets/manager_approval.png';
+import { getAdminInfo } from '@/apis/admin';
 
 interface ManagerApprovalModalProps {
   isOpen: boolean;
@@ -16,16 +17,38 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
   onClose,
   onConfirm,
   variant = 'default',
-  managerName = '홍길동',
+  managerName: initialManagerName,
   closeOnBackdropClick = true,
   onReject,
 }) => {
+  const [fetchedAdminName, setFetchedAdminName] = useState<string>('');
+
+  useEffect(() => {
+    const fetchAdmin = async () => {
+      if (isOpen && variant === 'request') {
+        try {
+          const response = await getAdminInfo();
+          if (response.isSuccess && response.result && response.result.length > 0) {
+            setFetchedAdminName(response.result[0].adminName);
+          }
+        } catch (error) {
+          console.error('관리자 정보 조회 실패:', error);
+          setFetchedAdminName('정보 없음');
+        }
+      }
+    };
+
+    fetchAdmin();
+  }, [isOpen, variant]);
+
   if (!isOpen) return null;
 
   const isRequestMode = variant === 'request';
 
+  const displayManagerName = fetchedAdminName || initialManagerName || '관리자';
+
   const content = {
-    title: isRequestMode ? `승인 관리자: ${managerName}` : '관리자 결재를 진행하시겠습니까?',
+    title: isRequestMode ? `승인 관리자: ${displayManagerName}` : '관리자 결재를 진행하시겠습니까?',
     description: isRequestMode
       ? '확인을 누르면 관리자에게 승인 요청이 전달돼요'
       : '승인 시 업무 상태가 진행 중으로 변경돼요',
@@ -35,7 +58,7 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
 
   return (
     <div
-      className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={closeOnBackdropClick ? onClose : undefined}
     >
       <div
@@ -56,6 +79,7 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
 
         <div className="mt-[34.45px] flex gap-[17px]">
           <button
+            type="button"
             onClick={onReject || onClose}
             className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] border border-greyColor-grey300 bg-greyColor-grey50 font-pretendard text-[17px] font-bold leading-normal text-greyColor-grey500 transition-colors hover:bg-greyColor-grey100"
           >
@@ -63,6 +87,7 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
           </button>
 
           <button
+            type="button"
             onClick={onConfirm}
             className="flex h-[34px] w-[70px] cursor-pointer items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[15px] font-bold leading-normal text-white transition-colors hover:bg-mainColor-blue700"
           >

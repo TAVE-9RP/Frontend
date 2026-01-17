@@ -126,16 +126,21 @@ export default function InboundItemTable({
                 <div className={`${cell110} flex items-center justify-center`}>
                   {isProgress ? (
                     <input
-                      type="number"
-                      value={item.inboundQty === '-' ? '' : item.inboundQty}
-                      onChange={(e) => onInboundQtyChange?.(item.id, e.target.value)}
+                      type="text"
+                      inputMode="numeric"
+                      value={
+                        item.inboundQty === '-' || item.inboundQty === 0 ? '' : item.inboundQty
+                      }
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '');
+                        onInboundQtyChange?.(item.id, value);
+                      }}
                       disabled={!isSelected || item.status === '완료'}
                       className={`h-[30px] w-[100px] rounded-[5px] border border-greyColor-grey300 px-2 text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue600 focus:outline-none ${
                         !isSelected || item.status === '완료'
                           ? 'cursor-not-allowed bg-greyColor-grey100'
                           : ''
                       }`}
-                      min="0"
                     />
                   ) : (
                     <span className="text-greyColor-grey900">

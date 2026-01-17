@@ -67,4 +67,9 @@ export const rejectLogistics = async (logisticsId: string | number) => {
   return response.data;
 };
 
+export const getAdminInfo = async () => {
+  const response = await memberApi.get('/admin/info');
+  return response.data;
+};
+
 export default memberApi;

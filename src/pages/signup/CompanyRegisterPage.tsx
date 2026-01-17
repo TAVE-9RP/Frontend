@@ -4,7 +4,8 @@ import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
 import addCircle from '@/assets/add-circle.png';
 import { useNavigate } from 'react-router-dom';
-import { postCompany } from '@/apis/company';
+import { postCompany, uploadCompanyLogo } from '@/apis/company';
+import type { CompanyRegisterRequest } from '@/types/company';
 
 export default function CompanyRegisterPage() {
   const navigate = useNavigate();
@@ -47,57 +48,42 @@ export default function CompanyRegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('=== handleSubmit 시작 ===');
-    console.log('isFormValid:', isFormValid);
-    console.log('formData:', formData);
+    if (!isFormValid) return;
 
-    if (!isFormValid) {
-      console.log('폼 유효성 검사 실패');
-      return;
-    }
-
-    console.log('API 호출 시작...');
     setIsLoading(true);
     try {
-      const requestData = {
+      const requestData: CompanyRegisterRequest = {
         name: formData.companyName,
         industryType: formData.businessType,
         description: formData.companyDescription || '',
-        imagePath: formData.companyLogo ? URL.createObjectURL(formData.companyLogo) : '',
+        imagePath: '',
       };
 
-      console.log('=== API 요청 데이터 ===');
-      console.log('요청 데이터:', requestData);
-      console.log('postCompany 함수 호출 전');
-
       const response = await postCompany(requestData);
+      const companyId = response.result?.companyId;
 
-      console.log('postCompany 함수 호출 후');
-
-      console.log('=== API 응답 ===');
-      console.log('전체 응답:', response);
-      console.log('response.result:', response.result);
-      console.log('response.result?.companyId:', response.result?.companyId);
-
-      if (response.result?.companyId) {
-        console.log('companyId:', response.result.companyId);
-        navigate('/companysignup/step2', {
-          state: {
-            companyId: response.result.companyId,
-          },
-        });
-      } else {
-        console.warn('companyId가 응답에 없습니다. 응답 구조:', response);
+      if (!companyId) {
+        throw new Error('Company ID is missing in response');
       }
+
+      if (formData.companyLogo) {
+        try {
+          await uploadCompanyLogo(companyId, formData.companyLogo);
+        } catch (logoError) {
+          console.error('Logo upload failed:', logoError);
+          alert('회사 등록은 완료되었으나 로고 업로드에 실패했습니다.');
+        }
+      }
+
+      navigate('/companysignup/step2', { state: { companyId } });
     } catch (error: any) {
-      console.error('회사 등록 실패:', error);
-      const errorMessage = error?.response?.data?.message || '회사 등록에 실패했습니다.';
+      console.error('Registration error:', error);
+      const errorMessage = error?.response?.data?.message || '등록 중 오류가 발생했습니다.';
       alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
-
   const handlePrevStep = () => {
     navigate('/signup');
   };
@@ -140,17 +126,28 @@ export default function CompanyRegisterPage() {
           </label>
           <label
             htmlFor="logoUpload"
-            className="flex h-[103px] w-[535px] cursor-pointer flex-col items-center justify-center gap-[10px] rounded-[10px] bg-[#F7F8F9]"
+            className="flex h-[103px] w-[535px] cursor-pointer flex-col items-center justify-center gap-[10px] rounded-[10px] border border-transparent bg-[#F7F8F9] transition-all hover:border-blue-400"
           >
-            <img src={addCircle} alt="아이콘" className="h-[32px] w-[32px] object-contain" />
-            <span className="font-pretendard text-[19px] font-normal text-[#63656C]">
-              파일을 선택해주세요
-            </span>
+            {formData.companyLogo ? (
+              <div className="flex flex-col items-center">
+                <span className="font-pretendard text-[16px] font-bold text-blue-600">
+                  선택된 파일: {formData.companyLogo.name}
+                </span>
+                <span className="mt-1 text-[12px] text-gray-400">클릭하여 변경</span>
+              </div>
+            ) : (
+              <>
+                <img src={addCircle} alt="아이콘" className="h-[32px] w-[32px] object-contain" />
+                <span className="font-pretendard text-[19px] font-normal text-[#63656C]">
+                  파일을 선택해주세요
+                </span>
+              </>
+            )}
           </label>
           <input
             id="logoUpload"
             type="file"
-            accept="image/*"
+            accept="image/png, image/jpeg, image/jpg"
             onChange={handleLogoUpload}
             className="hidden"
           />
