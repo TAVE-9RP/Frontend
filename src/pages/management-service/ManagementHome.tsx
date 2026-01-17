@@ -603,57 +603,70 @@ export default function ManagementHome() {
                 현재 승인 요청이 들어온 입고/출하 업무를 확인할 수 있어요
               </p>
               <div className="mt-[28px] flex gap-[46px]">
-                <ul className="flex flex-col">
-                  {pendingInboundTasks.map((task) => (
-                    <li
-                      key={task.id}
-                      onClick={() => handleDetailClick('inbound-task', String(task.id))}
-                      className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px]"
-                    >
-                      <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-mainColor-blue050 px-[10px] py-[5px]">
-                        <span className="font-pretendard text-[15px] font-bold text-mainColor-blue600">
-                          입고
+                <ul className="custom-scrollbar flex max-h-[192px] flex-col overflow-y-auto pr-2">
+                  {pendingInboundTasks.length === 0 ? (
+                    <p className="py-4 text-[14px] text-greyColor-grey400">
+                      대기 중인 입고 업무가 없습니다.
+                    </p>
+                  ) : (
+                    pendingInboundTasks.map((task) => (
+                      <li
+                        key={task.id}
+                        onClick={() => handleDetailClick('inbound-task', String(task.id))}
+                        className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] transition-colors hover:bg-gray-50"
+                      >
+                        <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-mainColor-blue050 px-[10px] py-[5px]">
+                          <span className="font-pretendard text-[15px] font-bold text-mainColor-blue600">
+                            입고
+                          </span>
+                        </div>
+                        <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
+                          {task.requestDate}
                         </span>
-                      </div>
-                      <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
-                        {task.requestDate}
-                      </span>
-                      <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
-                        {task.taskName}
-                      </span>
-                      <img
-                        src="/images/next_1.png"
-                        alt="next"
-                        className="ml-[32px] h-[16px] w-[16px] object-contain"
-                      />
-                    </li>
-                  ))}
+                        <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
+                          {task.taskName}
+                        </span>
+                        <img
+                          src="/images/next_1.png"
+                          alt="next"
+                          className="ml-[32px] h-[16px] w-[16px] object-contain"
+                        />
+                      </li>
+                    ))
+                  )}
                 </ul>
-                <ul className="flex flex-col">
-                  {pendingOutboundTasks.map((task) => (
-                    <li
-                      key={task.id}
-                      onClick={() => handleDetailClick('outbound-task', String(task.id))}
-                      className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px]"
-                    >
-                      <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
-                        <span className="font-pretendard text-[15px] font-bold text-subColor-orange900">
-                          출하
+
+                <ul className="custom-scrollbar flex max-h-[192px] flex-col overflow-y-auto pr-2">
+                  {pendingOutboundTasks.length === 0 ? (
+                    <p className="py-4 text-[14px] text-greyColor-grey400">
+                      대기 중인 출하 업무가 없습니다.
+                    </p>
+                  ) : (
+                    pendingOutboundTasks.map((task) => (
+                      <li
+                        key={task.id}
+                        onClick={() => handleDetailClick('outbound-task', String(task.id))}
+                        className="flex w-[476px] cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] transition-colors hover:bg-gray-50"
+                      >
+                        <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
+                          <span className="font-pretendard text-[15px] font-bold text-subColor-orange900">
+                            출하
+                          </span>
+                        </div>
+                        <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
+                          {task.requestDate}
                         </span>
-                      </div>
-                      <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
-                        {task.requestDate}
-                      </span>
-                      <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
-                        {task.taskName}
-                      </span>
-                      <img
-                        src="/images/next_1.png"
-                        alt="next"
-                        className="ml-[32px] h-[16px] w-[16px] object-contain"
-                      />
-                    </li>
-                  ))}
+                        <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
+                          {task.taskName}
+                        </span>
+                        <img
+                          src="/images/next_1.png"
+                          alt="next"
+                          className="ml-[32px] h-[16px] w-[16px] object-contain"
+                        />
+                      </li>
+                    ))
+                  )}
                 </ul>
               </div>
             </div>
