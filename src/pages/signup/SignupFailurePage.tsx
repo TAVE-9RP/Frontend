@@ -1,5 +1,4 @@
 import Header from '@/components/signup/Header';
-import locked from '@/assets/Locked padlock.png';
 import Button from '@/components/common/Button';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +21,7 @@ export default function SignupSuccessPage() {
       </p>
 
       <img
-        src={locked}
+        src="/images/Locked padlock.png"
         alt="가입 실패 아이콘"
         className="mt-[46px] h-[254px] w-[254px] flex-shrink-0 object-contain"
       />

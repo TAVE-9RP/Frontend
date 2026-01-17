@@ -7,7 +7,12 @@ interface AssignmentChipProps {
   disabled?: boolean;
 }
 
-const AssignmentChip: React.FC<AssignmentChipProps> = ({ label, isActive, onClick, disabled = false }) => {
+const AssignmentChip: React.FC<AssignmentChipProps> = ({
+  label,
+  isActive,
+  onClick,
+  disabled = false,
+}) => {
   const activeStyle = {
     border: '1px solid var(--mainColor-blue700, #106CE1)',
     background: 'var(--mainColor-blue050, #E2F1FF)',
@@ -48,8 +53,8 @@ const AssignmentChip: React.FC<AssignmentChipProps> = ({ label, isActive, onClic
         <img
           src={
             isActive
-              ? '/src/assets/checkmark-circle-checked.png'
-              : '/src/assets/checkmark-circle-unchecked.png'
+              ? '/images/checkmark-circle-checked.png'
+              : '/images/checkmark-circle-unchecked.png'
           }
           alt="Check icon"
           style={{ width: '16px', height: '16px' }}

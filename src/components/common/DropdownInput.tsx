@@ -1,9 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import ChevronDownIcon from '../../assets/chevron-down.png';
-import CheckCircleChecked from '../../assets/checkmark-circle-checked.png';
-import CheckCircleUnchecked from '../../assets/checkmark-circle-unchecked.png';
-
 export interface DropdownOption {
   id: number;
   label: string;
@@ -57,7 +53,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
 
   const handleInputClick = () => {
     if (disabled) {
-      // disabled 상태에서도 onOpen 콜백 호출 (업무 할당 변경을 위해)
       if (onOpen) {
         onOpen();
       }
@@ -66,7 +61,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
     const wasClosed = !isOpen;
     setIsOpen((prev) => !prev);
     setIsFocused(true);
-    // 드롭다운이 열릴 때 onOpen 콜백 호출
     if (wasClosed && onOpen) {
       onOpen();
     }
@@ -119,7 +113,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
         </div>
         <div className="flex w-[40px] items-center justify-end pr-[10px]">
           <img
-            src={ChevronDownIcon}
+            src="/images/chevron-down.png"
             alt="Dropdown icon"
             className={`h-[13px] w-[13px] ${disabled ? 'opacity-30' : 'opacity-100'}`}
           />
@@ -146,7 +140,11 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
                 </div>
 
                 <img
-                  src={isSelected ? CheckCircleChecked : CheckCircleUnchecked}
+                  src={
+                    isSelected
+                      ? '/images/checkmark-circle-checked.png'
+                      : '/images/checkmark-circle-unchecked.png'
+                  }
                   className="h-5 w-5"
                   alt="check icon"
                 />

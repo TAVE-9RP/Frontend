@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import APPROVAL_ICON_SRC from '../../assets/manager_approval.png';
 import { getAdminInfo } from '@/apis/admin';
 
 interface ManagerApprovalModalProps {
@@ -66,7 +65,11 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mt-[32px]">
-          <img src={APPROVAL_ICON_SRC} alt="승인 아이콘" className="h-[33.25px] w-[33.25px]" />
+          <img
+            src="/images/manager_approval.png"
+            alt="승인 아이콘"
+            className="h-[33.25px] w-[33.25px]"
+          />
         </div>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold leading-normal text-black">

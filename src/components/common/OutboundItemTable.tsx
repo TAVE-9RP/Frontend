@@ -1,9 +1,4 @@
 import React from 'react';
-import checkboxImg from '@/assets/checkbox.png';
-import checkboxCheckImg from '@/assets/checkbox_check.png';
-import 진행중Img from '@/assets/management/진행중.png';
-import 미진행Img from '@/assets/management/미진행.png';
-import 완료Img from '@/assets/management/완료.png';
 import { OutboundItem, LogisticsStatus, ItemProcessingStatus } from '@/types/logistics';
 
 interface ExtendedOutboundItem extends OutboundItem {
@@ -101,7 +96,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   className={`flex h-full w-full items-center justify-center ${isItemCompleted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 >
                   <img
-                    src={isSelected ? checkboxCheckImg : checkboxImg}
+                    src={isSelected ? '/images/checkbox_check.png' : '/images/checkbox.png'}
                     alt="checkbox"
                     className="h-[19.5px] w-[19.5px] object-contain"
                   />
@@ -192,15 +187,27 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             <div className="flex h-full w-[97px] items-center justify-center font-pretendard text-[14px]">
               {item.logisticsProcessingStatus === 'IN_PROGRESS' ? (
                 <div className="flex items-center justify-center">
-                  <img src={진행중Img} alt="진행 중" className="h-auto w-[71px] object-contain" />
+                  <img
+                    src="/images/management/진행중.png"
+                    alt="진행 중"
+                    className="h-auto w-[71px] object-contain"
+                  />
                 </div>
               ) : item.logisticsProcessingStatus === 'NOT_STARTED' ? (
                 <div className="flex items-center justify-center">
-                  <img src={미진행Img} alt="미진행" className="h-auto w-[71px] object-contain" />
+                  <img
+                    src="/images/management/미진행.png"
+                    alt="미진행"
+                    className="h-auto w-[71px] object-contain"
+                  />
                 </div>
               ) : item.logisticsProcessingStatus === 'COMPLETED' ? (
                 <div className="flex items-center justify-center">
-                  <img src={완료Img} alt="완료" className="h-auto w-[71px] object-contain" />
+                  <img
+                    src="/images/management/완료.png"
+                    alt="완료"
+                    className="h-auto w-[71px] object-contain"
+                  />
                 </div>
               ) : (
                 <div

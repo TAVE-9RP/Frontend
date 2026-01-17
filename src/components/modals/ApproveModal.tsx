@@ -1,8 +1,5 @@
 import React from 'react';
 
-import CHECKMARK_ICON_SRC from '../../assets/projectcheckmark.png';
-import CANCEL_ICON_SRC from '../../assets/approval_cancellation.png';
-
 interface ApproveModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,14 +11,14 @@ const ApproveModal: React.FC<ApproveModalProps> = ({ isOpen, onClose, type }) =>
 
   const isApprove = type === 'approve';
 
-  const iconSrc = isApprove ? CHECKMARK_ICON_SRC : CANCEL_ICON_SRC;
+  const iconSrc = isApprove ? '/images/projectcheckmark.png' : '/images/approval_cancellation.png';
   const titleText = isApprove ? '승인 완료' : '승인 취소';
   const subText = isApprove
     ? "프로젝트의 진행 상태가 '진행 중'으로 변경되었어요"
     : "프로젝트의 진행 상태가 '업무 할당'으로 변경되었어요";
 
   return (
-    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed bottom-0 left-[220px] right-0 top-0 z-50 flex items-center justify-center bg-black/50">
       <div
         className="flex h-[230px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
         onClick={(e) => e.stopPropagation()}

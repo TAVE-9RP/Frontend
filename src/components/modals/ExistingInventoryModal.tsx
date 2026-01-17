@@ -99,7 +99,7 @@ export default function ExistingInventoryModal({
   };
 
   return (
-    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed bottom-0 left-[220px] right-0 top-0 z-50 flex items-center justify-center bg-black/50">
       <div className="relative flex h-[609px] w-[981px] flex-col rounded-[30px] bg-white p-[64px] shadow-xl">
         <div className="flex items-start justify-between">
           <h2 className="font-pretendard text-[24px] font-bold leading-normal text-black">
@@ -156,8 +156,13 @@ export default function ExistingInventoryModal({
               <tbody className="bg-white text-[15px] font-normal text-black">
                 {inventoryData.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="h-[40px] border-b-2 border-greyColor-grey200 text-center">
-                      <span className="font-pretendard text-[14px] text-greyColor-grey400">없음</span>
+                    <td
+                      colSpan={6}
+                      className="h-[40px] border-b-2 border-greyColor-grey200 text-center"
+                    >
+                      <span className="font-pretendard text-[14px] text-greyColor-grey400">
+                        없음
+                      </span>
                     </td>
                   </tr>
                 ) : (
@@ -180,9 +185,7 @@ export default function ExistingInventoryModal({
                             >
                               <img
                                 src={
-                                  isSelected
-                                    ? '/src/assets/checkbox_check.png'
-                                    : '/src/assets/checkbox.png'
+                                  isSelected ? '/images/checkbox_check.png' : '/images/checkbox.png'
                                 }
                                 alt="checkbox"
                                 className="h-5 w-5 object-contain"
@@ -234,9 +237,7 @@ export default function ExistingInventoryModal({
                 return;
               }
 
-              const selectedItems = inventoryData.filter((item) =>
-                selectedIds.includes(item.id),
-              );
+              const selectedItems = inventoryData.filter((item) => selectedIds.includes(item.id));
 
               if (selectedItems.length === 0) {
                 alert('추가할 재고를 선택해주세요.');
@@ -264,7 +265,9 @@ export default function ExistingInventoryModal({
               } catch (error: any) {
                 console.error('재고 추가 실패:', error);
                 console.error('에러 응답:', error?.response?.data);
-                alert(`재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`);
+                alert(
+                  `재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+                );
               } finally {
                 setIsAdding(false);
               }

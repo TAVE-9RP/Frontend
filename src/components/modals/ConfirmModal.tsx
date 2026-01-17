@@ -1,5 +1,4 @@
 import React from 'react';
-import QUESTION_ICON_SRC from '../../assets/questionmark.png';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -20,7 +19,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <div
-      className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed bottom-0 left-[220px] right-0 top-0 z-50 flex items-center justify-center bg-black/50"
       onClick={onClose}
     >
       <div
@@ -28,7 +27,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mt-[32px]">
-          <img src={QUESTION_ICON_SRC} alt="질문 아이콘" className="h-[30px] w-[30px]" />
+          <img src="/images/questionmark.png" alt="질문 아이콘" className="h-[30px] w-[30px]" />
         </div>
 
         <p className="mt-[10.28px] text-center font-pretendard text-[19px] font-bold text-black">

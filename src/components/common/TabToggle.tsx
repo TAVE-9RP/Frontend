@@ -1,8 +1,5 @@
 import React from 'react';
 
-import PersonFillIcon from '../../assets/person-fill.png';
-import JournalCheckIcon from '../../assets/journal-check.png';
-
 interface TabToggleProps {
   activeTab: string;
   onTabChange: (tab: '직원 목록' | '가입 관리') => void;
@@ -46,7 +43,7 @@ const TabToggle: React.FC<TabToggleProps> = ({ activeTab, onTabChange }) => {
         style={activeTab === '직원 목록' ? activeShadowStyle : {}}
       >
         <img
-          src={PersonFillIcon}
+          src="/images/person-fill.png"
           alt="직원 목록 아이콘"
           className="h-5 w-5"
           style={{
@@ -62,7 +59,7 @@ const TabToggle: React.FC<TabToggleProps> = ({ activeTab, onTabChange }) => {
         style={activeTab === '가입 관리' ? activeShadowStyle : {}}
       >
         <img
-          src={JournalCheckIcon}
+          src="/images/journal-check.png"
           alt="가입 관리 아이콘"
           className="h-5 w-5"
           style={{

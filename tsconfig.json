@@ -19,5 +19,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "public/images/images.d.ts"]
 }

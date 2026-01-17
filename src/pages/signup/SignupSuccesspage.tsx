@@ -1,5 +1,4 @@
 import Header from '@/components/signup/Header';
-import checkmark from '@/assets/Checkmark in circle.png';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -25,7 +24,7 @@ export default function SignupSuccessPage() {
       </p>
 
       <img
-        src={checkmark}
+        src="/images/Checkmark in circle.png"
         alt="가입 완료 체크 아이콘"
         className="mt-[46px] h-[254px] w-[254px] flex-shrink-0 object-contain"
       />

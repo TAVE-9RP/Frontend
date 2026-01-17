@@ -5,9 +5,6 @@ import { OptionCard } from '@/components/signup/OptionCard';
 import Button from '@/components/common/Button';
 import '@/styles/index.css';
 
-import signupicon01 from '@/assets/signupicon01.png';
-import signupicon02 from '@/assets/signupicon02.png';
-
 type CardType = 'COMPANY' | 'EMPLOYEE' | null;
 
 export default function SignupStartPage() {
@@ -32,7 +29,9 @@ export default function SignupStartPage() {
 
         <div className="mt-[98px] flex flex-col items-center gap-[29px]">
           <OptionCard
-            icon={<img src={signupicon01} alt="회사 등록" className="h-[140px] w-[140px]" />}
+            icon={
+              <img src="/images/signupicon01.png" alt="회사 등록" className="h-[140px] w-[140px]" />
+            }
             title="회사 신규 등록"
             description="우리 회사를 NexERP에 등록하고 팀을 관리하세요."
             onClick={() => handleCardClick('COMPANY')}
@@ -40,7 +39,9 @@ export default function SignupStartPage() {
           />
 
           <OptionCard
-            icon={<img src={signupicon02} alt="사원 등록" className="h-[140px] w-[140px]" />}
+            icon={
+              <img src="/images/signupicon02.png" alt="사원 등록" className="h-[140px] w-[140px]" />
+            }
             title="사원 신규 등록"
             description="오너가 등록한 회사에 참여하는 사원 계정을 생성합니다."
             onClick={() => handleCardClick('EMPLOYEE')}

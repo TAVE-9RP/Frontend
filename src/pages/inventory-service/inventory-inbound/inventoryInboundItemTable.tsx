@@ -1,7 +1,4 @@
 import React from 'react';
-import 진행중Img from '@/assets/management/진행중.png';
-import 미진행Img from '@/assets/management/미진행.png';
-import 완료Img from '@/assets/management/완료.png';
 
 export interface InboundItem {
   id: string;
@@ -105,9 +102,7 @@ export default function InboundItemTable({
                       className="flex h-full w-full items-center justify-center"
                     >
                       <img
-                        src={
-                          isSelected ? '/src/assets/checkbox_check.png' : '/src/assets/checkbox.png'
-                        }
+                        src={isSelected ? '/images/checkbox_check.png' : '/images/checkbox.png'}
                         alt="checkbox"
                         style={{ width: '19.5px', height: '19.5px' }}
                         className="object-contain"
@@ -168,7 +163,7 @@ export default function InboundItemTable({
                   {item.status === '진행중' ? (
                     <div className="flex items-center justify-center">
                       <img
-                        src={진행중Img}
+                        src="/images/management/진행중.png"
                         alt="진행 중"
                         className="h-auto w-[71px] object-contain"
                       />
@@ -176,14 +171,18 @@ export default function InboundItemTable({
                   ) : item.status === '미진행' ? (
                     <div className="flex items-center justify-center">
                       <img
-                        src={미진행Img}
+                        src="/images/management/미진행.png"
                         alt="미진행"
                         className="h-auto w-[71px] object-contain"
                       />
                     </div>
                   ) : item.status === '완료' ? (
                     <div className="flex items-center justify-center">
-                      <img src={완료Img} alt="완료" className="h-auto w-[71px] object-contain" />
+                      <img
+                        src="/images/management/완료.png"
+                        alt="완료"
+                        className="h-auto w-[71px] object-contain"
+                      />
                     </div>
                   ) : (
                     <div

@@ -5,10 +5,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getCompanies } from '@/apis/company';
 import type { Company } from '@/types/company';
 
-import searchIcon from '@/assets/search.png';
-import checkIcon from '@/assets/checkicon.png';
-import companyImage from '@/assets/companyimage.png';
-
 export default function EmployeeRegisterSecondPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,7 +65,9 @@ export default function EmployeeRegisterSecondPage() {
       <Header title="회사를 선택해주세요" />
 
       <div className="mt-[49px] flex h-[69px] w-[535px] shrink-0 items-center gap-[14px] rounded-[10px] border border-greyColor-grey300 bg-[#F7F8F9] px-[15px]">
-        {!searchTerm && <img src={searchIcon} alt="검색" className="h-[36px] w-[36px] shrink-0" />}
+        {!searchTerm && (
+          <img src="/images/search.png" alt="검색" className="h-[36px] w-[36px] shrink-0" />
+        )}
         <input
           type="text"
           value={searchTerm}
@@ -95,7 +93,11 @@ export default function EmployeeRegisterSecondPage() {
               onClick={() => setSelectedCompanyId(company.id)}
               className="flex h-[75px] w-[535px] shrink-0 cursor-pointer items-center border-b border-greyColor-grey200 px-[10px] transition-colors hover:bg-gray-50"
             >
-              <img src={companyImage} alt="로고" className="h-[36px] w-[36px] shrink-0" />
+              <img
+                src="/images/companyimage.png"
+                alt="로고"
+                className="h-[36px] w-[36px] shrink-0"
+              />
 
               <span className="ml-[17px] flex-1 font-pretendard text-[19px] font-bold text-greyColor-grey900">
                 {company.name}
@@ -106,8 +108,8 @@ export default function EmployeeRegisterSecondPage() {
                   isSelected ? 'bg-mainColor-blue600' : 'bg-greyColor-grey300'
                 }`}
                 style={{
-                  WebkitMaskImage: `url(${checkIcon})`,
-                  maskImage: `url(${checkIcon})`,
+                  WebkitMaskImage: `url(/images/checkicon.png)`,
+                  maskImage: `url(/images/checkicon.png)`,
                   WebkitMaskRepeat: 'no-repeat',
                   maskRepeat: 'no-repeat',
                   WebkitMaskSize: 'contain',

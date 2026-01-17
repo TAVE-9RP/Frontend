@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ellipseIcon from '@/assets/ellipse.png';
 import { getAssignedProjects } from '@/apis/admin';
 
 type MappedStatus = '미진행' | '진행중' | '완료';
@@ -27,21 +26,18 @@ const ProjectListTable = () => {
         const response = await getAssignedProjects();
         if (response.isSuccess && response.result) {
           const mappedProjects: ProjectData[] = response.result.map((item: any) => {
-            // 날짜 포맷팅 (ISO 형식에서 YYYY-MM-DD로)
             let dueDate = '';
             if (item.projectExpectedEndDate) {
               const date = new Date(item.projectExpectedEndDate);
               dueDate = date.toISOString().split('T')[0];
             }
 
-            // 상태 매핑: '미진행', '진행중', '완료' 세 개로만
             let mappedStatus: MappedStatus = '미진행';
             if (item.status === 'COMPLETED') {
               mappedStatus = '완료';
             } else if (item.status === 'IN_PROGRESS') {
               mappedStatus = '진행중';
             } else {
-              // NOT_STARTED, ASSIGNED, PENDING, REJECT 등 모두 '미진행'
               mappedStatus = '미진행';
             }
 
@@ -88,7 +84,7 @@ const ProjectListTable = () => {
   };
 
   return (
-    <div className="flex w-[980px] max-h-[240px] flex-col items-start overflow-y-auto overflow-x-hidden">
+    <div className="flex max-h-[240px] w-[980px] flex-col items-start overflow-y-auto overflow-x-hidden">
       <div className={`flex w-[980px] border ${borderColor} ${headerBg}`}>
         <div
           className={`flex h-[40px] w-[200px] items-center justify-center border-r font-pretendard text-[13px] font-bold text-black ${borderColor}`}
@@ -119,7 +115,9 @@ const ProjectListTable = () => {
           </div>
         ) : projectList.length === 0 ? (
           <div className="flex h-[48px] items-center justify-center">
-            <span className="font-pretendard text-[13px] text-greyColor-grey500">데이터가 없습니다</span>
+            <span className="font-pretendard text-[13px] text-greyColor-grey500">
+              데이터가 없습니다
+            </span>
           </div>
         ) : (
           projectList.map((item) => (
@@ -143,17 +141,15 @@ const ProjectListTable = () => {
               >
                 {item.dueDate}
               </div>
-              <div
-                className={`flex h-[48px] w-[200px] items-center justify-center ${borderColor}`}
-              >
+              <div className={`flex h-[48px] w-[200px] items-center justify-center ${borderColor}`}>
                 <div className={getStatusChipClasses(item.status)}>
                   <span
                     className="inline-block h-[6px] w-[6px] bg-current"
                     style={{
-                      maskImage: `url(${ellipseIcon})`,
+                      maskImage: `url(/images/ellipse.png)`,
                       maskSize: 'contain',
                       maskRepeat: 'no-repeat',
-                      WebkitMaskImage: `url(${ellipseIcon})`,
+                      WebkitMaskImage: `url(/images/ellipse.png)`,
                       WebkitMaskSize: 'contain',
                       WebkitMaskRepeat: 'no-repeat',
                     }}

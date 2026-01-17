@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { InputField } from '@/components/signup/InputField';
 import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
-import addCircle from '@/assets/add-circle.png';
 import { useNavigate } from 'react-router-dom';
 import { postCompany, uploadCompanyLogo } from '@/apis/company';
 import type { CompanyRegisterRequest } from '@/types/company';
@@ -137,9 +136,13 @@ export default function CompanyRegisterPage() {
               </div>
             ) : (
               <>
-                <img src={addCircle} alt="아이콘" className="h-[32px] w-[32px] object-contain" />
+                <img
+                  src="/images/add-circle.png"
+                  alt="아이콘"
+                  className="h-[32px] w-[32px] object-contain"
+                />
                 <span className="font-pretendard text-[19px] font-normal text-[#63656C]">
-                  파일을 선택해주세요
+                  ファイルを選択해주세요
                 </span>
               </>
             )}

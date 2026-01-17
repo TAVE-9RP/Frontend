@@ -4,7 +4,8 @@ import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import AssignmentChip from '../../../components/common/AssignmentChip';
-import DropdownInput, { DropdownOption } from '../../../components/common/DropdownInput';
+import DropdownInput from '../../../components/common/DropdownInput';
+import type { DropdownOption } from '../../../components/common/DropdownInput';
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
@@ -75,15 +76,23 @@ export default function ProjectCreatePage() {
       try {
         const response = await getAssignMembers();
         if (response.isSuccess && response.result) {
-          // API 응답을 DropdownOption 형식으로 변환
           const allMembers: DropdownOption[] = response.result.map((member: any) => ({
             id: member.memberId,
             label: member.name,
-            subLabel: member.department === 'LOGISTICS' ? '물류' : member.department === 'INVENTORY' ? '입고' : '',
-            team: member.department === 'LOGISTICS' ? '물류' : member.department === 'INVENTORY' ? '입고' : '',
+            subLabel:
+              member.department === 'LOGISTICS'
+                ? '물류'
+                : member.department === 'INVENTORY'
+                  ? '입고'
+                  : '',
+            team:
+              member.department === 'LOGISTICS'
+                ? '물류'
+                : member.department === 'INVENTORY'
+                  ? '입고'
+                  : '',
           }));
 
-          // department에 따라 필터링
           const inventoryMembers = allMembers.filter((member) => member.team === '입고');
           const logisticsMembers = allMembers.filter((member) => member.team === '물류');
 
@@ -103,26 +112,20 @@ export default function ProjectCreatePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleInventoryManagerOpen = () => {
-    // 드롭다운만 열고 선택하지 않으면 활성화하지 않음
-  };
+  const handleInventoryManagerOpen = () => {};
 
   const handleInventoryManagerChange = (selected: DropdownOption[]) => {
     setInventoryManager(selected);
-    // 담당자가 선택되면 해당 업무 활성화, 모두 해제되면 비활성화
     setActiveAssignment((prev) => ({
       ...prev,
       inbound: selected.length > 0,
     }));
   };
 
-  const handleLogisticsManagerOpen = () => {
-    // 드롭다운만 열고 선택하지 않으면 활성화하지 않음
-  };
+  const handleLogisticsManagerOpen = () => {};
 
   const handleLogisticsManagerChange = (selected: DropdownOption[]) => {
     setLogisticsManager(selected);
-    // 담당자가 선택되면 해당 업무 활성화, 모두 해제되면 비활성화
     setActiveAssignment((prev) => ({
       ...prev,
       logistics: selected.length > 0,
@@ -138,7 +141,6 @@ export default function ProjectCreatePage() {
       formData.targetMonth.trim() !== '' &&
       formData.targetDay.trim() !== '';
 
-    // 담당자는 무조건 1명 이상이어야 함 (입고 또는 물류 중 하나 이상)
     const managerValid = inventoryManager.length > 0 || logisticsManager.length > 0;
 
     return baseValid && managerValid;
@@ -155,16 +157,13 @@ export default function ProjectCreatePage() {
     setIsCreating(true);
 
     try {
-      // 담당자 ID 리스트 추출 (입고와 물류 모두 포함)
       const assigneeIds = [
         ...inventoryManager.map((manager) => manager.id),
         ...logisticsManager.map((manager) => manager.id),
       ];
 
-      // 날짜 형식 변환 (YYYY-MM-DD)
       const formattedDate = `${formData.targetYear}-${String(formData.targetMonth).padStart(2, '0')}-${String(formData.targetDay).padStart(2, '0')}`;
 
-      // API 요청 데이터 구성
       const requestData = {
         projectNumber: projectNumber,
         projectName: formData.projectTitle,
@@ -175,7 +174,6 @@ export default function ProjectCreatePage() {
         assigneeIds: assigneeIds,
       };
 
-      // API 호출
       const response = await createProject(requestData);
 
       if (response.isSuccess) {

@@ -1,5 +1,4 @@
 import React from 'react';
-import nextIcon from '../../assets/next.png';
 
 interface StatusChipProps {
   label: string;
@@ -10,9 +9,7 @@ const StatusChip: React.FC<StatusChipProps> = ({ label, isActive }) => {
   return (
     <div
       className={`flex items-center justify-center gap-[10px] whitespace-nowrap rounded-[100px] px-[10px] py-[10px] transition-all ${
-        isActive
-          ? 'text-white'
-          : 'border border-greyColor-grey300 bg-white text-greyColor-grey300'
+        isActive ? 'text-white' : 'border border-greyColor-grey300 bg-white text-greyColor-grey300'
       }`}
       style={isActive ? { backgroundColor: '#007ef5' } : {}}
     >
@@ -55,7 +52,7 @@ export default function StatusStepBar({ currentStatus, type = 'inbound' }: Statu
         <React.Fragment key={step.id}>
           <StatusChip label={step.label} isActive={normalizedStatus === step.id} />
           {index < STATUS_STEPS.length - 1 && (
-            <img src={nextIcon} alt="next" className="h-[23px] w-[15px] object-contain" />
+            <img src="/images/next.png" alt="next" className="h-[23px] w-[15px] object-contain" />
           )}
         </React.Fragment>
       ))}

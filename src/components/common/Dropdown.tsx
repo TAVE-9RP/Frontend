@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ChevronDownIcon from '../../assets/chevron-down.png';
 
 interface DropdownProps<T extends string> {
   options: T[];
@@ -71,7 +70,7 @@ export default function Dropdown<T extends string>({
         <span>{selectedValue}</span>
 
         <img
-          src={ChevronDownIcon}
+          src="/images/chevron-down.png"
           alt="Dropdown icon"
           className="ml-2 h-4 w-4 transition-transform duration-200"
           style={{

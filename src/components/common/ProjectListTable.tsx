@@ -1,8 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import 진행중Img from '@/assets/management/진행중.png';
-import 미진행Img from '@/assets/management/미진행.png';
-import 완료Img from '@/assets/management/완료.png';
 
 interface Project {
   id: number;
@@ -38,13 +35,13 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
   const getStatusImage = (status: Project['status']) => {
     switch (status) {
       case 'IN_PROGRESS':
-        return 진행중Img;
+        return '/images/management/진행중.png';
       case 'PENDING':
-        return 미진행Img;
+        return '/images/management/미진행.png';
       case 'COMPLETED':
-        return 완료Img;
+        return '/images/management/완료.png';
       default:
-        return 미진행Img;
+        return '/images/management/미진행.png';
     }
   };
 
@@ -92,17 +89,26 @@ export default function ProjectListTable({ data, isLoading }: ProjectListTablePr
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>
                       {project.projectNumber}
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass}`} title={project.projectTitle}>
+                    <td
+                      className={`${tableCellClasses} ${bottomBorderClass}`}
+                      title={project.projectTitle}
+                    >
                       <div className="mx-auto max-w-[170px] truncate text-left">
                         {project.projectTitle}
                       </div>
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass}`} title={project.projectDescription}>
+                    <td
+                      className={`${tableCellClasses} ${bottomBorderClass}`}
+                      title={project.projectDescription}
+                    >
                       <div className="mx-auto max-w-[180px] truncate text-left">
                         {project.projectDescription}
                       </div>
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass}`} title={project.client}>
+                    <td
+                      className={`${tableCellClasses} ${bottomBorderClass}`}
+                      title={project.client}
+                    >
                       <div className="mx-auto max-w-[120px] truncate text-left">
                         {project.client}
                       </div>

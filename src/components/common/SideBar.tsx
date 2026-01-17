@@ -34,7 +34,6 @@ export default function SideBar() {
     }
   }, []);
 
-  // 회원 정보 조회
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
@@ -54,7 +53,7 @@ export default function SideBar() {
   const menuSections = [
     {
       title: '관리 서비스',
-      icon: '/src/assets/management_service.png',
+      icon: '/images/management_service.png',
       marginTop: 'mt-[69.77px]',
       homePath: '/management-home',
       subMenus: [
@@ -66,7 +65,7 @@ export default function SideBar() {
     },
     {
       title: '재고 서비스',
-      icon: '/src/assets/box.png',
+      icon: '/images/box.png',
       marginTop: 'mt-[32px]',
       homePath: '/inventory-home',
       subMenus: [
@@ -76,7 +75,7 @@ export default function SideBar() {
     },
     {
       title: '물류 서비스',
-      icon: '/src/assets/delivery.png',
+      icon: '/images/delivery.png',
       marginTop: 'mt-[32px]',
       homePath: '/logistics-home',
       subMenus: [{ text: '출하 업무 관리', path: '/logistics-outbound-task' }],
@@ -159,18 +158,18 @@ export default function SideBar() {
         }}
         className="ml-[27px] mt-[33px] flex items-center"
       >
-        <img src="/src/assets/logo.png" alt="logo" width={129} height={36.47} />
+        <img src="/images/logo.png" alt="logo" width={129} height={36.47} />
       </button>
 
       <div className="ml-[27px] mt-[32px] flex items-center gap-[10px]">
-        <img src="/src/assets/logistics.png" alt="logistics" width={24} height={24} />
+        <img src="/images/logistics.png" alt="logistics" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
           {departmentFromToken ? ` ${departmentFromToken}` : ''}
         </span>
       </div>
 
       <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
-        <img src="/src/assets/owner.png" alt="owner" width={24} height={24} />
+        <img src="/images/owner.png" alt="owner" width={24} height={24} />
         {(memberPosition || memberName) && (
           <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
             {memberPosition ? mapPositionToKorean(memberPosition) : ''}
@@ -184,7 +183,6 @@ export default function SideBar() {
         const isManagementSection = section.title === '관리 서비스';
         const isDisabled = isManagementSection && !isManagementUser;
 
-        // 섹션 헤더 버튼 active 상태 확인 (서브 메뉴가 active가 아닐 때만)
         const hasActiveSubMenu = section.subMenus.some((menu) => {
           if (menu.path === '/project-management') {
             return currentPath === '/project-create' || currentPath.startsWith('/project/');
@@ -252,7 +250,7 @@ export default function SideBar() {
           <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
             로그아웃
           </span>
-          <img src="/src/assets/logout.png" alt="arrow" width={16} height={16} />
+          <img src="/images/logout.png" alt="arrow" width={16} height={16} />
         </button>
       </div>
     </aside>

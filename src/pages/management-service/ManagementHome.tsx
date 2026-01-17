@@ -4,10 +4,6 @@ import SideBar from '@/components/common/SideBar';
 import DashboardChart from '@/components/dashboard/DashboardChart';
 import DashboardTab from '@/components/dashboard/DashboardTab';
 import LeadTimeChart from '@/components/dashboard/LeadTimeChart';
-import circleMark from '@/assets/circlemark.png';
-import circleMarkDark from '@/assets/circlemark_dark.png';
-import ellipse from '@/assets/ellipse.png';
-import nextIcon from '@/assets/next_1.png';
 import { getDashboard, getShipmentLeadTimeChart } from '@/apis/dashboard';
 import { getProjects } from '@/apis/admin';
 import { getInventoryList } from '@/apis/inventory';
@@ -137,7 +133,6 @@ export default function ManagementHome() {
     fetchDashboard();
   }, []);
 
-  // 출하 리드타임 차트 데이터 가져오기
   useEffect(() => {
     const fetchLeadTimeChart = async () => {
       try {
@@ -149,14 +144,12 @@ export default function ManagementHome() {
         if (chartResponse.isSuccess && chartResponse.result?.history) {
           const year = chartResponse.result.year || 2025;
 
-          // "1월", "2월" 형식을 "2025-01", "2025-02" 형식으로 변환
           const convertMonthFormat = (monthStr: string, year: number): string => {
-            // "1월", "2월" 등에서 숫자 추출
             const monthNum = parseInt(monthStr.replace('월', '').trim());
             if (!isNaN(monthNum)) {
               return `${year}-${String(monthNum).padStart(2, '0')}`;
             }
-            return monthStr; // 변환 실패 시 원본 반환
+            return monthStr;
           };
 
           let chartData: LeadTimeChartData[] = chartResponse.result.history
@@ -169,17 +162,15 @@ export default function ManagementHome() {
               type: 'actual' as const,
             }));
 
-          // 마지막 항목(12월)을 predict 타입으로 한 번 더 추가
           if (chartData.length > 0) {
             const lastItem = chartData[chartData.length - 1];
             chartData.push({
-              month: lastItem.month, // "2025-12"
+              month: lastItem.month,
               value: lastItem.value,
               type: 'predict' as const,
             });
           }
 
-          // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
           if (
             dashboardResponse.isSuccess &&
             dashboardResponse.result?.predShipmentLeadTime != null &&
@@ -187,14 +178,13 @@ export default function ManagementHome() {
             dashboardResponse.timestamp
           ) {
             const timestamp = dashboardResponse.timestamp;
-            // timestamp에서 년도와 월 추출 (예: "2026-01-16T06:42:20.113894867Z" -> "2026-01")
             const date = new Date(timestamp);
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const monthLabel = `${year}-${month}`;
 
             chartData.push({
-              month: monthLabel, // "2026-01"
+              month: monthLabel,
               value: Number(dashboardResponse.result.predShipmentLeadTime),
               type: 'predict' as const,
             });
@@ -202,11 +192,7 @@ export default function ManagementHome() {
 
           if (chartData.length > 0) {
             setLeadTimeChartData(chartData);
-          } else {
-            console.warn('출하 리드타임 차트 데이터가 없습니다.');
           }
-        } else {
-          console.warn('출하 리드타임 차트 API 응답이 올바르지 않습니다:', chartResponse);
         }
       } catch (error) {
         console.error('출하 리드타임 차트 데이터 가져오기 실패:', error);
@@ -221,7 +207,6 @@ export default function ManagementHome() {
       const response = await getProjects(keyword);
       const apiProjects = response.result || response.data || [];
 
-      // localStorage에서 저장된 프로젝트 가져오기
       const savedProjectsString = localStorage.getItem('projects');
       let savedProjects: any[] = [];
 
@@ -234,7 +219,6 @@ export default function ManagementHome() {
         }
       }
 
-      // API 프로젝트를 Project 인터페이스에 맞게 변환
       const formattedApiProjects: Project[] = apiProjects.map((p: any) => {
         let managerDisplay = '미정';
         if (p.projectMembers) {
@@ -270,7 +254,6 @@ export default function ManagementHome() {
         };
       });
 
-      // localStorage에 저장된 프로젝트도 변환
       const formattedSavedProjects: Project[] = savedProjects.map((p: any) => {
         let managerDisplay = '미정';
 
@@ -308,7 +291,6 @@ export default function ManagementHome() {
         };
       });
 
-      // API 프로젝트와 localStorage 프로젝트 합치기
       const allProjectsList = [...formattedApiProjects, ...formattedSavedProjects.reverse()];
       setAllProjects(allProjectsList);
     } catch (error) {
@@ -317,7 +299,6 @@ export default function ManagementHome() {
     }
   };
 
-  // 프로젝트 필터링 함수
   const getFilteredProjects = (status: ProjectFilterStatus): Project[] => {
     const statusMap: Record<ProjectFilterStatus, 'IN_PROGRESS' | 'PENDING' | 'COMPLETED'> = {
       진행중: 'IN_PROGRESS',
@@ -328,7 +309,6 @@ export default function ManagementHome() {
     return allProjects.filter((project) => project.status === statusMap[status]);
   };
 
-  // 초기 로드 및 activeTab 변경 시 프로젝트 조회 및 필터링
   useEffect(() => {
     fetchProjects('');
   }, []);
@@ -338,7 +318,6 @@ export default function ManagementHome() {
     setProjectList(filtered);
   }, [activeTab, allProjects]);
 
-  // 재고 대시보드 필터링 함수
   const getFilteredInventoryTasks = (status: FilterStatus): InventoryTask[] => {
     const statusMap: Record<FilterStatus, InventoryStatus> = {
       '업무 할당': 'ASSIGNED',
@@ -350,7 +329,6 @@ export default function ManagementHome() {
     return allInventoryTasks.filter((task) => task.status === statusMap[status]);
   };
 
-  // 재고 대시보드 데이터 가져오기
   useEffect(() => {
     const fetchInventoryTasks = async () => {
       try {
@@ -358,9 +336,9 @@ export default function ManagementHome() {
         if (response.isSuccess && response.result) {
           const mappedTasks: InventoryTask[] = response.result.map((item: any) => ({
             id: item.inventoryId,
-            projectNumber: formatNullValue(item.projectNumber),
-            taskName: formatNullValue(item.inventoryTitle),
-            requestDate: formatDate(item.requestedAt),
+            projectNumber: item.projectNumber ?? '-',
+            taskName: item.inventoryTitle ?? '-',
+            requestDate: item.requestedAt ? item.requestedAt.split('T')[0] : '-',
             status: item.inventoryStatus as InventoryStatus,
           }));
 
@@ -375,13 +353,11 @@ export default function ManagementHome() {
     fetchInventoryTasks();
   }, []);
 
-  // 재고 대시보드 필터링
   useEffect(() => {
     const filtered = getFilteredInventoryTasks(safetyInventoryTab);
     setInventoryTasks(filtered);
   }, [safetyInventoryTab, allInventoryTasks]);
 
-  // 물류 대시보드 필터링 함수
   const getFilteredLogisticsTasks = (status: FilterStatus): LogisticsTask[] => {
     const statusMap: Record<FilterStatus, LogisticsStatus> = {
       '업무 할당': 'ASSIGNED',
@@ -393,7 +369,6 @@ export default function ManagementHome() {
     return allLogisticsTasks.filter((task) => task.status === statusMap[status]);
   };
 
-  // 물류 대시보드 데이터 가져오기
   useEffect(() => {
     const fetchLogisticsTasks = async () => {
       try {
@@ -401,9 +376,9 @@ export default function ManagementHome() {
         if (response.isSuccess && response.result) {
           const mappedTasks: LogisticsTask[] = response.result.map((item: any) => ({
             id: item.logisticsId,
-            projectNumber: formatNullValue(item.projectNumber),
-            taskName: formatNullValue(item.logisticsTitle),
-            requestDate: formatDate(item.requestedAt),
+            projectNumber: item.projectNumber ?? '-',
+            taskName: item.logisticsTitle ?? '-',
+            requestDate: item.requestedAt ? item.requestedAt.split('T')[0] : '-',
             status: item.logisticsStatus as LogisticsStatus,
           }));
 
@@ -418,39 +393,23 @@ export default function ManagementHome() {
     fetchLogisticsTasks();
   }, []);
 
-  // 물류 대시보드 필터링
   useEffect(() => {
     const filtered = getFilteredLogisticsTasks(logisticsTab);
     setLogisticsTasks(filtered);
   }, [logisticsTab, allLogisticsTasks]);
 
-  // null 값을 "-"로 변환하는 헬퍼 함수
-  const formatNullValue = (value: string | null | undefined): string => {
-    return value ?? '-';
-  };
-
-  // 날짜를 ISO 형식에서 'YYYY-MM-DD' 형식으로 변환
-  const formatDate = (dateString: string | null | undefined): string => {
-    if (!dateString || dateString === '-') return '-';
-    const datePart = dateString.split('T')[0];
-    if (!datePart) return '-';
-    return datePart;
-  };
-
-  // 승인 대기 입고 업무 가져오기
   useEffect(() => {
     const fetchPendingInboundTasks = async () => {
       try {
         const response = await getInventoryList('');
         if (response.isSuccess && response.result) {
-          // API 응답을 InboundTask 형식으로 변환하고 PENDING 상태만 필터링
           const mappedTasks: InboundTask[] = response.result
             .filter((item: any) => item.inventoryStatus === 'PENDING')
             .map((item: any) => ({
               id: item.inventoryId,
-              projectNumber: formatNullValue(item.projectNumber),
-              taskName: formatNullValue(item.inventoryTitle),
-              requestDate: formatDate(item.requestedAt),
+              projectNumber: item.projectNumber ?? '-',
+              taskName: item.inventoryTitle ?? '-',
+              requestDate: item.requestedAt ? item.requestedAt.split('T')[0] : '-',
             }));
 
           setPendingInboundTasks(mappedTasks);
@@ -464,20 +423,18 @@ export default function ManagementHome() {
     fetchPendingInboundTasks();
   }, []);
 
-  // 승인 대기 출하 업무 가져오기
   useEffect(() => {
     const fetchPendingOutboundTasks = async () => {
       try {
         const response = await getLogisticsList('');
         if (response.isSuccess && response.result) {
-          // API 응답을 OutboundTask 형식으로 변환하고 PENDING 상태만 필터링
           const mappedTasks: OutboundTask[] = response.result
             .filter((item: any) => item.logisticsStatus === 'PENDING')
             .map((item: any) => ({
               id: item.logisticsId,
-              projectNumber: formatNullValue(item.projectNumber),
-              taskName: formatNullValue(item.logisticsTitle),
-              requestDate: formatDate(item.requestedAt),
+              projectNumber: item.projectNumber ?? '-',
+              taskName: item.logisticsTitle ?? '-',
+              requestDate: item.requestedAt ? item.requestedAt.split('T')[0] : '-',
             }));
 
           setPendingOutboundTasks(mappedTasks);
@@ -577,7 +534,7 @@ export default function ManagementHome() {
                 </div>
                 <div className="absolute left-[315.5px] top-[75.25px] flex items-center">
                   <img
-                    src={circleMark}
+                    src="/images/circlemark.png"
                     alt="mark"
                     className="mr-[8px] h-[14px] w-[14px] object-contain"
                   />
@@ -589,7 +546,7 @@ export default function ManagementHome() {
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-mainColor-blue600"
-                      style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
+                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-mainColor-blue600">
                       재고 {dashboardData?.inventoryTaskCount ?? 0}
@@ -598,7 +555,7 @@ export default function ManagementHome() {
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-subColor-orange900"
-                      style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
+                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-subColor-orange900">
                       출하 {dashboardData?.logisticsTaskCount ?? 0}
@@ -607,7 +564,7 @@ export default function ManagementHome() {
                 </div>
                 <div className="absolute left-[315.5px] top-[177.75px] flex items-center">
                   <img
-                    src={circleMarkDark}
+                    src="/images/circlemark_dark.png"
                     alt="dark mark"
                     className="mr-[8px] h-[12px] w-[12px] object-contain"
                   />
@@ -619,7 +576,7 @@ export default function ManagementHome() {
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-mainColor-blue600"
-                      style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
+                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
                       재고 {dashboardData?.inventoryDelayedCount ?? 0}
@@ -628,7 +585,7 @@ export default function ManagementHome() {
                   <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-subColor-orange900"
-                      style={{ maskImage: `url(${ellipse})`, maskSize: 'contain' }}
+                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
                     <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
                       출하 {dashboardData?.logisticsDelayedCount ?? 0}
@@ -665,7 +622,7 @@ export default function ManagementHome() {
                         {task.taskName}
                       </span>
                       <img
-                        src={nextIcon}
+                        src="/images/next_1.png"
                         alt="next"
                         className="ml-[32px] h-[16px] w-[16px] object-contain"
                       />
@@ -691,7 +648,7 @@ export default function ManagementHome() {
                         {task.taskName}
                       </span>
                       <img
-                        src={nextIcon}
+                        src="/images/next_1.png"
                         alt="next"
                         className="ml-[32px] h-[16px] w-[16px] object-contain"
                       />

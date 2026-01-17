@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import checkboxImg from '@/assets/checkbox.png';
-import checkboxCheckImg from '@/assets/checkbox_check.png';
 import axios from 'axios';
 
 export interface InventoryItem {
@@ -73,7 +71,7 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
   };
 
   return (
-    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-[100] flex items-center justify-center bg-black/50">
+    <div className="fixed bottom-0 left-[220px] right-0 top-0 z-[100] flex items-center justify-center bg-black/50">
       <div className="relative flex h-[609px] w-[981px] flex-col rounded-[30px] bg-white p-[64px] shadow-xl">
         <div className="flex items-start justify-between">
           <h2 className="font-pretendard text-[24px] font-bold leading-normal text-black">
@@ -148,8 +146,9 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
                           className="flex w-full items-center justify-center"
                         >
                           <img
-                            src={isSelected ? checkboxCheckImg : checkboxImg}
+                            src={isSelected ? '/images/checkbox_check.png' : '/images/checkbox.png'}
                             className="h-[19.5px] w-[19.5px]"
+                            alt="checkbox"
                           />
                         </button>
                       </td>

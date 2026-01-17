@@ -4,7 +4,6 @@ import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { postMemberSignup } from '@/apis/member';
-import defaultLogoImg from '@/assets/logoimg.png';
 
 // 부서 옵션 (표시명: 서버값)
 const DEPARTMENT_OPTIONS = [
@@ -138,7 +137,7 @@ export default function EmployeeRegisterFourthPage() {
       <div className="mt-[82px] flex flex-col items-center">
         <button type="button" onClick={openFileDialog} className="focus:outline-none">
           <img
-            src={image || defaultLogoImg}
+            src={image || '/images/logoimg.png'}
             alt="회사 로고 업로드"
             className="h-[188px] w-[188px] cursor-pointer rounded-[10px] object-cover"
           />

@@ -7,7 +7,7 @@ interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const SearchBar: React.FC<SearchBarProps> = ({
   placeholder = '검색어를 입력하세요.',
-  iconSrc = '/src/assets/search.png',
+  iconSrc = '/images/search.png',
   className = '',
   ...rest
 }) => {
