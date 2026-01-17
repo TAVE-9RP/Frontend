@@ -441,7 +441,7 @@ export default function LogisticsOutboundTaskDetailPage() {
             <div className="mt-[80px]">
               <div className="mb-[36px] flex items-center justify-between">
                 <h2 className="font-pretendard text-[19px] font-bold text-black">출하 물품 목록</h2>
-                {!isInProgress && !isCompleted && (
+                {!isReadOnlyStatus && (
                   <button
                     onClick={() => setIsInventoryModalOpen(true)}
                     className="flex h-[37px] w-[88px] items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 hover:bg-greyColor-grey200"

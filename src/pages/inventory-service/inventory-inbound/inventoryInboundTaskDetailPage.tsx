@@ -478,31 +478,24 @@ export default function InventoryInboundTaskDetailPage() {
             <div className="mt-[80px]">
               <div className="mb-[36px] flex items-center justify-between">
                 <h2 className="font-pretendard text-[19px] font-bold text-black">입고 물품 목록</h2>
-                <div className="flex gap-[8px]">
-                  <button
-                    disabled={isPending}
-                    onClick={() => setIsInventoryModalOpen(true)}
-                    className={`flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 font-pretendard text-[15px] font-bold transition-all ${isPending ? 'cursor-not-allowed bg-greyColor-grey100 text-greyColor-grey600' : 'cursor-pointer bg-greyColor-grey100 text-greyColor-grey600 hover:bg-greyColor-grey200'}`}
-                  >
-                    기존 재고 추가
-                  </button>
-                  <ExistingInventoryModal
-                    isOpen={isInventoryModalOpen}
-                    onClose={() => {
-                      setIsInventoryModalOpen(false);
-                      setRefreshItems((prev) => prev + 1);
-                    }}
-                    onAdd={() => {}}
-                    inventoryId={projectNumber}
-                  />
-                  <button
-                    disabled={isPending}
-                    onClick={() => setIsNewModalOpen(true)}
-                    className={`flex h-[37px] w-[117px] items-center justify-center rounded-[5px] border border-greyColor-grey200 font-pretendard text-[15px] font-bold transition-all ${isPending ? 'cursor-not-allowed bg-greyColor-grey100 text-greyColor-grey600' : 'cursor-pointer bg-greyColor-grey100 text-greyColor-grey600 hover:bg-greyColor-grey200'}`}
-                  >
-                    신규 재고 추가
-                  </button>
-                </div>
+                {!isDisabled && (
+                  <div className="flex gap-[8px]">
+                    <button
+                      type="button"
+                      onClick={() => setIsInventoryModalOpen(true)}
+                      className="flex h-[37px] w-[117px] cursor-pointer items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 hover:bg-greyColor-grey200"
+                    >
+                      기존 재고 추가
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsNewModalOpen(true)}
+                      className="flex h-[37px] w-[117px] cursor-pointer items-center justify-center rounded-[5px] border border-greyColor-grey200 bg-greyColor-grey100 font-pretendard text-[15px] font-bold text-greyColor-grey600 hover:bg-greyColor-grey200"
+                    >
+                      신규 재고 추가
+                    </button>
+                  </div>
+                )}
               </div>
               {items.length === 0 ? (
                 <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
@@ -544,7 +537,15 @@ export default function InventoryInboundTaskDetailPage() {
               )}
             </div>
           </div>
-
+          <ExistingInventoryModal
+            isOpen={isInventoryModalOpen}
+            onClose={() => {
+              setIsInventoryModalOpen(false);
+              setRefreshItems((prev) => prev + 1);
+            }}
+            onAdd={() => {}}
+            inventoryId={projectNumber || ''}
+          />
           <NewInventoryModal
             isOpen={isNewModalOpen}
             onClose={() => {

@@ -173,7 +173,7 @@ export default function InventoryInboundTaskListPage() {
           </div>
         </div>
 
-        <div className="mt-[27px] pl-[70px] pr-10">
+        <div className="mt-[27px] pb-20 pl-[70px] pr-10">
           <TaskListTable
             data={taskList}
             isLoading={isLoading}
