@@ -35,4 +35,17 @@ export const getCompanies = async (keyword: string = ''): Promise<CompanySearchR
   return response.data;
 };
 
+export const uploadCompanyLogo = async (companyId: number, imageFile: File) => {
+  const formData = new FormData();
+  formData.append('file', imageFile);
+
+  const response = await memberApi.post(`/companies/${companyId}/logo`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response.data;
+};
+
 export default memberApi;
