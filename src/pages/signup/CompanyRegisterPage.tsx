@@ -72,7 +72,10 @@ export default function CompanyRegisterPage() {
           await uploadCompanyLogo(companyId, formData.companyLogo);
         } catch (logoError) {
           console.error('Logo upload failed:', logoError);
-          setAlertModal({ isOpen: true, message: '회사 등록은 완료되었으나 로고 업로드에 실패했습니다.' });
+          setAlertModal({
+            isOpen: true,
+            message: '회사 등록은 완료되었으나 로고 업로드에 실패했습니다.',
+          });
         }
       }
 
