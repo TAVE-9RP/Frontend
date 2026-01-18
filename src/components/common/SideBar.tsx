@@ -24,7 +24,7 @@ export default function SideBar() {
   const [departmentFromToken, setDepartmentFromToken] = useState<string | null>(null);
   const [memberName, setMemberName] = useState<string>('');
   const [memberPosition, setMemberPosition] = useState<string>('');
-  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '', redirectPath: '' });
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -145,7 +145,7 @@ export default function SideBar() {
   };
 
   return (
-    <aside className="sticky top-0 flex h-screen w-[220px] flex-col overflow-x-hidden border-r border-greyColor-grey200 bg-white">
+    <aside className="sticky top-0 z-50 flex h-screen w-[220px] flex-col overflow-x-hidden border-r border-greyColor-grey200 bg-white">
       <button
         onClick={() => {
           if (isManagementUser) {
@@ -237,16 +237,21 @@ export default function SideBar() {
               const response = await postLogout();
               if (response.isSuccess) {
                 localStorage.removeItem('accessToken');
-                setAlertModal({ isOpen: true, message: '로그아웃 되었습니다' });
-                setTimeout(() => {
-                  navigate('/');
-                }, 1000);
+                setAlertModal({ isOpen: true, message: '로그아웃 되었습니다', redirectPath: '/' });
               } else {
-                setAlertModal({ isOpen: true, message: '로그아웃에 실패했습니다.' });
+                setAlertModal({
+                  isOpen: true,
+                  message: '로그아웃에 실패했습니다.',
+                  redirectPath: '',
+                });
               }
             } catch (error) {
               console.error('로그아웃 실패:', error);
-              setAlertModal({ isOpen: true, message: '로그아웃에 실패했습니다.' });
+              setAlertModal({
+                isOpen: true,
+                message: '로그아웃에 실패했습니다.',
+                redirectPath: '',
+              });
             }
           }}
           className="flex items-center gap-[10px] text-left"
@@ -260,7 +265,13 @@ export default function SideBar() {
 
       <AlertModal
         isOpen={alertModal.isOpen}
-        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        onClose={() => {
+          const path = alertModal.redirectPath;
+          setAlertModal({ isOpen: false, message: '', redirectPath: '' });
+          if (path) {
+            navigate(path);
+          }
+        }}
         message={alertModal.message}
       />
     </aside>

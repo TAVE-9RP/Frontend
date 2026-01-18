@@ -16,7 +16,7 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
 
   return (
     <div
-      className={`fixed bottom-0 right-0 top-0 z-50 flex items-center justify-center bg-black/50 ${
+      className={`fixed bottom-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50 ${
         isCenterMode ? 'left-0' : 'left-[220px]'
       }`}
       onClick={onClose}
