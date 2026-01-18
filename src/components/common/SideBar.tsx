@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { decodeAccessToken } from '@/utils/jwt';
 import { getMemberMe, postLogout } from '@/apis/member';
+import AlertModal from '@/components/modals/AlertModal';
 
 const mapPositionToKorean = (position?: string): string => {
   const positionMap: Record<string, string> = {
@@ -23,6 +24,7 @@ export default function SideBar() {
   const [departmentFromToken, setDepartmentFromToken] = useState<string | null>(null);
   const [memberName, setMemberName] = useState<string>('');
   const [memberPosition, setMemberPosition] = useState<string>('');
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -235,14 +237,16 @@ export default function SideBar() {
               const response = await postLogout();
               if (response.isSuccess) {
                 localStorage.removeItem('accessToken');
-                alert('로그아웃 되었습니다');
-                navigate('/');
+                setAlertModal({ isOpen: true, message: '로그아웃 되었습니다' });
+                setTimeout(() => {
+                  navigate('/');
+                }, 1000);
               } else {
-                alert('로그아웃에 실패했습니다.');
+                setAlertModal({ isOpen: true, message: '로그아웃에 실패했습니다.' });
               }
             } catch (error) {
               console.error('로그아웃 실패:', error);
-              alert('로그아웃에 실패했습니다.');
+              setAlertModal({ isOpen: true, message: '로그아웃에 실패했습니다.' });
             }
           }}
           className="flex items-center gap-[10px] text-left"
@@ -253,6 +257,12 @@ export default function SideBar() {
           <img src="/images/logout.png" alt="arrow" width={16} height={16} />
         </button>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </aside>
   );
 }

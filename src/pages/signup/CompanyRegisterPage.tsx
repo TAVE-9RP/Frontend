@@ -5,6 +5,7 @@ import Button from '@/components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { postCompany, uploadCompanyLogo } from '@/apis/company';
 import type { CompanyRegisterRequest } from '@/types/company';
+import AlertModal from '@/components/modals/AlertModal';
 
 export default function CompanyRegisterPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function CompanyRegisterPage() {
 
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -70,7 +72,7 @@ export default function CompanyRegisterPage() {
           await uploadCompanyLogo(companyId, formData.companyLogo);
         } catch (logoError) {
           console.error('Logo upload failed:', logoError);
-          alert('회사 등록은 완료되었으나 로고 업로드에 실패했습니다.');
+          setAlertModal({ isOpen: true, message: '회사 등록은 완료되었으나 로고 업로드에 실패했습니다.' });
         }
       }
 
@@ -78,7 +80,7 @@ export default function CompanyRegisterPage() {
     } catch (error: any) {
       console.error('Registration error:', error);
       const errorMessage = error?.response?.data?.message || '등록 중 오류가 발생했습니다.';
-      alert(errorMessage);
+      setAlertModal({ isOpen: true, message: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -178,6 +180,12 @@ export default function CompanyRegisterPage() {
           </Button>
         </div>
       </form>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

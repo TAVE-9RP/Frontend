@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { OutboundItem, LogisticsStatus, ItemProcessingStatus } from '@/types/logistics';
+import AlertModal from '@/components/modals/AlertModal';
 
 interface ExtendedOutboundItem extends OutboundItem {
   tempProcessedQuantity?: number;
@@ -22,6 +23,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   onProcessedQuantityChange,
   status = 'ASSIGNED',
 }) => {
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
   const currentStatus = status.toUpperCase();
   const isEditable = currentStatus === 'ASSIGNED' || currentStatus === 'REJECT';
   const isTaskAssignment = currentStatus === 'ASSIGNED';
@@ -127,9 +129,10 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                     const remainingQty = targetQty - currentProcessed;
 
                     if (inputQty > remainingQty) {
-                      alert(
-                        `처리 가능한 수량을 초과했습니다.\n` + `남은 수량: ${remainingQty}개\n`,
-                      );
+                      setAlertModal({
+                        isOpen: true,
+                        message: `처리 가능한 수량을 초과했습니다.\n남은 수량: ${remainingQty}개`,
+                      });
                       onProcessedQuantityChange?.(item.logisticsItemId, 0);
                       return;
                     }
@@ -220,6 +223,12 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
           </div>
         );
       })}
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 };

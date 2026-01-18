@@ -4,6 +4,7 @@ import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { postMemberSignup } from '@/apis/member';
+import AlertModal from '@/components/modals/AlertModal';
 
 export default function CompanyRegisterSecondPage() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function CompanyRegisterSecondPage() {
 
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -86,7 +88,7 @@ export default function CompanyRegisterSecondPage() {
     }
 
     if (!companyId) {
-      alert('회사 정보가 없습니다. 이전 단계로 돌아가주세요.');
+      setAlertModal({ isOpen: true, message: '회사 정보가 없습니다. 이전 단계로 돌아가주세요.' });
       return;
     }
 
@@ -111,15 +113,17 @@ export default function CompanyRegisterSecondPage() {
       console.log('응답:', response);
 
       if (response.isSuccess) {
-        alert('회원가입이 완료되었습니다.');
-        navigate('/login');
+        setAlertModal({ isOpen: true, message: '회원가입이 완료되었습니다.' });
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
       } else {
-        alert(response.message || '회원가입에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: response.message || '회원가입에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('회원가입 실패:', error);
       const errorMessage = error?.response?.data?.message || '회원가입에 실패했습니다.';
-      alert(errorMessage);
+      setAlertModal({ isOpen: true, message: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -202,6 +206,12 @@ export default function CompanyRegisterSecondPage() {
           </Button>
         </div>
       </form>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import Dropdown from '../common/Dropdown';
 import { getMemberPermissions, updateMemberPermissions } from '../../apis/admin';
 import ConfirmModal from '../modals/ConfirmModal';
 import SuccessModal from '../modals/SuccessModal';
+import AlertModal from '../modals/AlertModal';
 
 interface EmployeeListTableProps {
   searchTerm: string;
@@ -67,6 +68,7 @@ export default function EmployeeListTable({
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const loadData = async () => {
     try {
@@ -113,7 +115,7 @@ export default function EmployeeListTable({
       await loadData();
       setIsSuccessModalOpen(true);
     } catch (err: any) {
-      alert(`저장 실패: ${err.response?.data?.message}`);
+      setAlertModal({ isOpen: true, message: `저장 실패: ${err.response?.data?.message}` });
     } finally {
       setIsSaving(false);
     }
@@ -188,6 +190,11 @@ export default function EmployeeListTable({
         isOpen={isSuccessModalOpen}
         onClose={() => setIsSuccessModalOpen(false)}
         description="직원 권한 설정이 저장되었어요"
+      />
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
       />
     </div>
   );
