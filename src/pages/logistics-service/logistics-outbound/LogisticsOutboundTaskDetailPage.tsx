@@ -209,6 +209,7 @@ export default function LogisticsOutboundTaskDetailPage() {
       if (errorStatus === 403 || errorMessage.includes('권한') || errorMessage.includes('접근')) {
         setAlertModal({ isOpen: true, message: '접근 권한이 없습니다.' });
       } else if (errorStatus === 409) {
+        setIsOutboundConfirmModalOpen(false);
         setAlertModal({
           isOpen: true,
           message: '재고 수량이 부족합니다.',
