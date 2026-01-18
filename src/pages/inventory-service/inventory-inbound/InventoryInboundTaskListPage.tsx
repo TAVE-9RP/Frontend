@@ -149,8 +149,10 @@ export default function InventoryInboundTaskListPage() {
           <div className="mt-8">
             <TaskToggleButton viewMode={viewMode} onChange={setViewMode} />
           </div>
+        </div>
 
-          <div className="mt-[43px] flex items-center">
+        <div className="mt-[43px] w-max pb-20 pl-[70px]">
+          <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[8px]">
               {statusData.map((item) => (
                 <ProjectStatusButton
@@ -163,17 +165,16 @@ export default function InventoryInboundTaskListPage() {
               ))}
             </div>
 
-            <div className="ml-[54px] w-[450px]">
+            <div className="w-[450px]">
               <SearchBar
                 placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요."
                 value={searchTerm}
                 onChange={handleSearchChange}
+                className="w-full"
               />
             </div>
           </div>
-        </div>
 
-        <div className="mt-[27px] pb-20 pl-[70px] pr-10">
           <TaskListTable
             data={taskList}
             isLoading={isLoading}

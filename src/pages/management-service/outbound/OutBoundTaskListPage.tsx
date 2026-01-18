@@ -237,7 +237,7 @@ export default function OutboundTaskListPage() {
             </div>
             <div className="ml-[48px] w-[500px]">
               <SearchBar
-                placeholder="프로젝트 넘버 또는 출하 업dd무명을 입력하세요."
+                placeholder="프로젝트 넘버 또는 출하 업무명을 입력하세요."
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
