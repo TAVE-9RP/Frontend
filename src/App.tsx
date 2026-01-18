@@ -42,22 +42,8 @@ function App() {
         <Route path="employeesignup" element={<EmployeeRegisterPage />} />
         <Route path="employeesignup/step2" element={<EmployeeRegisterSecondPage />} />
         <Route path="employeesignup/step4" element={<EmployeeRegisterFourthPage />} />
-        <Route
-          path="signupsuccess"
-          element={
-            <ProtectedRoute>
-              <SignupSuccessPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="signupfailure"
-          element={
-            <ProtectedRoute>
-              <SignupFailurePage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="signupsuccess" element={<SignupSuccessPage />} />
+        <Route path="signupfailure" element={<SignupFailurePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route
           path="/project-management"
