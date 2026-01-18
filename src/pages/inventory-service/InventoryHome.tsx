@@ -200,6 +200,7 @@ export default function InventoryHome() {
                   }
                   label="재고 회전율(%)"
                   colorType="blue"
+                  maxPercent={2}
                 />
               </div>
 
@@ -212,6 +213,7 @@ export default function InventoryHome() {
                   }
                   label="익월 재고 회전율(%)"
                   colorType="orange"
+                  maxPercent={2}
                 />
               </div>
             </div>

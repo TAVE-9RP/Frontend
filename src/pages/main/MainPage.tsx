@@ -7,7 +7,7 @@ export default function Main() {
   return (
     <div className="min-h-screen w-full bg-white">
       {/* 헤더 */}
-      <header className="fixed top-0 z-50 flex h-[157px] w-full items-center justify-between bg-white px-[120px]">
+      <header className="fixed top-0 z-50 flex h-[100px] w-full items-center justify-between bg-white px-[120px]">
         <div className="flex items-center gap-[12px]">
           <img
             src="/images/logo.png"

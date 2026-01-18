@@ -726,6 +726,7 @@ export default function ManagementHome() {
                     percent={dashboardData ? Math.floor(dashboardData.turnOverRate * 100) / 100 : 0}
                     label="재고 회전율(%)"
                     colorType="blue"
+                    maxPercent={2}
                   />
                 </div>
               </div>
@@ -737,6 +738,7 @@ export default function ManagementHome() {
                     }
                     label="재고 회전율 익월(%)"
                     colorType="orange"
+                    maxPercent={2}
                   />
                 </div>
               </div>
