@@ -543,21 +543,21 @@ export default function ManagementHome() {
                   </span>
                 </div>
                 <div className="absolute left-[311px] top-[111.25px] flex gap-[8px]">
-                  <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
+                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-mainColor-blue600"
                       style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
-                    <span className="font-pretendard text-[13px] font-normal text-mainColor-blue600">
+                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-mainColor-blue600">
                       재고 {dashboardData?.inventoryTaskCount ?? 0}
                     </span>
                   </div>
-                  <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
+                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-subColor-orange900"
                       style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
-                    <span className="font-pretendard text-[13px] font-normal text-subColor-orange900">
+                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-subColor-orange900">
                       출하 {dashboardData?.logisticsTaskCount ?? 0}
                     </span>
                   </div>
@@ -573,21 +573,21 @@ export default function ManagementHome() {
                   </span>
                 </div>
                 <div className="absolute left-[311px] top-[209.75px] flex gap-[8px]">
-                  <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
+                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-mainColor-blue600"
                       style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
-                    <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
+                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-greyColor-grey200">
                       재고 {dashboardData?.inventoryDelayedCount ?? 0}
                     </span>
                   </div>
-                  <div className="flex h-[20px] w-[57px] items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
+                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
                     <div
                       className="h-[8px] w-[8px] bg-subColor-orange900"
                       style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                     />
-                    <span className="font-pretendard text-[13px] font-normal text-greyColor-grey200">
+                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-greyColor-grey200">
                       출하 {dashboardData?.logisticsDelayedCount ?? 0}
                     </span>
                   </div>

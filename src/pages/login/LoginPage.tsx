@@ -90,21 +90,21 @@ export default function LoginPage() {
         if (tokenPayload) {
           const { department } = tokenPayload;
 
-          // 1. department: MANAGEMENT이면 /project-management
+          // 1. department: MANAGEMENT이면 /management-home
           if (department === 'MANAGEMENT') {
-            navigate('/project-management');
+            navigate('/management-home');
             return;
           }
 
-          // 2. department: LOGISTICS이면 /logistics-outbound-task
+          // 2. department: LOGISTICS이면 /logistics-home
           if (department === 'LOGISTICS') {
-            navigate('/logistics-outbound-task');
+            navigate('/logistics-home');
             return;
           }
 
-          // 3. department: INVENTORY이면 /inventory-inbound-task
+          // 3. department: INVENTORY이면 /inventory-home
           if (department === 'INVENTORY') {
-            navigate('/inventory-inbound-task');
+            navigate('/inventory-home');
             return;
           }
         }
