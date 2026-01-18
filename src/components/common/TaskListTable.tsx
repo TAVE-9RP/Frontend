@@ -108,7 +108,7 @@ export default function TaskListTable({
   return (
     <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200 font-pretendard">
       <div className="overflow-x-auto">
-        <table className="min-w-full table-fixed border-collapse bg-white">
+        <table className="table-fixed border-collapse bg-white">
           <thead>
             <tr>
               <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
