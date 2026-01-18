@@ -207,7 +207,7 @@ export default function LogisticsOutboundTaskDetailPage() {
       const errorMessage = error.response?.data?.message || '';
 
       if (errorStatus === 403 || errorMessage.includes('권한') || errorMessage.includes('접근')) {
-        setAlertModal({ isOpen: true, message: '접근 권한이 없습니다.' });
+        setAlertModal({ isOpen: true, message: '해당 업무에 대한 접근 권한이 없습니다.' });
       } else if (errorStatus === 409) {
         setIsOutboundConfirmModalOpen(false);
         setAlertModal({
@@ -220,7 +220,6 @@ export default function LogisticsOutboundTaskDetailPage() {
           message: '출하 수량 반영에 실패했습니다. 입력값을 다시 확인해주세요.',
         });
       }
-      console.error('출하 에러:', error);
     }
   };
 
