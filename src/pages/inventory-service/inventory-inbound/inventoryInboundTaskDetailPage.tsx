@@ -11,6 +11,7 @@ import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import InboundItemTable, { InboundItem } from './inventoryInboundItemTable';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
+import AlertModal from '@/components/modals/AlertModal';
 import {
   getInventoryDetail,
   getInventoryItems,
@@ -112,6 +113,7 @@ export default function InventoryInboundTaskDetailPage() {
   const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [isFinalInbound, setIsFinalInbound] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   // 입고 업무 상세 정보 가져오기 (초기 로드 시에만)
   useEffect(() => {
@@ -203,7 +205,7 @@ export default function InventoryInboundTaskDetailPage() {
       });
 
       if (!updateResponse.isSuccess) {
-        alert('입고 정보 업데이트에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '입고 정보 업데이트에 실패했습니다.' });
         return;
       }
 
@@ -226,7 +228,7 @@ export default function InventoryInboundTaskDetailPage() {
           targetQuantityUpdates,
         );
         if (!targetQtyResponse.isSuccess) {
-          alert('목표 입고 수량 업데이트에 실패했습니다.');
+          setAlertModal({ isOpen: true, message: '목표 입고 수량 업데이트에 실패했습니다.' });
           return;
         }
       }
@@ -257,17 +259,17 @@ export default function InventoryInboundTaskDetailPage() {
         }
         setRefreshItems((prev) => prev + 1);
       } else {
-        alert('승인 요청에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '승인 요청에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('처리 실패:', error);
-      alert('처리 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: '처리 중 오류가 발생했습니다.' });
     }
   };
 
   const handleInboundProcess = () => {
     if (selectedItemIds.length === 0) {
-      alert('입고 처리할 물품을 선택해주세요.');
+      setAlertModal({ isOpen: true, message: '입고 처리할 물품을 선택해주세요.' });
       return;
     }
 
@@ -299,7 +301,7 @@ export default function InventoryInboundTaskDetailPage() {
         }));
 
       if (processItems.length === 0) {
-        alert('입고 수량이 입력된 항목이 없습니다.');
+        setAlertModal({ isOpen: true, message: '입고 수량이 입력된 항목이 없습니다.' });
         return;
       }
 
@@ -310,11 +312,11 @@ export default function InventoryInboundTaskDetailPage() {
         setRefreshItems((prev) => prev + 1);
         setIsCompleteSuccessModalOpen(true);
       } else {
-        alert('입고 처리에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '입고 처리에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('입고 처리 실패:', error);
-      alert('입고 처리 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: '입고 처리 중 오류가 발생했습니다.' });
     }
   };
 
@@ -341,11 +343,11 @@ export default function InventoryInboundTaskDetailPage() {
           });
         }
       } else {
-        alert('입고 완료 처리에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '입고 완료 처리에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('입고 완료 처리 실패:', error);
-      alert('입고 완료 처리 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: '입고 완료 처리 중 오류가 발생했습니다.' });
     }
   };
 
@@ -388,7 +390,10 @@ export default function InventoryInboundTaskDetailPage() {
       const remainingQty = targetLimit - currentProcessed;
 
       if (numValue > remainingQty) {
-        alert(`처리 가능한 수량을 초과했습니다.\n남은 수량: ${remainingQty}개`);
+        setAlertModal({
+          isOpen: true,
+          message: `처리 가능한 수량을 초과했습니다.\n남은 수량: ${remainingQty}개`,
+        });
 
         setItems((prevItems) =>
           prevItems.map((item) => (item.id === id ? { ...item, inboundQty: '' } : item)),
@@ -625,6 +630,12 @@ export default function InventoryInboundTaskDetailPage() {
             onClose={() => setIsCompleteSuccessModalOpen(false)}
             title="처리 완료"
             description={isFinalInbound ? '입고 완료 처리되었어요' : '입고 처리되었어요'}
+          />
+
+          <AlertModal
+            isOpen={alertModal.isOpen}
+            onClose={() => setAlertModal({ isOpen: false, message: '' })}
+            message={alertModal.message}
           />
         </div>
       </main>

@@ -11,6 +11,7 @@ import InventorySearchModal, { InventoryItem } from '@/components/modals/Invento
 import ManagerApprovalModal from '@/components/modals/ManagerApproveModal';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import InboundConfirmModal from '@/components/modals/InboundConfirmModal';
+import AlertModal from '@/components/modals/AlertModal';
 
 import {
   getLogisticsDetail,
@@ -64,6 +65,7 @@ export default function LogisticsOutboundTaskDetailPage() {
   const [isFinalCompleteModalOpen, setIsFinalCompleteModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successText, setSuccessText] = useState({ title: '', description: '' });
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const isApprovalPending = taskDetail.logisticsStatus === 'PENDING';
   const isInProgress = taskDetail.logisticsStatus === 'IN_PROGRESS';
@@ -201,11 +203,13 @@ export default function LogisticsOutboundTaskDetailPage() {
       }
     } catch (error: any) {
       if (error.response?.status === 409) {
-        alert(
-          '이미 출하 처리가 완료된 항목이 있거나, 재고 수량이 변경되었습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.',
-        );
+        setAlertModal({
+          isOpen: true,
+          message:
+            '이미 출하 처리가 완료된 항목이 있거나, 재고 수량이 변경되었습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.',
+        });
       } else {
-        alert('출하 수량 반영에 실패했습니다. 입력값을 다시 확인해주세요.');
+        setAlertModal({ isOpen: true, message: '출하 수량 반영에 실패했습니다. 입력값을 다시 확인해주세요.' });
       }
       console.error('출하 에러:', error);
     }
@@ -222,7 +226,7 @@ export default function LogisticsOutboundTaskDetailPage() {
         fetchData();
       }
     } catch (error) {
-      alert('완료 처리 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: '완료 처리 중 오류가 발생했습니다.' });
     }
   };
 
@@ -230,13 +234,13 @@ export default function LogisticsOutboundTaskDetailPage() {
     if (!logisticsId) return;
 
     if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
-      alert('출하 업무명과 업무 설명은 필수입니다.');
+      setAlertModal({ isOpen: true, message: '출하 업무명과 업무 설명은 필수입니다.' });
       setIsApprovalModalOpen(false);
       return;
     }
 
     if (items.length === 0) {
-      alert('출하 물품 목록을 추가해야 승인 요청이 가능합니다.');
+      setAlertModal({ isOpen: true, message: '출하 물품 목록을 추가해야 승인 요청이 가능합니다.' });
       setIsApprovalModalOpen(false);
       return;
     }
@@ -274,7 +278,7 @@ export default function LogisticsOutboundTaskDetailPage() {
       }
     } catch (error: any) {
       console.error('승인 요청 프로세스 오류:', error);
-      alert(error.message || '처리 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: error.message || '처리 중 오류가 발생했습니다.' });
     }
   };
 
@@ -282,7 +286,7 @@ export default function LogisticsOutboundTaskDetailPage() {
     if (!logisticsId) return;
 
     if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
-      alert('출하 업무명과 업무 설명은 필수 입력 사항입니다.');
+      setAlertModal({ isOpen: true, message: '출하 업무명과 업무 설명은 필수 입력 사항입니다.' });
       return;
     }
 
@@ -305,12 +309,12 @@ export default function LogisticsOutboundTaskDetailPage() {
         setIsSuccessModalOpen(true);
         fetchData();
       } else {
-        alert(res.message || '정보 저장에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: res.message || '정보 저장에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('수정 중 오류 발생:', error);
       const errorMsg = error.response?.data?.message || '수정 중 오류가 발생했습니다.';
-      alert(errorMsg);
+      setAlertModal({ isOpen: true, message: errorMsg });
     }
   };
 
@@ -318,7 +322,7 @@ export default function LogisticsOutboundTaskDetailPage() {
     if (!logisticsId) return;
 
     if (!taskDetail.logisticsTitle?.trim() || !taskDetail.logisticsDescription?.trim()) {
-      alert('출하 업무명과 업무 설명을 먼저 입력해 주세요.');
+      setAlertModal({ isOpen: true, message: '출하 업무명과 업무 설명을 먼저 입력해 주세요.' });
       return;
     }
 
@@ -342,11 +346,11 @@ export default function LogisticsOutboundTaskDetailPage() {
         setIsInventoryModalOpen(false);
         fetchData();
       } else {
-        alert(res.message || '품목 추가에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: res.message || '품목 추가에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('품목 추가 중 오류:', error);
-      alert('처리 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: '처리 중 오류가 발생했습니다.' });
     }
   };
 
@@ -554,6 +558,12 @@ export default function LogisticsOutboundTaskDetailPage() {
             onClose={() => setIsSuccessModalOpen(false)}
             title={successText.title}
             description={successText.description}
+          />
+
+          <AlertModal
+            isOpen={alertModal.isOpen}
+            onClose={() => setAlertModal({ isOpen: false, message: '' })}
+            message={alertModal.message}
           />
         </div>
       </main>

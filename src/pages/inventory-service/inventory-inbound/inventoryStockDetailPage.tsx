@@ -5,6 +5,7 @@ import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import AlertModal from '@/components/modals/AlertModal';
 import { getItemDetail, getItemHistory, updateItemTargetStock, updateItemSafetyStock } from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
@@ -86,6 +87,7 @@ export default function InventoryStockDetailPage() {
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCompleteSuccessModalOpen, setIsCompleteSuccessModalOpen] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   // 날짜 포맷팅 함수 (ISO 형식에서 YYYY-MM-DD 형식으로)
   const formatDate = (dateString: string | null | undefined): string => {
@@ -176,14 +178,14 @@ export default function InventoryStockDetailPage() {
         const response = await updateItemTargetStock(itemId, targetStock);
         
         if (response.isSuccess) {
-          alert('변경되었습니다.');
+          setAlertModal({ isOpen: true, message: '변경되었습니다.' });
           setIsTargetChanged(false);
         } else {
-          alert('변경에 실패했습니다.');
+          setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
         }
       } catch (error) {
         console.error('목표재고 변경 실패:', error);
-        alert('변경에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
       }
     } else if (type === 'safety') {
       try {
@@ -191,14 +193,14 @@ export default function InventoryStockDetailPage() {
         const response = await updateItemSafetyStock(itemId, safetyStock);
         
         if (response.isSuccess) {
-          alert('변경되었습니다.');
+          setAlertModal({ isOpen: true, message: '변경되었습니다.' });
           setIsSafetyChanged(false);
         } else {
-          alert('변경에 실패했습니다.');
+          setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
         }
       } catch (error) {
         console.error('안전재고 변경 실패:', error);
-        alert('변경에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
       }
     }
   };
@@ -353,6 +355,12 @@ export default function InventoryStockDetailPage() {
         onClose={() => setIsCompleteSuccessModalOpen(false)}
         title="수정 완료"
         description="수정사항이 저장되었어요"
+      />
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
       />
     </div>
   );

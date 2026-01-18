@@ -5,6 +5,7 @@ import Button from '@/components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { postLogin } from '@/apis/member';
 import { decodeAccessToken } from '@/utils/jwt';
+import AlertModal from '@/components/modals/AlertModal';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function LoginPage() {
 
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
@@ -128,7 +130,7 @@ export default function LoginPage() {
       }
       // 아이디와 비밀번호 확인해야 하는 경우
       else {
-        alert('아이디와 비밀번호를 확인해주세요.');
+        setAlertModal({ isOpen: true, message: '아이디와 비밀번호를 확인해주세요.' });
       }
     } finally {
       setIsLoading(false);
@@ -178,6 +180,12 @@ export default function LoginPage() {
           </Button>
         </div>
       </form>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

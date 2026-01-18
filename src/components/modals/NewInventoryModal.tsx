@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BasicInput from '@/components/common/BasicInput';
+import AlertModal from './AlertModal';
 import { createItem } from '@/apis/item';
 
 interface NewInventoryModalProps {
@@ -16,6 +17,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
     price: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const isFormValid = Object.values(formData).every((val) => val.trim() !== '');
 
@@ -67,16 +69,17 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
         setFormData({ id: '', name: '', location: '', price: '' });
         onClose();
       } else {
-        alert('신규 재고 추가에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: '신규 재고 추가에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('신규 재고 추가 실패:', error);
       console.error('에러 응답:', error?.response?.data);
       console.error('에러 상태 코드:', error?.response?.status);
       console.error('에러 메시지:', error?.message);
-      alert(
-        `신규 재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
-      );
+      setAlertModal({
+        isOpen: true,
+        message: `신규 재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -150,6 +153,12 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
           </button>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

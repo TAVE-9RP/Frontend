@@ -9,6 +9,7 @@ import type { DropdownOption } from '../../../components/common/DropdownInput';
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '../../../components/modals/ProjectSuccessModal';
+import AlertModal from '@/components/modals/AlertModal';
 import { getProjectSerialNumber, getAssignMembers, createProject } from '../../../apis/admin';
 
 interface FormGroupProps {
@@ -52,6 +53,7 @@ export default function ProjectCreatePage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   useEffect(() => {
     const fetchProjectSerialNumber = async () => {
@@ -179,12 +181,12 @@ export default function ProjectCreatePage() {
       if (response.isSuccess) {
         setIsSuccessModalOpen(true);
       } else {
-        alert(response.message || '프로젝트 생성에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: response.message || '프로젝트 생성에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('프로젝트 생성 실패:', error);
       const errorMessage = error?.response?.data?.message || '프로젝트 생성에 실패했습니다.';
-      alert(errorMessage);
+      setAlertModal({ isOpen: true, message: errorMessage });
     } finally {
       setIsCreating(false);
     }
@@ -386,6 +388,12 @@ export default function ProjectCreatePage() {
       />
 
       <ProjectSuccessModal isOpen={isSuccessModalOpen} onClose={handleSuccessModalClose} />
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

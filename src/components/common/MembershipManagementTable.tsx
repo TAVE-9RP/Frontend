@@ -3,6 +3,7 @@ import Dropdown from '../common/Dropdown';
 import { getMemberStatuses, updateMemberStatuses } from '../../apis/admin';
 import ConfirmModal from '../modals/ConfirmModal';
 import SuccessModal from '../modals/SuccessModal';
+import AlertModal from '../modals/AlertModal';
 
 interface MembershipManagementTableProps {
   searchTerm: string;
@@ -66,6 +67,7 @@ export default function MembershipManagementTable({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const loadData = async () => {
     try {
@@ -116,7 +118,7 @@ export default function MembershipManagementTable({
     } catch (err: any) {
       console.error('가입 상태 변경 실패:', err);
       const serverMessage = err.response?.data?.message || '다시 시도해주세요.';
-      alert(`변경 실패: ${serverMessage}`);
+      setAlertModal({ isOpen: true, message: `변경 실패: ${serverMessage}` });
     } finally {
       setIsSaving(false);
     }
@@ -191,6 +193,11 @@ export default function MembershipManagementTable({
         isOpen={isSuccessModalOpen}
         onClose={() => setIsSuccessModalOpen(false)}
         description="가입 상태 설정이 저장되었어요"
+      />
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
       />
     </div>
   );

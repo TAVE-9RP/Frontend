@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '@/components/common/SearchBar';
+import AlertModal from './AlertModal';
 import { getItems } from '@/apis/item';
 import { addInventoryItems } from '@/apis/inventory';
 
@@ -30,6 +31,7 @@ export default function ExistingInventoryModal({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   useEffect(() => {
     if (isOpen) {
@@ -233,14 +235,14 @@ export default function ExistingInventoryModal({
           <button
             onClick={async () => {
               if (!inventoryId) {
-                alert('입고 업무 ID가 없습니다.');
+                setAlertModal({ isOpen: true, message: '입고 업무 ID가 없습니다.' });
                 return;
               }
 
               const selectedItems = inventoryData.filter((item) => selectedIds.includes(item.id));
 
               if (selectedItems.length === 0) {
-                alert('추가할 재고를 선택해주세요.');
+                setAlertModal({ isOpen: true, message: '추가할 재고를 선택해주세요.' });
                 return;
               }
 
@@ -260,14 +262,15 @@ export default function ExistingInventoryModal({
                   setSelectedIds([]);
                   onClose();
                 } else {
-                  alert('재고 추가에 실패했습니다.');
+                  setAlertModal({ isOpen: true, message: '재고 추가에 실패했습니다.' });
                 }
               } catch (error: any) {
                 console.error('재고 추가 실패:', error);
                 console.error('에러 응답:', error?.response?.data);
-                alert(
-                  `재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
-                );
+                setAlertModal({
+                  isOpen: true,
+                  message: `재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
+                });
               } finally {
                 setIsAdding(false);
               }
@@ -283,6 +286,12 @@ export default function ExistingInventoryModal({
           </button>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

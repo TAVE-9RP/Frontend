@@ -4,6 +4,7 @@ import { InputField } from '@/components/signup/InputField';
 import Button from '@/components/common/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { postMemberSignup } from '@/apis/member';
+import AlertModal from '@/components/modals/AlertModal';
 
 const DEPARTMENT_OPTIONS = [
   { label: '물류 부서', value: 'LOGISTICS' },
@@ -39,6 +40,7 @@ export default function EmployeeRegisterFourthPage() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, department: e.target.value }));
@@ -52,7 +54,7 @@ export default function EmployeeRegisterFourthPage() {
     if (!formData.department || !formData.position) return;
 
     if (!companyId || !name || !userId || !email || !password) {
-      alert('필수 정보가 누락되었습니다. 이전 단계로 돌아가주세요.');
+      setAlertModal({ isOpen: true, message: '필수 정보가 누락되었습니다. 이전 단계로 돌아가주세요.' });
       return;
     }
 
@@ -73,12 +75,12 @@ export default function EmployeeRegisterFourthPage() {
       if (response.isSuccess) {
         navigate('/signupsuccess');
       } else {
-        alert(response.message || '사원 등록에 실패했습니다.');
+        setAlertModal({ isOpen: true, message: response.message || '사원 등록에 실패했습니다.' });
       }
     } catch (error: any) {
       console.error('사원 등록 실패:', error);
       const serverErrorMessage = error?.response?.data?.message;
-      alert(serverErrorMessage || '요청 중 오류가 발생했습니다.');
+      setAlertModal({ isOpen: true, message: serverErrorMessage || '요청 중 오류가 발생했습니다.' });
     } finally {
       setIsLoading(false);
     }
@@ -159,6 +161,12 @@ export default function EmployeeRegisterFourthPage() {
           {isLoading ? '등록 중...' : '다음'}
         </Button>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }
