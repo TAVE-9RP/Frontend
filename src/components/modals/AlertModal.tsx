@@ -10,7 +10,9 @@ interface AlertModalProps {
 const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title = '알림' }) => {
   if (!isOpen) return null;
 
-  const isCenterMode = message.includes('아이디와 비밀번호를 확인해주세요');
+  const isCenterMode =
+    message.includes('아이디와 비밀번호를 확인해주세요') ||
+    message.includes('요청 데이터 검증 실패');
 
   return (
     <div
