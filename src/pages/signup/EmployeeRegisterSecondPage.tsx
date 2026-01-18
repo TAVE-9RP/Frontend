@@ -17,13 +17,6 @@ export default function EmployeeRegisterSecondPage() {
       password?: string;
     }) || {};
 
-  useEffect(() => {
-    console.log('=== EmployeeRegisterSecondPage에서 받은 데이터 ===');
-    console.log('userId:', userId);
-    console.log('email:', email);
-    console.log('password:', password);
-  }, [userId, email, password]);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -39,7 +32,6 @@ export default function EmployeeRegisterSecondPage() {
       setIsLoading(true);
       try {
         const response = await getCompanies(searchTerm);
-        console.log('회사 검색 결과:', response);
         if (response.result) {
           setCompanies(response.result);
         } else {
@@ -94,9 +86,12 @@ export default function EmployeeRegisterSecondPage() {
               className="flex h-[75px] w-[535px] shrink-0 cursor-pointer items-center border-b border-greyColor-grey200 px-[10px] transition-colors hover:bg-gray-50"
             >
               <img
-                src="/images/companyimage.png"
+                src={company.imagePath || '/images/companyimage.png'}
                 alt="로고"
-                className="h-[36px] w-[36px] shrink-0"
+                className="h-[45px] w-[45px] shrink-0 rounded-[5px] object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/companyimage.png';
+                }}
               />
 
               <span className="ml-[17px] flex-1 font-pretendard text-[19px] font-bold text-greyColor-grey900">
@@ -127,7 +122,6 @@ export default function EmployeeRegisterSecondPage() {
           variant="primary"
           size="md"
           onClick={() => navigate('/signup')}
-          // !를 추가하여 60x180 크기를 강제하고 leading-none으로 텍스트 줄바꿈 방지
           className="flex !h-[60px] !w-[180px] items-center justify-center whitespace-nowrap rounded-[10px] border-[#63656C] font-pretendard text-[24px] font-bold leading-none text-greyColor-grey500"
         >
           이전 단계
@@ -140,10 +134,12 @@ export default function EmployeeRegisterSecondPage() {
           onClick={() => {
             if (!selectedCompanyId) return;
             const selectedCompany = companies.find((c) => c.id === selectedCompanyId);
+
             navigate('/employeesignup/step4', {
               state: {
                 companyId: selectedCompanyId,
                 companyName: selectedCompany?.name,
+                companyImagePath: selectedCompany?.imagePath,
                 name,
                 userId,
                 email,
