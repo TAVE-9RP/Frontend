@@ -316,7 +316,16 @@ export default function InventoryInboundTaskDetailPage() {
       }
     } catch (error: any) {
       console.error('입고 처리 실패:', error);
-      setAlertModal({ isOpen: true, message: '입고 처리 중 오류가 발생했습니다.' });
+
+      const errorMessage = error?.response?.data?.message || '';
+      const status = error?.response?.status;
+
+      if (status === 403 || errorMessage.includes('권한')) {
+        setIsInboundConfirmModalOpen(false);
+        setAlertModal({ isOpen: true, message: '해당 업무에 대한 접근 권한이 없습니다.' });
+      } else {
+        setAlertModal({ isOpen: true, message: '입고 처리 중 오류가 발생했습니다.' });
+      }
     }
   };
 
@@ -347,7 +356,14 @@ export default function InventoryInboundTaskDetailPage() {
       }
     } catch (error: any) {
       console.error('입고 완료 처리 실패:', error);
-      setAlertModal({ isOpen: true, message: '입고 완료 처리 중 오류가 발생했습니다.' });
+      const errorMessage = error?.response?.data?.message || '';
+      const status = error?.response?.status;
+
+      if (status === 403 || errorMessage.includes('권한')) {
+        setAlertModal({ isOpen: true, message: '해당 업무에 대한 접근 권한이 없습니다.' });
+      } else {
+        setAlertModal({ isOpen: true, message: '입고 완료 처리 중 오류가 발생했습니다.' });
+      }
     }
   };
 

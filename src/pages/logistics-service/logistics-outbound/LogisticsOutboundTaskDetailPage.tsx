@@ -207,6 +207,7 @@ export default function LogisticsOutboundTaskDetailPage() {
       const errorMessage = error.response?.data?.message || '';
 
       if (errorStatus === 403 || errorMessage.includes('권한') || errorMessage.includes('접근')) {
+        setIsOutboundConfirmModalOpen(false);
         setAlertModal({ isOpen: true, message: '해당 업무에 대한 접근 권한이 없습니다.' });
       } else if (errorStatus === 409) {
         setIsOutboundConfirmModalOpen(false);
