@@ -118,9 +118,13 @@ export default function LoginPage() {
       // axios 에러 응답에서 에러 정보 추출
       const errorMessage = error?.response?.data?.message || '';
 
-      // 승인 대기 중인 경우
-      if (errorMessage.includes('승인')) {
-        alert('승인 대기 중입니다. 관리자 승인 후 로그인해주세요.');
+      // 승인되지 않은 계정인 경우 (메시지에 "승인되지 않은 계정" 또는 "인증 필요" 포함)
+      if (
+        errorMessage.includes('승인되지 않은 계정') ||
+        errorMessage.includes('인증 필요') ||
+        error?.response?.data?.code === 'COMMON_401_UNAUTHORIZED'
+      ) {
+        navigate('/signupfailure');
       }
       // 아이디와 비밀번호 확인해야 하는 경우
       else {

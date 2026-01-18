@@ -13,7 +13,7 @@ export default function SignupSuccessPage() {
         className="mt-[80px] text-center font-pretendard text-[32px] font-bold leading-[100%] text-black"
         style={{ letterSpacing: '0%' }}
       >
-        <span className="text-blue-600">홍길동</span>님의 가입 요청이 승인되지 않았습니다.
+        <span className="text-blue-600"></span>가입 요청이 승인되지 않았습니다.
       </h1>
 
       <p className="mt-[22px] text-center font-pretendard text-[19px] font-normal leading-normal text-gray-600">
