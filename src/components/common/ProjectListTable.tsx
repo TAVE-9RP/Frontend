@@ -74,7 +74,7 @@ export default function ProjectListTable({
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={7} className="h-[200px] bg-white align-middle">
+                <td colSpan={7} className="h-[100px] bg-white align-middle">
                   <div className="flex w-full justify-center items-center">
                     <p className="text-sm text-greyColor-grey500">해당 프로젝트 목록이 없습니다.</p>
                   </div>

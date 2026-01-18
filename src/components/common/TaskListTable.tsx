@@ -132,7 +132,7 @@ export default function TaskListTable({
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={6} className="h-[200px] bg-white align-middle">
+                <td colSpan={6} className="h-[100px] bg-white align-middle">
                   <div className="flex w-full justify-center items-center">
                     <p className="text-sm text-greyColor-grey500">해당 업무 목록이 없습니다.</p>
                   </div>

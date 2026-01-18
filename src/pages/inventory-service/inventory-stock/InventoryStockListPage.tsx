@@ -18,7 +18,7 @@ interface InventoryStock {
 export default function InventoryStockListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [stockList, setStockList] = useState<InventoryStock[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -63,7 +63,10 @@ export default function InventoryStockListPage() {
   };
 
   useEffect(() => {
-    fetchStock();
+    const timeoutId = setTimeout(() => {
+      fetchStock();
+    }, 300);
+    return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
   return (
