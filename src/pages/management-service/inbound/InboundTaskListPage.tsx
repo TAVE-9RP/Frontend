@@ -225,7 +225,7 @@ export default function InboundTaskListPage() {
               />
             </div>
           </div>
-          <TaskListTable data={taskList} isLoading={isLoading} type="inbound" />
+          <TaskListTable width="1227px" data={taskList} isLoading={isLoading} type="inbound" />
         </div>
       </main>
     </div>

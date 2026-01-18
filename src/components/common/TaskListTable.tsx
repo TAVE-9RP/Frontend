@@ -19,6 +19,7 @@ interface TaskListTableProps {
   isLoading: boolean;
   type: 'inbound' | 'outbound';
   basePath?: string;
+  width?: string;
 }
 
 export default function TaskListTable({
@@ -26,6 +27,7 @@ export default function TaskListTable({
   isLoading,
   type,
   basePath: externalPath,
+  width = "1040px",
 }: TaskListTableProps) {
   const navigate = useNavigate();
   const isOutbound = type === 'outbound';
@@ -99,9 +101,9 @@ export default function TaskListTable({
   const tableHeaderClasses = `${commonCellClasses} border-b-2 font-bold text-greyColor-grey700 bg-subColor-orange050 font-pretendard`;
 
 return (
-  <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200 font-pretendard">
-    <div className="overflow-x-auto">
-      <table className="table-fixed border-collapse bg-white">
+    <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200 font-pretendard">
+      <div className="overflow-x-auto">
+        <table className="table-fixed border-collapse bg-white">
         <thead>
           <tr>
             <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
@@ -115,24 +117,24 @@ return (
           </tr>
         </thead>
 <tbody>
-  {isLoading ? (
-    <tr>
-      <td colSpan={6} className="h-[100px] bg-white align-middle">
-        <div className="w-[1502px] flex justify-center items-center">
-          <p className="font-pretendard text-greyColor-grey500 text-lg">
-            목록을 불러오는 중...
-          </p>
-        </div>
-      </td>
-    </tr>
-  ) : data.length === 0 ? (
-    <tr>
+            {isLoading ? (
+              <tr>
+                <td colSpan={6} className="h-[100px] bg-white align-middle">
+                  <div style={{ width: width }} className="flex justify-center items-center">
+                    <p className="font-pretendard text-greyColor-grey500 text-lg">
+                      목록을 불러오는 중...
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              <tr>
       <td colSpan={6} className="h-[200px] bg-white align-middle">
-        <div className="w-[1200px] flex justify-center items-center">
-          <p className="text-sm text-greyColor-grey500">해당 업무 목록이 없습니다.</p>
-        </div>
-      </td>
-    </tr>
+                  <div style={{ width: width }} className="flex justify-center items-center">
+                    <p className="text-sm text-greyColor-grey500">해당 업무 목록이 없습니다.</p>
+                  </div>
+                </td>
+              </tr>
             ) : (
               data.map((task, index) => {
                 const isLastRow = index === data.length - 1;
