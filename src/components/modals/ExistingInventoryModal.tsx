@@ -267,10 +267,25 @@ export default function ExistingInventoryModal({
               } catch (error: any) {
                 console.error('재고 추가 실패:', error);
                 console.error('에러 응답:', error?.response?.data);
-                setAlertModal({
-                  isOpen: true,
-                  message: `재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
-                });
+
+                const errorMessage = error?.response?.data?.message || error?.message || '';
+                const errorStatus = error?.response?.status;
+
+                if (
+                  errorStatus === 403 ||
+                  errorMessage.includes('접근 권한 없음') ||
+                  errorMessage.includes('해당 업무에 접근할 수 없습니다')
+                ) {
+                  setAlertModal({
+                    isOpen: true,
+                    message: '해당 업무에 대한 접근 권한이 없습니다.',
+                  });
+                } else {
+                  setAlertModal({
+                    isOpen: true,
+                    message: `재고 추가 실패: ${errorMessage || '알 수 없는 오류가 발생했습니다.'}`,
+                  });
+                }
               } finally {
                 setIsAdding(false);
               }
