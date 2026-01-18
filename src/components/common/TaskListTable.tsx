@@ -100,27 +100,30 @@ export default function TaskListTable({
     'h-[40px] px-4 border-r-2 last:border-r-0 border-greyColor-grey200 text-center align-middle text-sm';
   const tableHeaderClasses = `${commonCellClasses} border-b-2 font-bold text-greyColor-grey700 bg-subColor-orange050 font-pretendard`;
 
-return (
+  return (
     <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200 font-pretendard">
       <div className="overflow-x-auto">
-        <table className="table-fixed border-collapse bg-white">
-        <thead>
-          <tr>
-            <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
-            <th className={`${tableHeaderClasses} w-[170px]`}>{taskLabel} 업무명</th>
-            <th className={`${tableHeaderClasses} w-[200px]`}>
-              {isOutbound ? '거래처' : `${taskLabel} 품목`}
-            </th>
-            <th className={`${tableHeaderClasses} w-[180px]`}>요청일</th>
-            <th className={`${tableHeaderClasses} w-[170px]`}>담당자</th>
-            <th className={`${tableHeaderClasses} w-[140px]`}>진행 상태</th>
-          </tr>
-        </thead>
-<tbody>
+        <table 
+          className="table-fixed border-collapse bg-white"
+          style={{ width: width }}
+        >
+          <thead>
+            <tr>
+              <th className={`${tableHeaderClasses}`} style={{ width: '18%' }}>프로젝트 넘버</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '17%' }}>{taskLabel} 업무명</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '20%' }}>
+                {isOutbound ? '거래처' : `${taskLabel} 품목`}
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '15%' }}>요청일</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '15%' }}>담당자</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '15%' }}>진행 상태</th>
+            </tr>
+          </thead>
+          <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={6} className="h-[100px] bg-white align-middle">
-                  <div style={{ width: width }} className="flex justify-center items-center">
+                <td colSpan={6} className="h-[200px] bg-white align-middle">
+                  <div className="flex w-full justify-center items-center">
                     <p className="font-pretendard text-greyColor-grey500 text-lg">
                       목록을 불러오는 중...
                     </p>
@@ -129,8 +132,8 @@ return (
               </tr>
             ) : data.length === 0 ? (
               <tr>
-      <td colSpan={6} className="h-[200px] bg-white align-middle">
-                  <div style={{ width: width }} className="flex justify-center items-center">
+                <td colSpan={6} className="h-[200px] bg-white align-middle">
+                  <div className="flex w-full justify-center items-center">
                     <p className="text-sm text-greyColor-grey500">해당 업무 목록이 없습니다.</p>
                   </div>
                 </td>

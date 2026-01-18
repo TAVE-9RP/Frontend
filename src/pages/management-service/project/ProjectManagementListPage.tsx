@@ -22,7 +22,9 @@ export default function ProjectManagementListPage() {
   const [activeStatus, setActiveStatus] = useState<string>('IN_PROGRESS');
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true); 
+
   const navigate = useNavigate();
 
   const getStatusCounts = (projects: Project[]) => ({
@@ -132,13 +134,11 @@ export default function ProjectManagementListPage() {
   const handleCreateProjectClick = () => navigate('/project-create');
 
   useEffect(() => {
-    fetchProjectsByStatus(activeStatus, searchTerm);
-  }, [activeStatus]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => fetchProjectsByStatus(activeStatus, searchTerm), 300);
+    const timeoutId = setTimeout(() => {
+      fetchProjectsByStatus(activeStatus, searchTerm);
+    }, 300);
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  }, [activeStatus, searchTerm]);
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
@@ -180,7 +180,7 @@ export default function ProjectManagementListPage() {
               />
             </div>
           </div>
-          <ProjectListTable data={projectList} isLoading={isLoading} />
+          <ProjectListTable width="1050px" data={projectList} isLoading={isLoading} />
         </div>
       </main>
     </div>
