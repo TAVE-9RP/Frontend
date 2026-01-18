@@ -42,6 +42,14 @@ memberApi.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // /member/login 또는 /member/signup 요청에서는 reissue 시도하지 않음
+    if (
+      originalRequest?.url?.includes('/member/login') ||
+      originalRequest?.url?.includes('/member/signup')
+    ) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve) => {
