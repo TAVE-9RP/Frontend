@@ -202,11 +202,16 @@ export default function LogisticsOutboundTaskDetailPage() {
         fetchData();
       }
     } catch (error: any) {
-      if (error.response?.status === 409) {
+      console.error('출하 에러:', error);
+      const errorStatus = error.response?.status;
+      const errorMessage = error.response?.data?.message || '';
+
+      if (errorStatus === 403 || errorMessage.includes('권한') || errorMessage.includes('접근')) {
+        setAlertModal({ isOpen: true, message: '접근 권한이 없습니다.' });
+      } else if (errorStatus === 409) {
         setAlertModal({
           isOpen: true,
-          message:
-            '이미 출하 처리가 완료된 항목이 있거나, 재고 수량이 변경되었습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.',
+          message: '재고 수량이 부족합니다.',
         });
       } else {
         setAlertModal({
