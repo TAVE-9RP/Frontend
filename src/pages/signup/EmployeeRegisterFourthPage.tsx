@@ -54,7 +54,10 @@ export default function EmployeeRegisterFourthPage() {
     if (!formData.department || !formData.position) return;
 
     if (!companyId || !name || !userId || !email || !password) {
-      setAlertModal({ isOpen: true, message: '필수 정보가 누락되었습니다. 이전 단계로 돌아가주세요.' });
+      setAlertModal({
+        isOpen: true,
+        message: '필수 정보가 누락되었습니다. 이전 단계로 돌아가주세요.',
+      });
       return;
     }
 
@@ -80,7 +83,10 @@ export default function EmployeeRegisterFourthPage() {
     } catch (error: any) {
       console.error('사원 등록 실패:', error);
       const serverErrorMessage = error?.response?.data?.message;
-      setAlertModal({ isOpen: true, message: serverErrorMessage || '요청 중 오류가 발생했습니다.' });
+      setAlertModal({
+        isOpen: true,
+        message: serverErrorMessage || '요청 중 오류가 발생했습니다.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -103,7 +109,7 @@ export default function EmployeeRegisterFourthPage() {
         </div>
       </div>
 
-      <div className="mt-[49px] flex w-full flex-1 flex-col gap-[20px]">
+      <div className="mb-[33px] mt-[49px] flex w-full flex-1 flex-col gap-[20px]">
         <div className="flex w-full flex-col">
           <label className="mb-2 text-[19px] font-bold text-black">부서</label>
           <select
