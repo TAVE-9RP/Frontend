@@ -202,8 +202,9 @@ export default function InboundTaskListPage() {
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             입고 업무 리스트
           </h1>
-
-          <div className="mt-[67px] flex w-fit items-center">
+        </div>
+        <div className="mt-[67px] w-max pb-20 pl-[70px] pr-10">
+          <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[8px]">
               {statusData.map((item) => (
                 <ProjectStatusButton
@@ -215,19 +216,16 @@ export default function InboundTaskListPage() {
                 />
               ))}
             </div>
-
-            <div className="ml-[54px] w-[300px]">
+            <div className="w-[450px]">
               <SearchBar
                 placeholder="프로젝트 넘버 또는 입고 업무명을 입력하세요"
                 value={searchTerm}
                 onChange={handleSearchChange}
+                className="w-full"
               />
             </div>
           </div>
-
-          <div className="mb-10 mt-[30px]">
-            <TaskListTable data={taskList} isLoading={isLoading} type="inbound" />
-          </div>
+          <TaskListTable data={taskList} isLoading={isLoading} type="inbound" />
         </div>
       </main>
     </div>

@@ -218,12 +218,13 @@ export default function OutboundTaskListPage() {
       <SideBar />
 
       <main className="flex-1">
-        <div className="pl-[70px] pt-[60px]">
+        <div className="pl-[70px] pr-10 pt-[60px]">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             출하 업무 리스트
           </h1>
-
-          <div className="mt-[67px] flex items-center">
+        </div>
+        <div className="mt-[67px] w-max pb-20 pl-[70px] pr-10">
+          <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[8px]">
               {statusData.map((item) => (
                 <ProjectStatusButton
@@ -235,14 +236,16 @@ export default function OutboundTaskListPage() {
                 />
               ))}
             </div>
-            <div className="ml-[48px] w-[500px]">
-              <SearchBar placeholder="검색" value={searchTerm} onChange={handleSearchChange} />
+            <div className="w-[450px]">
+              <SearchBar
+                placeholder="프로젝트 넘버 또는 출하 업무명을 입력하세요."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="w-full"
+              />
             </div>
           </div>
-
-          <div className="mt-[27px] pr-10">
-            <TaskListTable data={taskList} isLoading={isLoading} type="outbound" />
-          </div>
+          <TaskListTable data={taskList} isLoading={isLoading} type="outbound" />
         </div>
       </main>
     </div>

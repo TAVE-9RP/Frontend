@@ -144,14 +144,14 @@ export default function ProjectManagementListPage() {
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
       <main className="flex-1">
-        <div className="pl-[70px] pr-10 pt-[60px]">
-          <div className="mb-[67px] flex items-center">
+        <div className="w-max pb-20 pl-[70px] pr-10 pt-[60px]">
+          <div className="mb-[67px] flex w-full items-center justify-between">
             <h1 className="whitespace-nowrap font-pretendard text-2xl font-bold text-black">
               전체 프로젝트 관리
             </h1>
             <button
               onClick={handleCreateProjectClick}
-              className="ml-[725px] flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
+              className="flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
             >
               <img src="/images/add.png" alt="Add" className="mr-[5px] h-[26px] w-[26px]" />
               <span className="font-pretendard text-[17px] font-bold text-white">
@@ -159,7 +159,7 @@ export default function ProjectManagementListPage() {
               </span>
             </button>
           </div>
-          <div className="mb-[27px] flex items-center">
+          <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[10px]">
               {statusData.map((item) => (
                 <ProjectStatusButton
@@ -171,16 +171,15 @@ export default function ProjectManagementListPage() {
                 />
               ))}
             </div>
-            <div className="ml-[382px]">
+            <div className="w-[450px]">
               <SearchBar
                 placeholder="프로젝트 넘버 또는 프로젝트 제목을 입력하세요."
                 value={searchTerm}
                 onChange={handleSearchChange}
+                className="w-full"
               />
             </div>
           </div>
-        </div>
-        <div className="pl-[70px] pr-10">
           <ProjectListTable data={projectList} isLoading={isLoading} />
         </div>
       </main>

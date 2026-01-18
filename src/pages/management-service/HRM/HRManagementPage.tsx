@@ -43,10 +43,10 @@ export default function HRManagementPage() {
             {PAGE_TITLE}
           </h1>
 
-          <div className="mt-[46.5px] flex items-start">
+          <div className="mt-[46.5px] flex w-[1040px] items-center justify-between">
             <TabToggle activeTab={activeTab} onTabChange={handleTabChange} />
 
-            <div className="ml-[409px] mt-[8.5px] h-[45px] w-[356px]">
+            <div className="h-[45px] w-[356px]">
               <SearchBar
                 placeholder="검색"
                 value={searchTerm}
