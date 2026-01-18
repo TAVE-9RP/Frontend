@@ -128,9 +128,6 @@ export default function EmployeeListTable({
   const cellBase =
     'h-10 flex items-center justify-center border-b border-l border-r border-greyColor-grey200 text-greyColor-grey700 font-pretendard text-[15px] font-normal';
 
-  if (isLoading)
-    return <p className="py-10 text-center text-greyColor-grey500">직원 목록을 불러오는 중...</p>;
-
   return (
     <div className="flex w-[1040px] flex-col items-start">
       <div className="w-full">
@@ -142,8 +139,12 @@ export default function EmployeeListTable({
         </div>
 
         <div className="w-full bg-white">
-          {filteredList.length === 0 ? (
-            <div className={`${cellBase} w-full border-l border-r`}>
+          {isLoading ? (
+            <div className={`${cellBase} h-[100px] w-full border-l border-r`}>
+              직원 목록을 불러오는 중...
+            </div>
+          ) : filteredList.length === 0 ? (
+            <div className={`${cellBase} h-[100px] w-full border-l border-r`}>
               등록된 직원 목록이 없습니다.
             </div>
           ) : (

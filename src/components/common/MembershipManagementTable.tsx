@@ -132,9 +132,6 @@ export default function MembershipManagementTable({
   const cellBase =
     'h-10 flex items-center justify-center border-b border-l border-r border-greyColor-grey200 text-greyColor-grey700 font-pretendard text-[15px] font-normal';
 
-  if (isLoading)
-    return <p className="py-10 text-center text-greyColor-grey500">가입 목록을 불러오는 중...</p>;
-
   return (
     <div className="flex w-[1040px] flex-col items-start">
       <div className="w-full">
@@ -146,8 +143,14 @@ export default function MembershipManagementTable({
           <div className={`${headerBase} w-[260px] rounded-tr-[10px] border-l-0`}>가입 상태</div>
         </div>
         <div className="w-full bg-white">
-          {filteredList.length === 0 ? (
-            <div className={`${cellBase} border-1 w-full border-r`}>가입 요청 목록이 없습니다.</div>
+          {isLoading ? (
+            <div className={`${cellBase} h-[100px] w-full border-l border-r`}>
+              가입 목록을 불러오는 중...
+            </div>
+          ) : filteredList.length === 0 ? (
+            <div className={`${cellBase} h-[100px] w-full border-l border-r`}>
+              가입 요청 목록이 없습니다.
+            </div>
           ) : (
             filteredList.map((emp) => (
               <div key={emp.memberId} className="flex w-full">
