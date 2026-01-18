@@ -6,7 +6,12 @@ import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import AlertModal from '@/components/modals/AlertModal';
-import { getItemDetail, getItemHistory, updateItemTargetStock, updateItemSafetyStock } from '../../../apis/item';
+import {
+  getItemDetail,
+  getItemHistory,
+  updateItemTargetStock,
+  updateItemSafetyStock,
+} from '../../../apis/item';
 
 const MOCK_INVENTORY_LIST = [
   {
@@ -114,8 +119,10 @@ export default function InventoryStockDetailPage() {
             itemPrice: result.price ? String(result.price) : '-',
             location: result.location ?? '-',
             creationDate: result.createdAt ?? '-',
-            targetQty: result.targetStock && result.targetStock !== '-' ? String(result.targetStock) : '',
-            safetyQty: result.safetyStock && result.safetyStock !== '-' ? String(result.safetyStock) : '',
+            targetQty:
+              result.targetStock && result.targetStock !== '-' ? String(result.targetStock) : '',
+            safetyQty:
+              result.safetyStock && result.safetyStock !== '-' ? String(result.safetyStock) : '',
           });
 
           // 입출고 이력 API 호출
@@ -176,31 +183,45 @@ export default function InventoryStockDetailPage() {
       try {
         const targetStock = Number(inventoryDetail.targetQty);
         const response = await updateItemTargetStock(itemId, targetStock);
-        
+
         if (response.isSuccess) {
           setAlertModal({ isOpen: true, message: '변경되었습니다.' });
           setIsTargetChanged(false);
         } else {
           setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('목표재고 변경 실패:', error);
-        setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
+        const errorMessage = error?.response?.data?.message || '';
+        const errorStatus = error?.response?.status;
+
+        if (errorStatus === 403 || errorMessage.includes('권한')) {
+          setAlertModal({ isOpen: true, message: '접근 권한이 없습니다.' });
+        } else {
+          setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
+        }
       }
     } else if (type === 'safety') {
       try {
         const safetyStock = Number(inventoryDetail.safetyQty);
         const response = await updateItemSafetyStock(itemId, safetyStock);
-        
+
         if (response.isSuccess) {
           setAlertModal({ isOpen: true, message: '변경되었습니다.' });
           setIsSafetyChanged(false);
         } else {
           setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('안전재고 변경 실패:', error);
-        setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
+        const errorMessage = error?.response?.data?.message || '';
+        const errorStatus = error?.response?.status;
+
+        if (errorStatus === 403 || errorMessage.includes('권한')) {
+          setAlertModal({ isOpen: true, message: '접근 권한이 없습니다.' });
+        } else {
+          setAlertModal({ isOpen: true, message: '변경에 실패했습니다.' });
+        }
       }
     }
   };
@@ -298,9 +319,19 @@ export default function InventoryStockDetailPage() {
                   />
                   <button
                     onClick={() => handleApplyChange('target')}
-                    disabled={!isTargetChanged || !inventoryDetail.targetQty || inventoryDetail.targetQty === '-' || inventoryDetail.targetQty.trim() === '' || Number(inventoryDetail.targetQty) === 0}
+                    disabled={
+                      !isTargetChanged ||
+                      !inventoryDetail.targetQty ||
+                      inventoryDetail.targetQty === '-' ||
+                      inventoryDetail.targetQty.trim() === '' ||
+                      Number(inventoryDetail.targetQty) === 0
+                    }
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isTargetChanged && inventoryDetail.targetQty && inventoryDetail.targetQty !== '-' && inventoryDetail.targetQty.trim() !== '' && Number(inventoryDetail.targetQty) !== 0
+                      isTargetChanged &&
+                      inventoryDetail.targetQty &&
+                      inventoryDetail.targetQty !== '-' &&
+                      inventoryDetail.targetQty.trim() !== '' &&
+                      Number(inventoryDetail.targetQty) !== 0
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}
@@ -322,9 +353,19 @@ export default function InventoryStockDetailPage() {
                   />
                   <button
                     onClick={() => handleApplyChange('safety')}
-                    disabled={!isSafetyChanged || !inventoryDetail.safetyQty || inventoryDetail.safetyQty === '-' || inventoryDetail.safetyQty.trim() === '' || Number(inventoryDetail.safetyQty) === 0}
+                    disabled={
+                      !isSafetyChanged ||
+                      !inventoryDetail.safetyQty ||
+                      inventoryDetail.safetyQty === '-' ||
+                      inventoryDetail.safetyQty.trim() === '' ||
+                      Number(inventoryDetail.safetyQty) === 0
+                    }
                     className={`flex h-[50px] w-[60px] shrink-0 items-center justify-center rounded-[5px] text-[15px] font-bold transition-all ${
-                      isSafetyChanged && inventoryDetail.safetyQty && inventoryDetail.safetyQty !== '-' && inventoryDetail.safetyQty.trim() !== '' && Number(inventoryDetail.safetyQty) !== 0
+                      isSafetyChanged &&
+                      inventoryDetail.safetyQty &&
+                      inventoryDetail.safetyQty !== '-' &&
+                      inventoryDetail.safetyQty.trim() !== '' &&
+                      Number(inventoryDetail.safetyQty) !== 0
                         ? 'bg-mainColor-blue600 text-white'
                         : 'cursor-not-allowed bg-greyColor-grey300 text-white'
                     }`}

@@ -10,9 +10,13 @@ interface AlertModalProps {
 const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title = '알림' }) => {
   if (!isOpen) return null;
 
+  const isCenterMode = message.includes('아이디와 비밀번호를 확인해주세요');
+
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 top-0 z-50 flex items-center justify-center bg-black/50"
+      className={`fixed bottom-0 right-0 top-0 z-50 flex items-center justify-center bg-black/50 ${
+        isCenterMode ? 'left-0' : 'left-[220px]'
+      }`}
       onClick={onClose}
     >
       <div
@@ -23,11 +27,11 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
           {title}
         </p>
 
-        <p className="mt-[10.28px] px-8 text-center font-pretendard text-[13px] font-normal text-greyColor-grey500 whitespace-pre-line">
+        <p className="mt-[10.28px] whitespace-pre-line px-8 text-center font-pretendard text-[13px] font-normal text-greyColor-grey500">
           {message}
         </p>
 
-        <div className="mt-[34.45px] mb-[32px]">
+        <div className="mb-[32px] mt-[34.45px]">
           <button
             onClick={onClose}
             className="flex h-[34px] w-[70px] items-center justify-center rounded-[5px] bg-mainColor-blue600 font-pretendard text-[17px] font-bold text-white hover:bg-mainColor-blue700"
