@@ -27,7 +27,7 @@ export default function SignupStartPage() {
       <div className="flex w-full flex-1 flex-col">
         <Header title="NexERP와 함께 편리한 기업 프로세스를 관리해보세요" />
 
-        <div className="mt-[98px] flex flex-col items-center gap-[29px]">
+        <div className="mt-[98px] mb-[60px] flex flex-col items-center gap-[29px]">
           <OptionCard
             icon={
               <img src="/images/signupicon01.png" alt="회사 등록" className="h-[140px] w-[140px]" />
@@ -49,7 +49,7 @@ export default function SignupStartPage() {
           />
         </div>
 
-        <div className="mb-[114px] mt-auto flex justify-center">
+        <div className="mb-[114px] flex justify-center">
           <Button
             variant={isButtonEnabled ? 'active' : 'secondary'}
             onClick={handleNextClick}
