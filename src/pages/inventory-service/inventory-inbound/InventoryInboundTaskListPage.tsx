@@ -136,7 +136,7 @@ export default function InventoryInboundTaskListPage() {
 
   const statusData = calculateStatusCounts(allTasks);
 
-  return (
+return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
@@ -151,7 +151,8 @@ export default function InventoryInboundTaskListPage() {
           </div>
         </div>
 
-        <div className="mt-[43px] w-max pb-20 pl-[70px]">
+        <div className="mt-[43px] min-w-[1100px] w-max pb-20 pl-[70px]">
+          
           <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[8px]">
               {statusData.map((item) => (
@@ -180,6 +181,7 @@ export default function InventoryInboundTaskListPage() {
             isLoading={isLoading}
             type="inbound"
             basePath="/inventory-inbound-task"
+            width="1227px"
           />
         </div>
       </main>

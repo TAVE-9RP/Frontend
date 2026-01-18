@@ -28,19 +28,10 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
     'h-[40px] px-4 border-b border-r border-greyColor-grey200 flex items-center justify-center shrink-0';
 
   const headerTextClasses = 'font-pretendard text-[15px] font-bold text-black';
-
   const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black';
 
-  if (isLoading) {
-    return (
-      <p className="py-10 text-center font-pretendard text-greyColor-grey500">
-        재고 목록을 불러오는 중...
-      </p>
-    );
-  }
-
   return (
-    <div className="w-[1040px] overflow-hidden border-l border-t border-greyColor-grey200">
+    <div className="w-[1040px] overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
       <table className="w-full table-fixed border-collapse">
         <thead className="bg-subColor-orange050">
           <tr className="flex">
@@ -70,42 +61,50 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
           </tr>
         </thead>
         <tbody className="bg-white">
-          {data.length === 0 ? (
+          {isLoading ? (
             <tr className="flex">
-              <td className="flex h-[40px] w-full items-center justify-center border-b border-greyColor-grey200 font-pretendard text-[15px] text-greyColor-grey400">
-                없음
+              <td className="flex h-[100px] w-full items-center justify-center border-b border-greyColor-grey200 font-pretendard text-[16px] text-greyColor-grey500">
+                재고 목록을 불러오는 중...
+              </td>
+            </tr>
+          ) : data.length === 0 ? (
+            <tr className="flex">
+              <td className="flex h-[100px] w-full items-center justify-center border-b border-greyColor-grey200 font-pretendard text-[15px] text-greyColor-grey400">
+                조회된 재고 목록이 없습니다.
               </td>
             </tr>
           ) : (
-            data.map((stock) => (
-              <tr
-                key={stock.id}
-                className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
-                onClick={() => handleRowClick(stock.id)}
-              >
-                <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
-                  {stock.inventoryNumber}
-                </td>
-                <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
-                  {stock.itemName}
-                </td>
-                <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
-                  {stock.quantity}
-                </td>
-                <td className={`${commonCellClasses} w-[120px] ${bodyTextClasses}`}>
-                  {stock.itemPrice}
-                </td>
-                <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
-                  {stock.location}
-                </td>
-                <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
-                  {stock.recentInboundDate}
-                </td>
-                <td className={`${commonCellClasses} w-[160px] border-r-0 ${bodyTextClasses}`}>
-                  {stock.creationDate}
-                </td>
-              </tr>
-            ))
+            data.map((stock, index) => {
+              return (
+                <tr
+                  key={stock.id}
+                  className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
+                  onClick={() => handleRowClick(stock.id)}
+                >
+                  <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
+                    {stock.inventoryNumber}
+                  </td>
+                  <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
+                    {stock.itemName}
+                  </td>
+                  <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
+                    {stock.quantity}
+                  </td>
+                  <td className={`${commonCellClasses} w-[120px] ${bodyTextClasses}`}>
+                    {stock.itemPrice}
+                  </td>
+                  <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
+                    {stock.location}
+                  </td>
+                  <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
+                    {stock.recentInboundDate}
+                  </td>
+                  <td className={`${commonCellClasses} w-[160px] border-r-0 ${bodyTextClasses}`}>
+                    {stock.creationDate}
+                  </td>
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>

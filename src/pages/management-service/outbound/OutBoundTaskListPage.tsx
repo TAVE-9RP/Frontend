@@ -245,7 +245,7 @@ export default function OutboundTaskListPage() {
               />
             </div>
           </div>
-          <TaskListTable data={taskList} isLoading={isLoading} type="outbound" />
+          <TaskListTable width="1502px" data={taskList} isLoading={isLoading} type="outbound" />
         </div>
       </main>
     </div>
