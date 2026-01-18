@@ -25,39 +25,23 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
   };
 
   const commonCellClasses =
-    'h-[40px] px-4 border-b border-r border-greyColor-grey200 flex items-center justify-center shrink-0';
+    'h-[40px] px-4 border-b border-r border-greyColor-grey200 flex items-center shrink-0 min-w-0';
 
-  const headerTextClasses = 'font-pretendard text-[15px] font-bold text-black';
-  const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black';
+  const headerTextClasses = 'font-pretendard text-[15px] font-bold text-black truncate';
+  const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black truncate w-full';
 
   return (
     <div className="w-[1040px] overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
       <table className="w-full table-fixed border-collapse">
         <thead className="bg-subColor-orange050">
           <tr className="flex">
-            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
-              재고 번호
-            </th>
-            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
-              물품명
-            </th>
-            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses} justify-start`}>
-              수량
-            </th>
-            <th className={`${commonCellClasses} w-[120px] ${headerTextClasses} justify-start`}>
-              품목 가격
-            </th>
-            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses} justify-start`}>
-              위치
-            </th>
-            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses} justify-start`}>
-              최근 입고일
-            </th>
-            <th
-              className={`${commonCellClasses} w-[160px] border-r-0 ${headerTextClasses} justify-start`}
-            >
-              생성일
-            </th>
+            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>재고 번호</th>
+            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>물품명</th>
+            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses}`}>수량</th>
+            <th className={`${commonCellClasses} w-[120px] ${headerTextClasses}`}>품목 가격</th>
+            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses}`}>위치</th>
+            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>최근 입고일</th>
+            <th className={`${commonCellClasses} w-[160px] border-r-0 ${headerTextClasses}`}>생성일</th>
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -74,33 +58,33 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
               </td>
             </tr>
           ) : (
-            data.map((stock, index) => {
+            data.map((stock) => {
               return (
                 <tr
                   key={stock.id}
                   className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
                   onClick={() => handleRowClick(stock.id)}
                 >
-                  <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
-                    {stock.inventoryNumber}
+                  <td className={`${commonCellClasses} w-[160px] justify-center`}>
+                    <span className={bodyTextClasses}>{stock.inventoryNumber}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
-                    {stock.itemName}
+                  <td className={`${commonCellClasses} w-[160px] justify-center`}>
+                    <span className={bodyTextClasses}>{stock.itemName}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
-                    {stock.quantity}
+                  <td className={`${commonCellClasses} w-[140px] justify-center`}>
+                    <span className={bodyTextClasses}>{stock.quantity}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[120px] ${bodyTextClasses}`}>
-                    {stock.itemPrice}
+                  <td className={`${commonCellClasses} w-[120px] justify-center`}>
+                    <span className={bodyTextClasses}>{stock.itemPrice}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[140px] ${bodyTextClasses}`}>
-                    {stock.location}
+                  <td className={`${commonCellClasses} w-[140px] justify-center`}>
+                    <span className={bodyTextClasses}>{stock.location}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[160px] ${bodyTextClasses}`}>
-                    {stock.recentInboundDate}
+                  <td className={`${commonCellClasses} w-[160px] justify-center`}>
+                    <span className={bodyTextClasses}>{stock.recentInboundDate}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[160px] border-r-0 ${bodyTextClasses}`}>
-                    {stock.creationDate}
+                  <td className={`${commonCellClasses} w-[160px] border-r-0 justify-center`}>
+                    <span className={bodyTextClasses}>{stock.creationDate}</span>
                   </td>
                 </tr>
               );
