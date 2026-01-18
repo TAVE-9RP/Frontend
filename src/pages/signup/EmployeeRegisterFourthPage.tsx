@@ -110,8 +110,7 @@ export default function EmployeeRegisterFourthPage() {
       const response = await postMemberSignup(requestData);
 
       if (response.isSuccess) {
-        alert('사원 등록이 완료되었습니다.');
-        navigate('/login');
+        navigate('/signupsuccess');
       } else {
         alert(response.message || '사원 등록에 실패했습니다.');
       }
