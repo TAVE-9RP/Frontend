@@ -4,9 +4,15 @@ interface DashboardChartProps {
   percent: number;
   label: string;
   colorType: 'blue' | 'orange' | 'black';
+  maxPercent?: number;
 }
 
-const DashboardChart = ({ percent, label, colorType }: DashboardChartProps) => {
+const DashboardChart = ({
+  percent,
+  label,
+  colorType,
+  maxPercent = 100,
+}: DashboardChartProps) => {
   const COLORS = {
     blue: '#008CFF',
     orange: '#FF9B3F',
@@ -16,9 +22,11 @@ const DashboardChart = ({ percent, label, colorType }: DashboardChartProps) => {
 
   const selectedColor = COLORS[colorType];
 
+  const displayValue = (percent / maxPercent) * 100;
+
   const data = [
-    { name: 'Progress', value: percent },
-    { name: 'Remaining', value: 100 - percent },
+    { name: 'Progress', value: displayValue },
+    { name: 'Remaining', value: 100 - displayValue },
   ];
 
   return (
