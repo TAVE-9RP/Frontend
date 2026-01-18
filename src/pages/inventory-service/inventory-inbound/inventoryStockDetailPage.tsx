@@ -118,7 +118,7 @@ export default function InventoryStockDetailPage() {
             quantity: result.quantity ?? 0,
             itemPrice: result.price ? String(result.price) : '-',
             location: result.location ?? '-',
-            creationDate: result.createdAt ?? '-',
+            creationDate: formatDate(result.createdAt),
             targetQty:
               result.targetStock && result.targetStock !== '-' ? String(result.targetStock) : '',
             safetyQty:

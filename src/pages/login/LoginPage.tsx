@@ -174,7 +174,7 @@ export default function LoginPage() {
             variant={isFormValid ? 'active' : 'secondary'}
             size="md"
             disabled={!isFormValid || isLoading}
-            className="h-[60px] w-[180px] rounded-[10px] px-[50px] py-[17px] font-pretendard text-[24px] font-bold leading-none text-black"
+            className="h-[60px] w-[180px] whitespace-nowrap rounded-[10px] px-[10px] py-[17px] font-pretendard text-[24px] font-bold leading-none text-black"
           >
             {isLoading ? '로그인 중...' : '로그인'}
           </Button>
