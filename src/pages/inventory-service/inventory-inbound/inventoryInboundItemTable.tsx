@@ -114,7 +114,11 @@ export default function InboundItemTable({
                 </div>
 
                 <div className={`${cell110} text-greyColor-grey900`}>{item.id}</div>
-                <div className={`${cell110} text-greyColor-grey900`}>{item.name}</div>
+                <div className={`${cell110} px-2 text-greyColor-grey900`}>
+                  <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                    {item.name}
+                  </span>
+                </div>
                 <div className={`${cell110} text-greyColor-grey900`}>
                   {typeof item.price === 'number' ? `${item.price.toLocaleString()}원` : item.price}
                 </div>

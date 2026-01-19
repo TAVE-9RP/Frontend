@@ -56,8 +56,10 @@ const InboundItemList: React.FC<InboundItemListProps> = ({ status, items = [] })
             <div className="flex h-full w-[150px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] text-black">
               {item.stockNumber}
             </div>
-            <div className="flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] text-black">
-              {item.itemName}
+            <div className="flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
+              <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-pretendard text-[14px] text-black">
+                {item.itemName}
+              </span>
             </div>
             <div
               className={`flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] ${item.currQty === '-' ? 'text-greyColor-grey300' : 'text-black'}`}

@@ -43,18 +43,19 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
       <div className="box-border flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
         {columns.map((col, idx) => {
           const isCurrQtyHeader = col.key === 'currQty';
-          const headerColor = isCurrQtyHeader && isApprovalPending 
-            ? '#9CA3AF' 
-            : isColumnAllHyphen(col.key) 
-              ? '#9CA3AF' 
-              : '#131517';
-          
+          const headerColor =
+            isCurrQtyHeader && isApprovalPending
+              ? '#9CA3AF'
+              : isColumnAllHyphen(col.key)
+                ? '#9CA3AF'
+                : '#131517';
+
           return (
             <div
               key={idx}
-              style={{ 
+              style={{
                 width: col.width.match(/\d+/)?.[0] + 'px',
-                color: headerColor
+                color: headerColor,
               }}
               className="box-border flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] font-bold last:border-r-0"
             >
@@ -85,8 +86,10 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
                   rowIdx !== items.length - 1 ? 'border-b-[2px] border-greyColor-grey200' : ''
                 }`}
               >
-                <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px] text-black">
-                  {item.itemName}
+                <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
+                  <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-pretendard text-[13px] text-black">
+                    {item.itemName}
+                  </span>
                 </div>
                 <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px]">
                   <span style={{ color: isApprovalPending ? '#9CA3AF' : '#000000' }}>
