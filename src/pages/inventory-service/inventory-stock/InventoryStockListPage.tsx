@@ -78,7 +78,7 @@ export default function InventoryStockListPage() {
           재고 조회
         </h1>
 
-        <div className="mt-[60px] w-[1040px]">
+        <div className="mt-[60px] w-[1200px]">
           <SearchBar
             placeholder="재고 번호 또는 물품명을 입력하세요."
             value={searchTerm}

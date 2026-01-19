@@ -31,8 +31,8 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
   const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black truncate w-full';
 
   return (
-    <div className="w-[1040px] overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
-      <table className="w-full table-fixed border-collapse">
+    <div className="w-fit overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
+      <table className="table-fixed border-collapse" style={{ width: '1000px' }}>
         <thead className="bg-subColor-orange050">
           <tr className="flex">
             <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>재고 번호</th>
@@ -41,7 +41,7 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
             <th className={`${commonCellClasses} w-[120px] ${headerTextClasses}`}>품목 가격</th>
             <th className={`${commonCellClasses} w-[140px] ${headerTextClasses}`}>위치</th>
             <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>최근 입고일</th>
-            <th className={`${commonCellClasses} w-[160px] border-r-0 ${headerTextClasses}`}>생성일</th>
+            <th className={`${commonCellClasses} w-[120px] border-r-0 ${headerTextClasses}`}>생성일</th>
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -83,7 +83,7 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
                   <td className={`${commonCellClasses} w-[160px] justify-center`}>
                     <span className={bodyTextClasses}>{stock.recentInboundDate}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[160px] border-r-0 justify-center`}>
+                  <td className={`${commonCellClasses} w-[120px] border-r-0 justify-center`}>
                     <span className={bodyTextClasses}>{stock.creationDate}</span>
                   </td>
                 </tr>

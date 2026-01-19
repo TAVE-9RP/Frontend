@@ -56,7 +56,7 @@ export default function SideBar() {
     {
       title: '관리 서비스',
       icon: '/images/management_service.png',
-      marginTop: 'mt-[69.77px]',
+      marginTop: 'mt-[24px]',
       homePath: '/management-home',
       subMenus: [
         { text: '전체 프로젝트 관리', path: '/project-management' },
@@ -68,7 +68,7 @@ export default function SideBar() {
     {
       title: '재고 서비스',
       icon: '/images/box.png',
-      marginTop: 'mt-[32px]',
+      marginTop: 'mt-[20px]',
       homePath: '/inventory-home',
       subMenus: [
         { text: '입고 업무 관리', path: '/inventory-inbound-task' },
@@ -78,7 +78,7 @@ export default function SideBar() {
     {
       title: '물류 서비스',
       icon: '/images/delivery.png',
-      marginTop: 'mt-[32px]',
+      marginTop: 'mt-[20px]',
       homePath: '/logistics-home',
       subMenus: [{ text: '출하 업무 관리', path: '/logistics-outbound-task' }],
     },
@@ -100,7 +100,7 @@ export default function SideBar() {
     isManagementSection: boolean,
   ) => {
     return (
-      <div className="mt-[16px] flex flex-col gap-[8px]">
+      <div className="mt-[12px] flex flex-col gap-[6px]">
         {subMenus.map((menu) => {
           const isProjectManagementActive =
             menu.path === '/project-management' &&
@@ -118,7 +118,7 @@ export default function SideBar() {
                 }
               }}
               disabled={isDisabled}
-              className={`ml-[61.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${
+              className={`ml-[61.5px] flex w-[144.5px] items-center gap-[10px] rounded-[5px] py-[5px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${
                 isDisabled
                   ? 'cursor-not-allowed opacity-50'
                   : isActive
@@ -145,7 +145,7 @@ export default function SideBar() {
   };
 
   return (
-    <aside className="sticky top-0 z-50 flex h-screen w-[220px] flex-col overflow-x-hidden border-r border-greyColor-grey200 bg-white">
+    <aside className="sticky top-0 z-50 flex h-screen min-w-[220px] max-w-[220px] w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
       <button
         onClick={() => {
           if (isManagementUser) {
@@ -158,19 +158,19 @@ export default function SideBar() {
             navigate('/');
           }
         }}
-        className="ml-[27px] mt-[33px] flex items-center"
+        className="ml-[27px] mt-[24px] flex items-center"
       >
         <img src="/images/logo.png" alt="logo" width={129} height={36.47} />
       </button>
 
-      <div className="ml-[27px] mt-[32px] flex items-center gap-[10px]">
+      <div className="ml-[27px] mt-[20px] flex items-center gap-[10px]">
         <img src="/images/logistics.png" alt="logistics" width={24} height={24} />
         <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
           {departmentFromToken ? ` ${departmentFromToken}` : ''}
         </span>
       </div>
 
-      <div className="ml-[27px] mt-[13px] flex items-center gap-[10px]">
+      <div className="ml-[27px] mt-[12px] flex items-center gap-[10px]">
         <img src="/images/owner.png" alt="owner" width={24} height={24} />
         {(memberPosition || memberName) && (
           <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
@@ -203,7 +203,7 @@ export default function SideBar() {
                 }
               }}
               disabled={isDisabled}
-              className={`ml-[27px] flex w-[179px] items-center gap-[10px] rounded-[5px] py-[7px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${section.marginTop} ${
+              className={`ml-[27px] flex w-[179px] items-center gap-[10px] rounded-[5px] py-[5px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${section.marginTop} ${
                 isDisabled
                   ? 'cursor-not-allowed opacity-50'
                   : isSectionActive
@@ -230,7 +230,7 @@ export default function SideBar() {
         );
       })}
 
-      <div className="mt-[54px] flex flex-col items-center">
+      <div className="mt-auto mb-[20px] flex flex-col items-center">
         <button
           onClick={async () => {
             try {

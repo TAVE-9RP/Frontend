@@ -60,7 +60,7 @@ export default function InboundItemTable({
   const cell40 = `${cellBase} w-[40px]`;
 
   return (
-    <div className="flex w-[810px] flex-col self-stretch rounded-t-[10px] border-l border-t border-greyColor-grey200 bg-white font-pretendard">
+    <div className="flex w-full max-w-[1200px] flex-col self-stretch rounded-t-[10px] border-l border-t border-greyColor-grey200 bg-white font-pretendard">
       <div className="flex w-full bg-greyColor-grey100 text-center text-[14px] font-bold">
         <div className={`${cell40} ${getHeaderTextColor('selection')}`}>선택</div>
         <div className={`${cell110} ${getHeaderTextColor('id')}`}>재고 번호</div>

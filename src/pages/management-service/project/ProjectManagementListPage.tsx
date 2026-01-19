@@ -180,7 +180,7 @@ export default function ProjectManagementListPage() {
               />
             </div>
           </div>
-          <ProjectListTable width="1050px" data={projectList} isLoading={isLoading} />
+          <ProjectListTable width="1200px" data={projectList} isLoading={isLoading} />
         </div>
       </main>
     </div>

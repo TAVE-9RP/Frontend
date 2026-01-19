@@ -43,7 +43,7 @@ export default function HRManagementPage() {
             {PAGE_TITLE}
           </h1>
 
-          <div className="mt-[46.5px] flex w-[1040px] items-center justify-between">
+          <div className="mt-[46.5px] flex w-[1200px] items-center justify-between">
             <TabToggle activeTab={activeTab} onTabChange={handleTabChange} />
 
             <div className="h-[45px] w-[356px]">

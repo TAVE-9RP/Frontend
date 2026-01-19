@@ -181,7 +181,7 @@ return (
             isLoading={isLoading}
             type="inbound"
             basePath="/inventory-inbound-task"
-            width="1227px"
+            width="1200px"
           />
         </div>
       </main>
