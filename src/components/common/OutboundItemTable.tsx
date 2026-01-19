@@ -110,8 +110,10 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               {item.itemCode || '-'}
             </div>
 
-            <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
-              {item.itemName || '-'}
+            <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
+              <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-pretendard text-[14px] text-black">
+                {item.itemName || '-'}
+              </span>
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200">
