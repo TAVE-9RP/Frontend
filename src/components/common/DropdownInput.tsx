@@ -97,7 +97,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className={`flex h-[50px] w-[390px] items-center rounded-[10px] border transition-all duration-150 ${disabledClasses} ${focusedBorderStyle}`}
+        className={`flex h-[50px] w-[390px] items-center rounded-[10px] border font-pretendard transition-all duration-150 ${disabledClasses} ${focusedBorderStyle}`}
         onClick={handleInputClick}
       >
         <div className="flex w-[350px] flex-wrap items-center overflow-hidden px-4 py-[4px]">
@@ -121,7 +121,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
       </div>
 
       {isOpen && (
-        <div className="absolute z-10 mt-2 max-h-[300px] w-[390px] overflow-y-auto rounded-lg border border-greyColor-grey400 bg-white">
+        <div className="absolute z-10 mt-2 max-h-[300px] w-[390px] overflow-y-auto rounded-lg border border-greyColor-grey400 bg-white font-pretendard">
           {options.map((option) => {
             const isSelected = selectedItems.some((item) => item.id === option.id);
             return (
@@ -167,7 +167,7 @@ interface ChipProps {
 const Chip: React.FC<ChipProps> = ({ label, onRemove }) => {
   return (
     <div
-      className="m-1 flex h-[24px] items-center whitespace-nowrap rounded-full bg-mainColor-blue050 px-2 py-1 text-sm text-mainColor-blue700"
+      className="m-1 flex h-[24px] items-center whitespace-nowrap rounded-full bg-mainColor-blue050 px-2 py-1 font-pretendard text-sm text-mainColor-blue700"
       onClick={(e) => e.stopPropagation()}
     >
       <span className="font-bold">{label}</span>

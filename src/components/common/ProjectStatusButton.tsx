@@ -16,7 +16,7 @@ export default function ProjectStatusButton({
   className = '',
 }: ProjectStatusButtonProps) {
   const baseClasses = `
-  flex px-[12px] py-[8px] justify-center items-center gap-[5px] rounded-[50px] cursor-pointer text-center transition-colors duration-200 whitespace-nowrap ${className}
+  flex px-[12px] py-[8px] justify-center items-center gap-[5px] rounded-[50px] cursor-pointer text-center transition-colors duration-200 whitespace-nowrap font-pretendard ${className}
   `;
 
   const activeClasses = `border border-mainColor-blue600 bg-mainColor-blue050 text-mainColor-blue600

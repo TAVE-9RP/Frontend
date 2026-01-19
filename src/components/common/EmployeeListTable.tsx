@@ -17,8 +17,8 @@ const ROLE_MAP: Record<string, string> = {
 };
 
 const REVERSE_ROLE_MAP: Record<string, string> = {
-  '조회': 'READ',
-  '편집': 'WRITE',
+  조회: 'READ',
+  편집: 'WRITE',
 };
 
 const PERMISSION_OPTIONS = ['조회', '편집'];
@@ -129,13 +129,13 @@ export default function EmployeeListTable({
     'h-10 flex items-center justify-center border-b border-l border-r border-greyColor-grey200 text-greyColor-grey700 font-pretendard text-[15px] font-normal';
 
   return (
-    <div className="flex w-fit flex-col items-start">
+    <div className="flex w-[1200px] flex-col items-start">
       <div className="w-full">
         <div className="flex w-full">
-          <div className={`${headerBase} w-[210px] rounded-tl-[10px]`}>이름</div>
-          <div className={`${headerBase} w-[290px] border-l-0`}>부서</div>
-          <div className={`${headerBase} w-[200px] border-l-0`}>직급</div>
-          <div className={`${headerBase} w-[200px] rounded-tr-[10px] border-l-0`}>권한 설정</div>
+          <div className={`${headerBase} w-[20%] rounded-tl-[10px]`}>이름</div>
+          <div className={`${headerBase} w-[30%] border-l-0`}>부서</div>
+          <div className={`${headerBase} w-[25%] border-l-0`}>직급</div>
+          <div className={`${headerBase} w-[25%] rounded-tr-[10px] border-l-0`}>권한 설정</div>
         </div>
 
         <div className="w-full bg-white">
@@ -150,10 +150,12 @@ export default function EmployeeListTable({
           ) : (
             filteredList.map((emp) => (
               <div key={emp.memberId} className="flex w-full">
-                <div className={`${cellBase} w-[210px]`}>{emp.name}</div>
-                <div className={`${cellBase} w-[290px] border-l-0`}>{mapDepartment(emp.department)}</div>
-                <div className={`${cellBase} w-[200px] border-l-0`}>{mapPosition(emp.position)}</div>
-                <div className={`${cellBase} w-[200px] border-l-0`}>
+                <div className={`${cellBase} w-[20%]`}>{emp.name}</div>
+                <div className={`${cellBase} w-[30%] border-l-0`}>
+                  {mapDepartment(emp.department)}
+                </div>
+                <div className={`${cellBase} w-[25%] border-l-0`}>{mapPosition(emp.position)}</div>
+                <div className={`${cellBase} w-[25%] border-l-0`}>
                   <Dropdown
                     options={PERMISSION_OPTIONS}
                     selectedValue={permissionChanges[emp.memberId] || ROLE_MAP[emp.currentRole]}

@@ -198,7 +198,7 @@ export default function InboundTaskListPage() {
       <SideBar />
 
       <main className="flex flex-1 flex-col items-center">
-        <div className="pt-[60px] w-full flex flex-col items-center">
+        <div className="flex w-full flex-col items-center pt-[60px]">
           <div className="w-[1200px]">
             <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
               입고 업무 리스트

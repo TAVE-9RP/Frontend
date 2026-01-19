@@ -31,17 +31,19 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
   const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black truncate w-full';
 
   return (
-    <div className="w-fit overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
-      <table className="table-fixed border-collapse" style={{ width: '1000px' }}>
+    <div className="w-[1200px] overflow-hidden rounded-[10px] border-l border-r border-t border-greyColor-grey200">
+      <table className="w-full table-fixed border-collapse">
         <thead className="bg-subColor-orange050">
           <tr className="flex">
-            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>재고 번호</th>
-            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>물품명</th>
-            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses}`}>수량</th>
-            <th className={`${commonCellClasses} w-[120px] ${headerTextClasses}`}>품목 가격</th>
-            <th className={`${commonCellClasses} w-[140px] ${headerTextClasses}`}>위치</th>
-            <th className={`${commonCellClasses} w-[160px] ${headerTextClasses}`}>최근 입고일</th>
-            <th className={`${commonCellClasses} w-[120px] border-r-0 ${headerTextClasses}`}>생성일</th>
+            <th className={`${commonCellClasses} w-[16%] ${headerTextClasses}`}>재고 번호</th>
+            <th className={`${commonCellClasses} w-[16%] ${headerTextClasses}`}>물품명</th>
+            <th className={`${commonCellClasses} w-[14%] ${headerTextClasses}`}>수량</th>
+            <th className={`${commonCellClasses} w-[12%] ${headerTextClasses}`}>품목 가격</th>
+            <th className={`${commonCellClasses} w-[14%] ${headerTextClasses}`}>위치</th>
+            <th className={`${commonCellClasses} w-[16%] ${headerTextClasses}`}>최근 입고일</th>
+            <th className={`${commonCellClasses} w-[12%] border-r-0 ${headerTextClasses}`}>
+              생성일
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -65,25 +67,25 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
                   className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
                   onClick={() => handleRowClick(stock.id)}
                 >
-                  <td className={`${commonCellClasses} w-[160px] justify-center`}>
+                  <td className={`${commonCellClasses} w-[16%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.inventoryNumber}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[160px] justify-center`}>
+                  <td className={`${commonCellClasses} w-[16%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.itemName}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[140px] justify-center`}>
+                  <td className={`${commonCellClasses} w-[14%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.quantity}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[120px] justify-center`}>
+                  <td className={`${commonCellClasses} w-[12%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.itemPrice}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[140px] justify-center`}>
+                  <td className={`${commonCellClasses} w-[14%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.location}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[160px] justify-center`}>
+                  <td className={`${commonCellClasses} w-[16%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.recentInboundDate}</span>
                   </td>
-                  <td className={`${commonCellClasses} w-[120px] border-r-0 justify-center`}>
+                  <td className={`${commonCellClasses} w-[12%] justify-center border-r-0`}>
                     <span className={bodyTextClasses}>{stock.creationDate}</span>
                   </td>
                 </tr>

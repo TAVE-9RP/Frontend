@@ -136,11 +136,11 @@ export default function MembershipManagementTable({
     <div className="flex w-fit flex-col items-start">
       <div className="w-full">
         <div className="flex w-full">
-          <div className={`${headerBase} w-[170px] rounded-tl-[10px]`}>이름</div>
-          <div className={`${headerBase} w-[220px] border-l-0`}>부서</div>
-          <div className={`${headerBase} w-[160px] border-l-0`}>직급</div>
-          <div className={`${headerBase} w-[230px] border-l-0`}>이메일</div>
-          <div className={`${headerBase} w-[260px] rounded-tr-[10px] border-l-0`}>가입 상태</div>
+          <div className={`${headerBase} w-[15%] rounded-tl-[10px]`}>이름</div>
+          <div className={`${headerBase} w-[20%] border-l-0`}>부서</div>
+          <div className={`${headerBase} w-[15%] border-l-0`}>직급</div>
+          <div className={`${headerBase} w-[25%] border-l-0`}>이메일</div>
+          <div className={`${headerBase} w-[25%] rounded-tr-[10px] border-l-0`}>가입 상태</div>
         </div>
         <div className="w-full bg-white">
           {isLoading ? (
@@ -154,11 +154,13 @@ export default function MembershipManagementTable({
           ) : (
             filteredList.map((emp) => (
               <div key={emp.memberId} className="flex w-full">
-                <div className={`${cellBase} w-[170px]`}>{emp.name}</div>
-                <div className={`${cellBase} w-[220px] border-l-0`}>{mapDepartment(emp.department)}</div>
-                <div className={`${cellBase} w-[160px] border-l-0`}>{mapPosition(emp.position)}</div>
-                <div className={`${cellBase} w-[230px] border-l-0`}>{emp.email}</div>
-                <div className={`${cellBase} w-[260px] border-l-0`}>
+                <div className={`${cellBase} w-[15%]`}>{emp.name}</div>
+                <div className={`${cellBase} w-[20%] border-l-0`}>
+                  {mapDepartment(emp.department)}
+                </div>
+                <div className={`${cellBase} w-[15%] border-l-0`}>{mapPosition(emp.position)}</div>
+                <div className={`${cellBase} w-[25%] border-l-0`}>{emp.email}</div>
+                <div className={`${cellBase} w-[25%] border-l-0`}>
                   <Dropdown
                     options={STATUS_OPTIONS}
                     selectedValue={statusChanges[emp.memberId] || STATUS_MAP[emp.requestStatus]}
@@ -196,6 +198,11 @@ export default function MembershipManagementTable({
         isOpen={isSuccessModalOpen}
         onClose={() => setIsSuccessModalOpen(false)}
         description="가입 상태 설정이 저장되었어요"
+      />
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
       />
       <AlertModal
         isOpen={alertModal.isOpen}

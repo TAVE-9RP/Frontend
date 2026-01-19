@@ -29,7 +29,7 @@ const DateInput: React.FC<DateInputProps> = ({
       : 'bg-white border-greyColor-grey400 text-greyColor-grey500';
 
   return (
-    <div className="flex items-center gap-[6px]">
+    <div className="flex items-center gap-[6px] font-pretendard">
       <input
         type="text"
         name={name}

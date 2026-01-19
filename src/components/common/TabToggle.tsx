@@ -10,7 +10,7 @@ const TabToggle: React.FC<TabToggleProps> = ({ activeTab, onTabChange }) => {
     'inline-flex p-[7px] items-center gap-2 rounded-[50px] bg-greyColor-grey200';
 
   const baseButtonClasses =
-    'flex items-center gap-2 text-[17px] font-bold leading-normal transition-colors duration-150';
+    'flex items-center gap-2 font-pretendard text-[17px] font-bold leading-normal transition-colors duration-150';
 
   const activeClasses = 'py-2 px-[18px] rounded-[50px] bg-white text-mainColor-blue600';
 
