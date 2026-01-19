@@ -121,121 +121,113 @@ export default function InventoryHome() {
       <SideBar />
 
       <main className="flex flex-1 flex-col items-center overflow-y-auto">
-        <div className="pt-[60px] w-full flex flex-col items-center">
-          <div className="w-full max-w-[1200px] flex flex-col items-center">
-            <div className="w-full flex flex-col items-center">
-              <h1 className="w-full max-w-[1038px] font-pretendard text-[24px] font-bold text-greyColor-grey900">
+        <div className="flex w-full flex-col items-center pt-[60px]">
+          <div className="flex w-full max-w-[1200px] flex-col items-center">
+            <div className="flex w-full flex-col items-center">
+              <h1 className="w-full max-w-[1070px] font-pretendard text-[24px] font-bold text-greyColor-grey900">
                 재고 서비스 홈
               </h1>
             </div>
 
-            <section className="mt-[64px] w-full flex flex-col items-center">
-            <div className="w-full flex flex-col items-center">
-              <h2 className="w-full max-w-[1038px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
-                재고 대시보드
-              </h2>
-              <p className="w-full max-w-[1038px] mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
-                2025.12.01 ~ 2025.12.31
-              </p>
-            </div>
+            <section className="mt-[64px] flex w-full flex-col items-center">
+              <div className="flex w-full flex-col items-center">
+                <h2 className="w-full max-w-[1070px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
+                  재고 대시보드
+                </h2>
+                <p className="mt-[8px] w-full max-w-[1070px] font-pretendard text-[15px] text-greyColor-grey500">
+                  2025.12.01 ~ 2025.12.31
+                </p>
+              </div>
 
-            <div className="mt-[16px] flex gap-[20px] justify-center">
-              <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[40px] top-[47px]">
+              <div className="mt-[16px] flex justify-center gap-[16px]">
+                <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[40px] top-[47px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData ? Math.floor(dashboardData.safetyStockRate * 100) / 100 : 0
+                      }
+                      label="안전 재고 확보율(%)"
+                      colorType="blue"
+                    />
+                  </div>
+
+                  <div className="absolute left-[245px] right-[30px] top-[40px]">
+                    <div className="mb-[25px] flex gap-2">
+                      {tabs.map((tab) => (
+                        <DashboardTab
+                          key={tab}
+                          label={tab}
+                          isActive={activeTab === tab}
+                          onClick={() => setActiveTab(tab)}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1">
+                      {inventoryTasks.length === 0 ? (
+                        <div className="flex items-center justify-center py-[20px]">
+                          <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
+                            해당 업무가 없습니다.
+                          </span>
+                        </div>
+                      ) : (
+                        inventoryTasks.map((task) => (
+                          <div
+                            key={task.id}
+                            className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                            onClick={() => handleItemClick(String(task.id))}
+                          >
+                            <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                              <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                                {task.requestDate}
+                              </span>
+                            </div>
+                            <div className="ml-[13px] flex-1">
+                              <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                                {task.taskName}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                   <DashboardChart
-                    percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.safetyStockRate * 100) / 100
-                        : 0
-                    }
-                    label="안전 재고 확보율(%)"
+                    percent={dashboardData ? Math.floor(dashboardData.turnOverRate * 100) / 100 : 0}
+                    label="재고 회전율(%)"
                     colorType="blue"
+                    maxPercent={2}
                   />
                 </div>
 
-                <div className="absolute left-[245px] right-[30px] top-[40px]">
-                  <div className="mb-[25px] flex gap-2">
-                    {tabs.map((tab) => (
-                      <DashboardTab
-                        key={tab}
-                        label={tab}
-                        isActive={activeTab === tab}
-                        onClick={() => setActiveTab(tab)}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1">
-                    {inventoryTasks.length === 0 ? (
-                      <div className="flex items-center justify-center py-[20px]">
-                        <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
-                          해당 업무가 없습니다.
-                        </span>
-                      </div>
-                    ) : (
-                      inventoryTasks.map((task) => (
-                        <div
-                          key={task.id}
-                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
-                          onClick={() => handleItemClick(String(task.id))}
-                        >
-                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
-                              {task.requestDate}
-                            </span>
-                          </div>
-                          <div className="ml-[13px] flex-1">
-                            <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
-                              {task.taskName}
-                            </span>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
+                <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <DashboardChart
+                    percent={
+                      dashboardData ? Math.floor(dashboardData.predTurnOverRate * 100) / 100 : 0
+                    }
+                    label="익월 재고 회전율(%)"
+                    colorType="orange"
+                    maxPercent={2}
+                  />
                 </div>
               </div>
-
-              <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <DashboardChart
-                  percent={
-                    dashboardData
-                      ? Math.floor(dashboardData.turnOverRate * 100) / 100
-                      : 0
-                  }
-                  label="재고 회전율(%)"
-                  colorType="blue"
-                  maxPercent={2}
-                />
-              </div>
-
-              <div className="flex h-[306px] w-[240px] flex-col items-center justify-center rounded-[20px] bg-white pt-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <DashboardChart
-                  percent={
-                    dashboardData
-                      ? Math.floor(dashboardData.predTurnOverRate * 100) / 100
-                      : 0
-                  }
-                  label="익월 재고 회전율(%)"
-                  colorType="orange"
-                  maxPercent={2}
-                />
-              </div>
-            </div>
             </section>
 
-            <section className="mb-10 mt-[40px] w-full flex flex-col items-center">
-            <div className="w-full max-w-[1070px]">
-              <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
-                프로젝트 리스트
-              </h2>
-              <div className="min-h-[400px] w-full rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-              <p className="mb-[24px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
-                할당된 프로젝트입니다
-              </p>
-                <ProjectListTable />
+            <section className="mb-10 mt-[40px] flex w-full flex-col items-center">
+              <div className="w-full max-w-[1070px]">
+                <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
+                  프로젝트 리스트
+                </h2>
+                <div className="min-h-[400px] w-full rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <p className="mb-[24px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
+                    할당된 프로젝트입니다
+                  </p>
+                  <ProjectListTable />
+                </div>
               </div>
-            </div>
             </section>
           </div>
         </div>
