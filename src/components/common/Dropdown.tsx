@@ -52,13 +52,13 @@ export default function Dropdown<T extends string>({
   };
 
   const buttonClasses =
-    'flex items-center justify-between px-3 py-2 text-sm font-medium border rounded-md cursor-pointer transition h-8';
+    'flex items-center justify-between px-3 py-2 font-pretendard text-sm font-medium border rounded-md cursor-pointer transition h-8';
 
   const listContainerClasses =
     'absolute z-10 mt-1 w-full bg-white border border-greyColor-grey300 rounded-md shadow-lg overflow-hidden';
 
   const itemClasses =
-    'px-3 py-2 text-sm text-greyColor-grey800 cursor-pointer hover:bg-mainColor-blue050 transition';
+    'px-3 py-2 font-pretendard text-sm text-greyColor-grey800 cursor-pointer hover:bg-mainColor-blue050 transition';
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
