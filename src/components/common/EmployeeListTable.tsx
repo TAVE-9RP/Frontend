@@ -129,7 +129,7 @@ export default function EmployeeListTable({
     'h-10 flex items-center justify-center border-b border-l border-r border-greyColor-grey200 text-greyColor-grey700 font-pretendard text-[15px] font-normal';
 
   return (
-    <div className="flex w-[1040px] flex-col items-start">
+    <div className="flex w-[1200px] flex-col items-start">
       <div className="w-full">
         <div className="flex w-full">
           <div className={`${headerBase} w-[210px] rounded-tl-[10px]`}>이름</div>

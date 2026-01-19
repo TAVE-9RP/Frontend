@@ -125,7 +125,7 @@ return (
               isLoading={isLoading}
               type="outbound"
               basePath="/logistics-outbound-task"
-              width="1502px"
+              width="1200px"
             />
           </div>
         </div>

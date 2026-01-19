@@ -27,7 +27,7 @@ export default function TaskListTable({
   isLoading,
   type,
   basePath: externalPath,
-  width = "1040px",
+  width = "1200px",
 }: TaskListTableProps) {
   const navigate = useNavigate();
   const isOutbound = type === 'outbound';

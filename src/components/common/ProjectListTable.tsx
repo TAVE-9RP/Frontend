@@ -21,7 +21,7 @@ interface ProjectListTableProps {
 export default function ProjectListTable({ 
   data, 
   isLoading, 
-  width = "1227px" 
+  width = "1200px" 
 }: ProjectListTableProps) {
   const navigate = useNavigate();
 
@@ -53,13 +53,13 @@ export default function ProjectListTable({
         >
           <thead className="bg-subColor-orange050">
             <tr>
-              <th className={`${tableHeaderClasses} w-[180px]`}>프로젝트 넘버</th>
-              <th className={`${tableHeaderClasses} w-[200px]`}>프로젝트 제목</th>
-              <th className={`${tableHeaderClasses} w-[220px]`}>프로젝트 설명</th>
-              <th className={`${tableHeaderClasses} w-[150px]`}>거래처</th>
-              <th className={`${tableHeaderClasses} w-[150px]`}>생성 일자</th>
-              <th className={`${tableHeaderClasses} w-[160px]`}>담당자</th>
-              <th className={`${tableHeaderClasses} w-[167px]`}>진행 상태</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>프로젝트 넘버</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '22%' }}>프로젝트 제목</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>프로젝트 설명</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>거래처</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>생성 일자</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>담당자</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>진행 상태</th>
             </tr>
           </thead>
 
@@ -94,14 +94,14 @@ export default function ProjectListTable({
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate font-mono`}>
                       {project.projectNumber}
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass}`}>
-                      <div className="mx-auto max-w-[170px] truncate text-left">{project.projectTitle}</div>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.projectTitle}
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass}`}>
-                      <div className="mx-auto max-w-[180px] truncate text-left">{project.projectDescription}</div>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.projectDescription}
                     </td>
-                    <td className={`${tableCellClasses} ${bottomBorderClass}`}>
-                      <div className="mx-auto max-w-[120px] truncate text-left">{project.client}</div>
+                    <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
+                      {project.client}
                     </td>
                     <td className={`${tableCellClasses} ${bottomBorderClass} truncate`}>
                       {project.creationDate}

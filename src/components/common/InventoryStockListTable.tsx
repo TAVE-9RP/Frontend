@@ -31,7 +31,7 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
   const bodyTextClasses = 'font-pretendard text-[15px] font-normal text-black truncate w-full';
 
   return (
-    <div className="w-[1040px] overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
+    <div className="w-[1200px] overflow-hidden rounded-[10px] border-l border-t border-r border-greyColor-grey200">
       <table className="w-full table-fixed border-collapse">
         <thead className="bg-subColor-orange050">
           <tr className="flex">
