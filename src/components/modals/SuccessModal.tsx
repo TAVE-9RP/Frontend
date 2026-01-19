@@ -16,7 +16,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-0 left-[220px] right-0 top-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50">
       <div className="flex h-[230px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]">
         <div className="mt-[32px]">
           <img src="/images/projectcheckmark.png" alt="완료 아이콘" className="h-[30px] w-[30px]" />

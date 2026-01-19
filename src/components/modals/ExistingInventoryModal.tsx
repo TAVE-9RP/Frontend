@@ -101,7 +101,7 @@ export default function ExistingInventoryModal({
   };
 
   return (
-    <div className="fixed bottom-0 left-[220px] right-0 top-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50">
       <div className="relative flex h-[609px] w-[981px] flex-col rounded-[30px] bg-white p-[64px] shadow-xl">
         <div className="flex items-start justify-between">
           <h2 className="font-pretendard text-[24px] font-bold leading-normal text-black">

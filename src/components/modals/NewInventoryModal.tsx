@@ -86,7 +86,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
   };
 
   return (
-    <div className="fixed left-[220px] right-0 top-0 bottom-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50">
       <div className="relative h-[545px] w-[981px] rounded-[20px] bg-white p-[64px] shadow-xl">
         <h2 className="font-pretendard text-[24px] font-bold text-black">신규 재고 추가</h2>
         <button
