@@ -10,21 +10,21 @@
 https://nex-erp.vercel.app/
 
 ## 👀 3. 서비스 둘러보기
-
+### 🏢 회사 신규 등록
 <video src="https://github.com/user-attachments/assets/15255fda-3f61-4eb0-86e6-741c7dc02fba" autoplay loop muted playsinline width="100%"></video>
-
+- NexERP와 함께하는 첫걸음! 🚀 새로운 회사를 등록하고 생성된 계정으로 로그인하는 과정입니다.
 ---
-
+### 🧑‍💻 사원 신규 등록
 <video src="https://github.com/user-attachments/assets/1bd71207-38d2-4b93-ae98-b83a79d54f05" autoplay loop muted playsinline width="100%"></video>
-
+- 이름과 아이디 등 기본 정보를 입력하고 소속될 회사와 부서, 직급을 선택하면 가입 요청 완료!
 ---
-
+### 🤝 사원 가입 요청 승인
 <video src="https://github.com/user-attachments/assets/e85e75b7-7378-427b-ad7d-76e13fadd3fa" autoplay loop muted playsinline width="100%"></video>
-
+- 새로운 팀원의 합류 요청이 도착했어요 📩 관리자가 가입 관리 페이지에서 가입 요청 목록을 확인하고 승인 또는 거절을 선택합니다!
 ---
-
+### 🎯 프로젝트 생성하기
 <video src="https://github.com/user-attachments/assets/1d9eb662-3c55-49d7-b6be-faee7cf53a14" autoplay loop muted playsinline width="100%"></video>
-
+- 관리자가 프로젝트 정보를 입력하고 입고와 출하 업무를 책임질 담당자를 선택해요. 깔끔한 업무 분담과 스마트한 관리, NexERP가 함께합니다 🚀
 ---
 
 ! 입고 업무 관리자 영상 추가하기
@@ -34,9 +34,9 @@ https://nex-erp.vercel.app/
 ! 출하 업무 관리자 영상 추가하기
 
 ---
-
+### :🖱️ 관리자의 입고/출하 업무 승인 처리
 <video src="https://github.com/user-attachments/assets/0a1efb49-2492-40fe-a729-ecf1f1e7d9c3" autoplay loop muted playsinline width="100%"></video>
-
+- 관리자는 담당자가 보낸 승인 요청을 확인하고 클릭 한 번으로 결재를 끝냅니다. 빠르고 간단한 승인 프로세스로 업무 효율을 높여보세요 ✨
 ---
 
 <video src="https://github.com/user-attachments/assets/c8c2171b-c442-4703-a492-c497f78f36b8" autoplay loop muted playsinline width="100%"></video>
@@ -137,6 +137,7 @@ src
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
