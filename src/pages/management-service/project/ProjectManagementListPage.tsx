@@ -143,22 +143,26 @@ export default function ProjectManagementListPage() {
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
-      <main className="flex-1">
-        <div className="w-max pb-20 pl-[70px] pr-10 pt-[60px]">
-          <div className="mb-[67px] flex w-full items-center justify-between">
-            <h1 className="whitespace-nowrap font-pretendard text-2xl font-bold text-black">
-              전체 프로젝트 관리
-            </h1>
-            <button
-              onClick={handleCreateProjectClick}
-              className="flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
-            >
-              <img src="/images/add.png" alt="Add" className="mr-[5px] h-[26px] w-[26px]" />
-              <span className="font-pretendard text-[17px] font-bold text-white">
-                프로젝트 생성
-              </span>
-            </button>
+      <main className="flex flex-1 flex-col items-center">
+        <div className="pt-[60px] w-full flex flex-col items-center">
+          <div className="w-[1200px]">
+            <div className="mb-[67px] flex w-full items-center justify-between">
+              <h1 className="whitespace-nowrap font-pretendard text-2xl font-bold text-black">
+                전체 프로젝트 관리
+              </h1>
+              <button
+                onClick={handleCreateProjectClick}
+                className="flex h-[40px] w-[151px] cursor-pointer items-center justify-center rounded-[10px] border-none bg-mainColor-blue600 transition-colors hover:bg-blue-600"
+              >
+                <img src="/images/add.png" alt="Add" className="mr-[5px] h-[26px] w-[26px]" />
+                <span className="font-pretendard text-[17px] font-bold text-white">
+                  프로젝트 생성
+                </span>
+              </button>
+            </div>
           </div>
+        </div>
+        <div className="mt-[27px] w-max pb-20">
           <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[10px]">
               {statusData.map((item) => (
