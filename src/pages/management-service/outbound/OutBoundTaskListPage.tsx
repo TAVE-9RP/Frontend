@@ -217,13 +217,13 @@ export default function OutboundTaskListPage() {
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1">
-        <div className="pl-[70px] pr-10 pt-[60px]">
+      <main className="flex flex-1 flex-col items-center">
+        <div className="pt-[60px]">
           <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             출하 업무 리스트
           </h1>
         </div>
-        <div className="mt-[67px] w-max pb-20 pl-[70px] pr-10">
+        <div className="mt-[67px] w-max pb-20">
           <div className="mb-[27px] flex w-full items-center justify-between">
             <div className="flex gap-[8px]">
               {statusData.map((item) => (
