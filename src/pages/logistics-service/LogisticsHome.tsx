@@ -94,7 +94,7 @@ export default function LogisticsHome() {
 
         if (chartResponse.isSuccess && chartResponse.result?.history) {
           const year = chartResponse.result.year || 2025;
-          
+
           // "1월", "2월" 형식을 "2025-01", "2025-02" 형식으로 변환
           const convertMonthFormat = (monthStr: string, year: number): string => {
             // "1월", "2월" 등에서 숫자 추출
@@ -106,7 +106,9 @@ export default function LogisticsHome() {
           };
 
           let chartData: LeadTimeChartData[] = chartResponse.result.history
-            .filter((item: { month: string; value: number }) => item.value != null && !isNaN(item.value))
+            .filter(
+              (item: { month: string; value: number }) => item.value != null && !isNaN(item.value),
+            )
             .map((item: { month: string; value: number }) => ({
               month: convertMonthFormat(item.month, year),
               value: Number(item.value),
@@ -165,94 +167,96 @@ export default function LogisticsHome() {
   return (
     <div className="flex h-screen w-full overflow-hidden bg-greyColor-grey100">
       <SideBar />
-      <main className="flex-1 overflow-y-auto">
-        <div className="pl-[70px] pt-[60px]">
-          <h1 className="font-pretendard text-[24px] font-bold text-greyColor-grey900">
-            물류 서비스 홈
-          </h1>
+      <main className="flex flex-1 flex-col items-center overflow-y-auto">
+        <div className="flex w-full flex-col items-center pb-[60px] pt-[60px]">
+          <div className="w-full max-w-[1070px]">
+            <h1 className="font-pretendard text-[24px] font-bold text-greyColor-grey900">
+              물류 서비스 홈
+            </h1>
 
-          <section className="ml-[10px] mt-[64px]">
-            <h2 className="font-pretendard text-[19px] font-bold text-greyColor-grey900">
-              물류 대시보드
-            </h2>
-            <p className="mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
-              2025.12.01 ~ 2025.12.31
-            </p>
+            <section className="mt-[64px]">
+              <h2 className="font-pretendard text-[19px] font-bold text-greyColor-grey900">
+                물류 대시보드
+              </h2>
+              <p className="mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
+                2025.12.01 ~ 2025.12.31
+              </p>
 
-            <div className="mt-[16px] flex flex-col pr-10">
-              <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart
-                    percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.shipmentCompletionRate * 100) / 100
-                        : 0
-                    }
-                    label="출하 완료율(%)"
-                    colorType="blue"
-                  />
-                </div>
-
-                <div className="absolute left-[245px] right-[30px] top-[40px]">
-                  <div className="mb-[25px] flex gap-2">
-                    {tabs.map((tab) => (
-                      <DashboardTab
-                        key={tab}
-                        label={tab}
-                        isActive={activeTab === tab}
-                        onClick={() => setActiveTab(tab)}
-                      />
-                    ))}
+              <div className="mt-[16px] flex flex-col gap-[16px]">
+                <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[40px] top-[47px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData
+                          ? Math.floor(dashboardData.shipmentCompletionRate * 100) / 100
+                          : 0
+                      }
+                      label="출하 완료율(%)"
+                      colorType="blue"
+                    />
                   </div>
 
-                  <div className="flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1">
-                    {isLoading ? (
-                      <div className="py-4 text-center font-pretendard text-[13px] text-greyColor-grey400">
-                        데이터 로딩 중...
-                      </div>
-                    ) : tasksByStatus[activeTab].length > 0 ? (
-                      tasksByStatus[activeTab].map((task) => (
-                        <div
-                          key={task.id}
-                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
-                          onClick={() => navigate(`/logistics-outbound-task/${task.id}`)}
-                        >
-                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
-                              {task.date}
-                            </span>
-                          </div>
-                          <div className="ml-[13px] flex-1">
-                            <span className="block truncate font-pretendard text-[13px] text-greyColor-grey700">
-                              {task.title}
-                            </span>
-                          </div>
+                  <div className="absolute left-[245px] right-[30px] top-[40px]">
+                    <div className="mb-[25px] flex gap-2">
+                      {tabs.map((tab) => (
+                        <DashboardTab
+                          key={tab}
+                          label={tab}
+                          isActive={activeTab === tab}
+                          onClick={() => setActiveTab(tab)}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex max-h-[170px] flex-col gap-[8px] overflow-y-auto pr-1">
+                      {isLoading ? (
+                        <div className="py-4 text-center font-pretendard text-[13px] text-greyColor-grey400">
+                          데이터 로딩 중...
                         </div>
-                      ))
-                    ) : (
-                      <div className="py-4 text-center font-pretendard text-[13px] text-greyColor-grey400">
-                        해당 업무가 없습니다.
-                      </div>
-                    )}
+                      ) : tasksByStatus[activeTab].length > 0 ? (
+                        tasksByStatus[activeTab].map((task) => (
+                          <div
+                            key={task.id}
+                            className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                            onClick={() => navigate(`/logistics-outbound-task/${task.id}`)}
+                          >
+                            <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                              <span className="whitespace-nowrap font-pretendard text-[13px] font-bold text-subColor-orange900">
+                                {task.date}
+                              </span>
+                            </div>
+                            <div className="ml-[13px] flex-1">
+                              <span className="block truncate font-pretendard text-[13px] text-greyColor-grey700">
+                                {task.title}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-4 text-center font-pretendard text-[13px] text-greyColor-grey400">
+                          해당 업무가 없습니다.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                    <LeadTimeChart data={leadTimeChartData} />
                   </div>
                 </div>
               </div>
-              <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
-                  <LeadTimeChart data={leadTimeChartData} />
-                </div>
-              </div>
-            </div>
-          </section>
+            </section>
 
-          <section className="mb-10 ml-[10px] mt-[40px] pr-10">
-            <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
-              프로젝트 리스트
-            </h2>
-            <div className="min-h-[400px] w-full max-w-[1070px] rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-              <ProjectListTable />
-            </div>
-          </section>
+            <section className="mb-10 mt-[40px]">
+              <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
+                프로젝트 리스트
+              </h2>
+              <div className="min-h-[400px] w-full max-w-[1070px] rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                <ProjectListTable />
+              </div>
+            </section>
+          </div>
         </div>
       </main>
     </div>
