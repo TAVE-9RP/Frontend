@@ -12,7 +12,8 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
 
   const isCenterMode =
     message.includes('아이디와 비밀번호를 확인해주세요') ||
-    message.includes('요청 데이터 검증 실패');
+    message.includes('요청 데이터 검증 실패') ||
+    message.includes('회원가입이 완료되었습니다.');
 
   return (
     <div
