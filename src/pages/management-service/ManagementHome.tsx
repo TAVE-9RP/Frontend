@@ -467,347 +467,351 @@ export default function ManagementHome() {
     <div className="flex h-screen w-full overflow-hidden bg-[#F8F9FA]">
       <SideBar />
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="pb-[60px] pl-[70px] pt-[60px]">
-          <h1 className="font-pretendard text-[24px] font-bold text-black">관리 서비스 홈</h1>
+      <main className="flex flex-1 flex-col items-center overflow-y-auto">
+        <div className="flex w-full flex-col items-center pb-[60px] pt-[60px]">
+          <div className="w-full max-w-[1070px]">
+            <h1 className="font-pretendard text-[24px] font-bold text-black">관리 서비스 홈</h1>
 
-          <section className="ml-[10px] mt-[64px]">
-            <h2 className={sectionTitleStyle}>프로젝트 대시보드</h2>
-            <p className={dateTextStyle}>2025.12.01 ~ 2025.12.31</p>
+            <section className="mt-[64px]">
+              <h2 className={sectionTitleStyle}>프로젝트 대시보드</h2>
+              <p className={dateTextStyle}>2025.12.01 ~ 2025.12.31</p>
 
-            <div className="mt-[15px] flex gap-[16px]">
-              <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart
-                    percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.projectCompletionRate * 100) / 100
-                        : 0
-                    }
-                    label="프로젝트 처리 완료율(%)"
-                    colorType="blue"
-                  />
-                </div>
-                <div className="absolute left-[245px] right-[30px] top-[40px]">
-                  <div className="mb-[25px] flex gap-2">
-                    {projectTabs.map((tab) => (
-                      <DashboardTab
-                        key={tab}
-                        label={tab}
-                        isActive={activeTab === tab}
-                        onClick={() => setActiveTab(tab)}
-                      />
-                    ))}
+              <div className="mt-[15px] flex gap-[16px]">
+                <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[40px] top-[47px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData
+                          ? Math.floor(dashboardData.projectCompletionRate * 100) / 100
+                          : 0
+                      }
+                      label="프로젝트 처리 완료율(%)"
+                      colorType="blue"
+                    />
                   </div>
-                  <div className={scrollContainerStyle}>
-                    {projectList.map((project) => (
+                  <div className="absolute left-[245px] right-[30px] top-[40px]">
+                    <div className="mb-[25px] flex gap-2">
+                      {projectTabs.map((tab) => (
+                        <DashboardTab
+                          key={tab}
+                          label={tab}
+                          isActive={activeTab === tab}
+                          onClick={() => setActiveTab(tab)}
+                        />
+                      ))}
+                    </div>
+                    <div className={scrollContainerStyle}>
+                      {projectList.map((project) => (
+                        <div
+                          key={project.id}
+                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                          onClick={() => handleDetailClick('project', String(project.id))}
+                        >
+                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                              {project.creationDate}
+                            </span>
+                          </div>
+                          <div className="ml-[13px] flex-1">
+                            <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                              {project.projectTitle}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative h-[306px] w-[494px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[69px] top-[51.5px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData ? Math.floor(dashboardData.longTermTaskRate * 100) / 100 : 0
+                      }
+                      label="업무 장기 처리율(%)"
+                      colorType="black"
+                    />
+                  </div>
+                  <div className="absolute left-[315.5px] top-[75.25px] flex items-center">
+                    <img
+                      src="/images/circlemark.png"
+                      alt="mark"
+                      className="mr-[8px] h-[14px] w-[14px] object-contain"
+                    />
+                    <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
+                      전체 업무 : {dashboardData?.totalTaskCount ?? 0}
+                    </span>
+                  </div>
+                  <div className="absolute left-[311px] top-[111.25px] flex gap-[8px]">
+                    <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
                       <div
-                        key={project.id}
-                        className="flex cursor-pointer items-center transition-colors hover:opacity-70"
-                        onClick={() => handleDetailClick('project', String(project.id))}
-                      >
-                        <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                          <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
-                            {project.creationDate}
-                          </span>
-                        </div>
-                        <div className="ml-[13px] flex-1">
-                          <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
-                            {project.projectTitle}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative h-[306px] w-[494px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[69px] top-[51.5px]">
-                  <DashboardChart
-                    percent={
-                      dashboardData ? Math.floor(dashboardData.longTermTaskRate * 100) / 100 : 0
-                    }
-                    label="업무 장기 처리율(%)"
-                    colorType="black"
-                  />
-                </div>
-                <div className="absolute left-[315.5px] top-[75.25px] flex items-center">
-                  <img
-                    src="/images/circlemark.png"
-                    alt="mark"
-                    className="mr-[8px] h-[14px] w-[14px] object-contain"
-                  />
-                  <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
-                    전체 업무 : {dashboardData?.totalTaskCount ?? 0}
-                  </span>
-                </div>
-                <div className="absolute left-[311px] top-[111.25px] flex gap-[8px]">
-                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
-                    <div
-                      className="h-[8px] w-[8px] bg-mainColor-blue600"
-                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
-                    />
-                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-mainColor-blue600">
-                      재고 {dashboardData?.inventoryTaskCount ?? 0}
-                    </span>
-                  </div>
-                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
-                    <div
-                      className="h-[8px] w-[8px] bg-subColor-orange900"
-                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
-                    />
-                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-subColor-orange900">
-                      출하 {dashboardData?.logisticsTaskCount ?? 0}
-                    </span>
-                  </div>
-                </div>
-                <div className="absolute left-[315.5px] top-[177.75px] flex items-center">
-                  <img
-                    src="/images/circlemark_dark.png"
-                    alt="dark mark"
-                    className="mr-[8px] h-[12px] w-[12px] object-contain"
-                  />
-                  <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
-                    지연 업무 : {dashboardData?.totalDelayedCount ?? 0}
-                  </span>
-                </div>
-                <div className="absolute left-[311px] top-[209.75px] flex gap-[8px]">
-                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
-                    <div
-                      className="h-[8px] w-[8px] bg-mainColor-blue600"
-                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
-                    />
-                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-greyColor-grey200">
-                      재고 {dashboardData?.inventoryDelayedCount ?? 0}
-                    </span>
-                  </div>
-                  <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
-                    <div
-                      className="h-[8px] w-[8px] bg-subColor-orange900"
-                      style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
-                    />
-                    <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-greyColor-grey200">
-                      출하 {dashboardData?.logisticsDelayedCount ?? 0}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative mt-[16px] h-[326px] w-[1070px] rounded-[20px] bg-white px-[32px] pt-[25px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-              <h2 className="font-pretendard text-[19px] font-bold text-black">
-                승인 대기 프로젝트
-              </h2>
-              <p className="mt-[9.72px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
-                현재 승인 요청이 들어온 입고/출하 업무를 확인할 수 있어요
-              </p>
-
-              <div className="mt-[28px] flex gap-[46px]">
-                <div className="custom-scrollbar h-[192px] w-[476px] overflow-y-auto pr-1">
-                  <ul className="flex flex-col">
-                    {pendingInboundTasks.map((task) => (
-                      <li
-                        key={task.id}
-                        onClick={() => handleDetailClick('inbound-task', String(task.id))}
-                        className="flex w-full cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] transition-colors hover:bg-gray-50"
-                      >
-                        <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-mainColor-blue050 px-[10px] py-[5px]">
-                          <span className="font-pretendard text-[15px] font-bold text-mainColor-blue600">
-                            입고
-                          </span>
-                        </div>
-                        <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
-                          {task.requestDate}
-                        </span>
-                        <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
-                          {task.taskName}
-                        </span>
-                        <img
-                          src="/images/next_1.png"
-                          alt="next"
-                          className="ml-[32px] h-[16px] w-[16px] object-contain"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="custom-scrollbar h-[192px] w-[476px] overflow-y-auto pr-1">
-                  <ul className="flex flex-col">
-                    {pendingOutboundTasks.map((task) => (
-                      <li
-                        key={task.id}
-                        onClick={() => handleDetailClick('outbound-task', String(task.id))}
-                        className="flex w-full cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] transition-colors hover:bg-gray-50"
-                      >
-                        <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
-                          <span className="font-pretendard text-[15px] font-bold text-subColor-orange900">
-                            출하
-                          </span>
-                        </div>
-                        <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
-                          {task.requestDate}
-                        </span>
-                        <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
-                          {task.taskName}
-                        </span>
-                        <img
-                          src="/images/next_1.png"
-                          alt="next"
-                          className="ml-[32px] h-[16px] w-[16px] object-contain"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="ml-[10px] mt-[40px]">
-            <h2 className={sectionTitleStyle}>재고 대시보드</h2>
-            <p className={dateTextStyle}>2025.12.01 ~ 2025.12.31</p>
-            <div className="mt-[16px] flex gap-[16px]">
-              <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart
-                    percent={
-                      dashboardData ? Math.floor(dashboardData.safetyStockRate * 100) / 100 : 0
-                    }
-                    label="안전 재고 확보율(%)"
-                    colorType="blue"
-                  />
-                </div>
-                <div className="absolute left-[245px] right-[30px] top-[40px]">
-                  <div className="mb-[25px] flex gap-2">
-                    {tabs.map((tab) => (
-                      <DashboardTab
-                        key={tab}
-                        label={tab}
-                        isActive={safetyInventoryTab === tab}
-                        onClick={() => setSafetyInventoryTab(tab)}
+                        className="h-[8px] w-[8px] bg-mainColor-blue600"
+                        style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
                       />
-                    ))}
+                      <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-mainColor-blue600">
+                        재고 {dashboardData?.inventoryTaskCount ?? 0}
+                      </span>
+                    </div>
+                    <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey200 px-[5px] py-[2px]">
+                      <div
+                        className="h-[8px] w-[8px] bg-subColor-orange900"
+                        style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
+                      />
+                      <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-subColor-orange900">
+                        출하 {dashboardData?.logisticsTaskCount ?? 0}
+                      </span>
+                    </div>
                   </div>
-                  <div className={scrollContainerStyle}>
-                    {inventoryTasks.length === 0 ? (
-                      <div className="flex items-center justify-center py-[20px]">
-                        <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
-                          없음
-                        </span>
-                      </div>
-                    ) : (
-                      inventoryTasks.map((task) => (
-                        <div
+                  <div className="absolute left-[315.5px] top-[177.75px] flex items-center">
+                    <img
+                      src="/images/circlemark_dark.png"
+                      alt="dark mark"
+                      className="mr-[8px] h-[12px] w-[12px] object-contain"
+                    />
+                    <span className="font-pretendard text-[15px] font-bold text-greyColor-grey700">
+                      지연 업무 : {dashboardData?.totalDelayedCount ?? 0}
+                    </span>
+                  </div>
+                  <div className="absolute left-[311px] top-[209.75px] flex gap-[8px]">
+                    <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
+                      <div
+                        className="h-[8px] w-[8px] bg-mainColor-blue600"
+                        style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
+                      />
+                      <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-greyColor-grey200">
+                        재고 {dashboardData?.inventoryDelayedCount ?? 0}
+                      </span>
+                    </div>
+                    <div className="flex h-[20px] w-fit items-center justify-center gap-[5px] rounded-[5px] bg-greyColor-grey700 px-[5px] py-[2px]">
+                      <div
+                        className="h-[8px] w-[8px] bg-subColor-orange900"
+                        style={{ maskImage: `url(/images/ellipse.png)`, maskSize: 'contain' }}
+                      />
+                      <span className="whitespace-nowrap font-pretendard text-[13px] font-normal text-greyColor-grey200">
+                        출하 {dashboardData?.logisticsDelayedCount ?? 0}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative mt-[16px] h-[326px] w-[1070px] rounded-[20px] bg-white px-[32px] pt-[25px] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                <h2 className="font-pretendard text-[19px] font-bold text-black">
+                  승인 대기 프로젝트
+                </h2>
+                <p className="mt-[9.72px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
+                  현재 승인 요청이 들어온 입고/출하 업무를 확인할 수 있어요
+                </p>
+
+                <div className="mt-[28px] flex gap-[46px]">
+                  <div className="custom-scrollbar h-[192px] w-[476px] overflow-y-auto pr-1">
+                    <ul className="flex flex-col">
+                      {pendingInboundTasks.map((task) => (
+                        <li
                           key={task.id}
-                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                           onClick={() => handleDetailClick('inbound-task', String(task.id))}
+                          className="flex w-full cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] transition-colors hover:bg-gray-50"
                         >
-                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
-                              {task.requestDate}
+                          <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-mainColor-blue050 px-[10px] py-[5px]">
+                            <span className="font-pretendard text-[15px] font-bold text-mainColor-blue600">
+                              입고
                             </span>
                           </div>
-                          <div className="ml-[13px] flex-1">
-                            <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
-                              {task.taskName}
-                            </span>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                          <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
+                            {task.requestDate}
+                          </span>
+                          <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
+                            {task.taskName}
+                          </span>
+                          <img
+                            src="/images/next_1.png"
+                            alt="next"
+                            className="ml-[32px] h-[16px] w-[16px] object-contain"
+                          />
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              </div>
-              <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[45px] top-[47.5px]">
-                  <DashboardChart
-                    percent={dashboardData ? Math.floor(dashboardData.turnOverRate * 100) / 100 : 0}
-                    label="재고 회전율(%)"
-                    colorType="blue"
-                    maxPercent={2}
-                  />
-                </div>
-              </div>
-              <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[45px] top-[47.5px]">
-                  <DashboardChart
-                    percent={
-                      dashboardData ? Math.floor(dashboardData.predTurnOverRate * 100) / 100 : 0
-                    }
-                    label="재고 회전율 익월(%)"
-                    colorType="orange"
-                    maxPercent={2}
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
 
-          <section className="ml-[10px] mt-[40px]">
-            <h2 className={sectionTitleStyle}>물류 대시보드</h2>
-            <div className="mt-[16px]">
-              <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="absolute left-[40px] top-[47px]">
-                  <DashboardChart
-                    percent={
-                      dashboardData
-                        ? Math.floor(dashboardData.shipmentCompletionRate * 100) / 100
-                        : 0
-                    }
-                    label="출하 완료율(%)"
-                    colorType="blue"
-                  />
-                </div>
-                <div className="absolute left-[245px] right-[30px] top-[40px]">
-                  <div className="mb-[25px] flex gap-2">
-                    {tabs.map((tab) => (
-                      <DashboardTab
-                        key={tab}
-                        label={tab}
-                        isActive={logisticsTab === tab}
-                        onClick={() => setLogisticsTab(tab)}
-                      />
-                    ))}
-                  </div>
-                  <div className={scrollContainerStyle}>
-                    {logisticsTasks.length === 0 ? (
-                      <div className="flex items-center justify-center py-[20px]">
-                        <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
-                          없음
-                        </span>
-                      </div>
-                    ) : (
-                      logisticsTasks.map((task) => (
-                        <div
+                  <div className="custom-scrollbar h-[192px] w-[476px] overflow-y-auto pr-1">
+                    <ul className="flex flex-col">
+                      {pendingOutboundTasks.map((task) => (
+                        <li
                           key={task.id}
-                          className="flex cursor-pointer items-center transition-colors hover:opacity-70"
                           onClick={() => handleDetailClick('outbound-task', String(task.id))}
+                          className="flex w-full cursor-pointer items-center border-b border-greyColor-grey200 py-[12px] transition-colors hover:bg-gray-50"
                         >
-                          <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
-                            <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
-                              {task.requestDate}
+                          <div className="flex h-[24px] w-[46px] items-center justify-center rounded-[30px] bg-subColor-orange100 px-[10px] py-[5px]">
+                            <span className="font-pretendard text-[15px] font-bold text-subColor-orange900">
+                              출하
                             </span>
                           </div>
-                          <div className="ml-[13px] flex-1">
-                            <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
-                              {task.taskName}
-                            </span>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                          <span className="ml-[24px] font-pretendard text-[15px] font-bold text-greyColor-grey500">
+                            {task.requestDate}
+                          </span>
+                          <span className="ml-[24px] flex-1 truncate font-pretendard text-[15px] font-normal text-greyColor-grey700">
+                            {task.taskName}
+                          </span>
+                          <img
+                            src="/images/next_1.png"
+                            alt="next"
+                            className="ml-[32px] h-[16px] w-[16px] object-contain"
+                          />
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
-              <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
-                  <LeadTimeChart data={leadTimeChartData} />
+            </section>
+
+            <section className="mt-[40px]">
+              <h2 className={sectionTitleStyle}>재고 대시보드</h2>
+              <p className={dateTextStyle}>2025.12.01 ~ 2025.12.31</p>
+              <div className="mt-[16px] flex gap-[16px]">
+                <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[40px] top-[47px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData ? Math.floor(dashboardData.safetyStockRate * 100) / 100 : 0
+                      }
+                      label="안전 재고 확보율(%)"
+                      colorType="blue"
+                    />
+                  </div>
+                  <div className="absolute left-[245px] right-[30px] top-[40px]">
+                    <div className="mb-[25px] flex gap-2">
+                      {tabs.map((tab) => (
+                        <DashboardTab
+                          key={tab}
+                          label={tab}
+                          isActive={safetyInventoryTab === tab}
+                          onClick={() => setSafetyInventoryTab(tab)}
+                        />
+                      ))}
+                    </div>
+                    <div className={scrollContainerStyle}>
+                      {inventoryTasks.length === 0 ? (
+                        <div className="flex items-center justify-center py-[20px]">
+                          <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
+                            없음
+                          </span>
+                        </div>
+                      ) : (
+                        inventoryTasks.map((task) => (
+                          <div
+                            key={task.id}
+                            className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                            onClick={() => handleDetailClick('inbound-task', String(task.id))}
+                          >
+                            <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                              <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                                {task.requestDate}
+                              </span>
+                            </div>
+                            <div className="ml-[13px] flex-1">
+                              <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                                {task.taskName}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[45px] top-[47.5px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData ? Math.floor(dashboardData.turnOverRate * 100) / 100 : 0
+                      }
+                      label="재고 회전율(%)"
+                      colorType="blue"
+                      maxPercent={2}
+                    />
+                  </div>
+                </div>
+                <div className="relative h-[306px] w-[240px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[45px] top-[47.5px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData ? Math.floor(dashboardData.predTurnOverRate * 100) / 100 : 0
+                      }
+                      label="재고 회전율 익월(%)"
+                      colorType="orange"
+                      maxPercent={2}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+
+            <section className="mt-[40px]">
+              <h2 className={sectionTitleStyle}>물류 대시보드</h2>
+              <div className="mt-[16px]">
+                <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="absolute left-[40px] top-[47px]">
+                    <DashboardChart
+                      percent={
+                        dashboardData
+                          ? Math.floor(dashboardData.shipmentCompletionRate * 100) / 100
+                          : 0
+                      }
+                      label="출하 완료율(%)"
+                      colorType="blue"
+                    />
+                  </div>
+                  <div className="absolute left-[245px] right-[30px] top-[40px]">
+                    <div className="mb-[25px] flex gap-2">
+                      {tabs.map((tab) => (
+                        <DashboardTab
+                          key={tab}
+                          label={tab}
+                          isActive={logisticsTab === tab}
+                          onClick={() => setLogisticsTab(tab)}
+                        />
+                      ))}
+                    </div>
+                    <div className={scrollContainerStyle}>
+                      {logisticsTasks.length === 0 ? (
+                        <div className="flex items-center justify-center py-[20px]">
+                          <span className="font-pretendard text-[13px] font-normal text-greyColor-grey500">
+                            없음
+                          </span>
+                        </div>
+                      ) : (
+                        logisticsTasks.map((task) => (
+                          <div
+                            key={task.id}
+                            className="flex cursor-pointer items-center transition-colors hover:opacity-70"
+                            onClick={() => handleDetailClick('outbound-task', String(task.id))}
+                          >
+                            <div className="flex h-[26px] items-center justify-center rounded-[30px] bg-subColor-orange050 px-[10px]">
+                              <span className="whitespace-nowrap font-pretendard text-[13px] font-bold leading-none text-subColor-orange900">
+                                {task.requestDate}
+                              </span>
+                            </div>
+                            <div className="ml-[13px] flex-1">
+                              <span className="block truncate font-pretendard text-[13px] font-normal text-greyColor-grey700">
+                                {task.taskName}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-[16px] h-[363px] w-[1070px] overflow-hidden rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                  <div className="h-full w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                    <LeadTimeChart data={leadTimeChartData} />
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
       </main>
     </div>
