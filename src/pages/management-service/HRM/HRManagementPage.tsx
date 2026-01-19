@@ -38,8 +38,8 @@ export default function HRManagementPage() {
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
       <main className="flex flex-1 flex-col items-center">
-        <div className="pt-10 w-full flex flex-col items-center">
-          <div className={activeTab === '직원 목록' ? 'w-[900px]' : 'w-[1040px]'}>
+        <div className="flex w-full flex-col items-center pt-10">
+          <div className="w-[1200px]">
             <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
               {PAGE_TITLE}
             </h1>
