@@ -73,20 +73,24 @@ export default function InventoryStockListPage() {
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 pb-20 pl-[70px] pt-[60px]">
-        <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
-          재고 조회
-        </h1>
+      <main className="flex flex-1 flex-col items-center">
+        <div className="pt-[60px] w-full flex flex-col items-center">
+          <div className="w-[1000px]">
+            <h1 className="font-pretendard text-[24px] font-bold leading-normal text-black">
+              재고 조회
+            </h1>
 
-        <div className="mt-[60px] w-[1200px]">
-          <SearchBar
-            placeholder="재고 번호 또는 물품명을 입력하세요."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
+            <div className="mt-[60px]">
+              <SearchBar
+                placeholder="재고 번호 또는 물품명을 입력하세요."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="mt-[29px] pr-10">
+        <div className="mt-[29px] pb-20">
           <InventoryStockListTable data={stockList} isLoading={isLoading} />
         </div>
       </main>

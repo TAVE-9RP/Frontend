@@ -120,21 +120,26 @@ export default function InventoryHome() {
     <div className="flex h-screen w-full overflow-hidden bg-greyColor-grey100">
       <SideBar />
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="pl-[70px] pt-[60px]">
-          <h1 className="font-pretendard text-[24px] font-bold text-greyColor-grey900">
-            재고 서비스 홈
-          </h1>
+      <main className="flex flex-1 flex-col items-center overflow-y-auto">
+        <div className="pt-[60px] w-full flex flex-col items-center">
+          <div className="w-full max-w-[1200px] flex flex-col items-center">
+            <div className="w-full flex flex-col items-center">
+              <h1 className="w-full max-w-[1038px] font-pretendard text-[24px] font-bold text-greyColor-grey900">
+                재고 서비스 홈
+              </h1>
+            </div>
 
-          <section className="ml-[10px] mt-[64px]">
-            <h2 className="font-pretendard text-[19px] font-bold text-greyColor-grey900">
-              재고 대시보드
-            </h2>
-            <p className="mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
-              2025.12.01 ~ 2025.12.31
-            </p>
+            <section className="mt-[64px] w-full flex flex-col items-center">
+            <div className="w-full flex flex-col items-center">
+              <h2 className="w-full max-w-[1038px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
+                재고 대시보드
+              </h2>
+              <p className="w-full max-w-[1038px] mt-[8px] font-pretendard text-[15px] text-greyColor-grey500">
+                2025.12.01 ~ 2025.12.31
+              </p>
+            </div>
 
-            <div className="mt-[16px] flex gap-[20px] pr-10">
+            <div className="mt-[16px] flex gap-[20px] justify-center">
               <div className="relative h-[306px] w-[558px] rounded-[20px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-[40px] top-[47px]">
                   <DashboardChart
@@ -217,19 +222,22 @@ export default function InventoryHome() {
                 />
               </div>
             </div>
-          </section>
+            </section>
 
-          <section className="mb-10 ml-[10px] mt-[40px] pr-10">
-            <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
-              프로젝트 리스트
-            </h2>
-            <div className="min-h-[400px] w-full max-w-[1070px] rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+            <section className="mb-10 mt-[40px] w-full flex flex-col items-center">
+            <div className="w-full max-w-[1070px]">
+              <h2 className="mb-[16px] font-pretendard text-[19px] font-bold text-greyColor-grey900">
+                프로젝트 리스트
+              </h2>
+              <div className="min-h-[400px] w-full rounded-[20px] bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
               <p className="mb-[24px] font-pretendard text-[15px] font-normal text-greyColor-grey500">
                 할당된 프로젝트입니다
               </p>
-              <ProjectListTable />
+                <ProjectListTable />
+              </div>
             </div>
-          </section>
+            </section>
+          </div>
         </div>
       </main>
     </div>
