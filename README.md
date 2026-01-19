@@ -43,15 +43,18 @@ https://nex-erp.vercel.app/
 ---
 ### 📦 입고 처리
 <video src="https://github.com/user-attachments/assets/c8c2171b-c442-4703-a492-c497f78f36b8" autoplay loop muted playsinline width="100%"></video>
-- 입고할 물품을 선택하고 수량을 입력한 뒤 '입고처리' 버튼만 누르면 끝! 현재 입고 수량과 목표 입고 수량이 같아지면 입고 처리 완료 🎯
+- 입고할 물품을 선택하고 수량을 입력한 뒤 '입고처리' 버튼만 누르면 끝!
+- 현재 입고 수량과 목표 입고 수량이 같아지면 입고 처리 완료 🎯
 ---
 ### 🚚 출하 처리
 <video src="https://github.com/user-attachments/assets/3196e399-8b58-4fa7-b638-b880e7486e6c" autoplay loop muted playsinline width="100%"></video>
-- 출하할 물품을 선택하고 수량을 입력한 뒤 '출하 처리' 버튼만 누르면 끝! 수량과 딱 맞으면 출하 처리 완료 🎯
+- 출하할 물품을 선택하고 수량을 입력한 뒤 '출하 처리' 버튼만 누르면 끝!
+- 현재 출하 수량과 목표 출하 수량이 딱 맞으면 출하 처리 완료 🎯
 ---
 ### 🏆 완료된 프로젝트
 <video src="https://github.com/user-attachments/assets/8524b914-7c0c-4714-ad46-30d9fe0d04ec" autoplay loop muted playsinline width="100%"></video>
-- 관리자 홈과 전체 프로젝트 리스트에서 완료된 프로젝트들을 한눈에 확인할 수 있어요 🎉 필터 기능으로 진행 중 · 미진행 · 완료 상태를 손쉽게 조회해 보세요.
+- 관리자 홈과 전체 프로젝트 리스트에서 완료된 프로젝트들을 한눈에 확인할 수 있어요 🎉
+- 필터 기능으로 진행 중 · 미진행 · 완료 상태를 손쉽게 조회해 보세요.
 ---
 ### 📊 재고 관리
 <video src="https://github.com/user-attachments/assets/9957cdd1-adb2-4785-8388-0b702cf3698f" autoplay loop muted playsinline width="100%"></video>
@@ -142,6 +145,7 @@ src
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
