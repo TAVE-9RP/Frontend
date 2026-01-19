@@ -181,7 +181,10 @@ export default function ProjectCreatePage() {
       if (response.isSuccess) {
         setIsSuccessModalOpen(true);
       } else {
-        setAlertModal({ isOpen: true, message: response.message || '프로젝트 생성에 실패했습니다.' });
+        setAlertModal({
+          isOpen: true,
+          message: response.message || '프로젝트 생성에 실패했습니다.',
+        });
       }
     } catch (error: any) {
       console.error('프로젝트 생성 실패:', error);
@@ -300,7 +303,7 @@ export default function ProjectCreatePage() {
               </div>
 
               <div className="w-[390px]">
-                <FormGroup label="물류 업무 담당자">
+                <FormGroup label="출하 업무 담당자">
                   {logisticsOptions.length > 0 ? (
                     <DropdownInput
                       initialSelected={logisticsManager}

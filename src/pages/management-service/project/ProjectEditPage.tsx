@@ -97,7 +97,7 @@ export default function ProjectEditPage() {
 
           // projectMembers를 기반으로 업무 할당 및 담당자 설정
           const projectMembers = project.projectMembers || [];
-          
+
           const inventoryMembers: DropdownOption[] = [];
           const logisticsMembers: DropdownOption[] = [];
 
@@ -111,7 +111,12 @@ export default function ProjectEditPage() {
 
             if (member.department === 'LOGISTICS' || member.department === 'logistics') {
               logisticsMembers.push(formattedMember);
-            } else if (member.department === 'INVENTORY' || member.department === 'inventory' || member.department === 'MANAGEMENT' || member.department === 'management') {
+            } else if (
+              member.department === 'INVENTORY' ||
+              member.department === 'inventory' ||
+              member.department === 'MANAGEMENT' ||
+              member.department === 'management'
+            ) {
               // INVENTORY 또는 MANAGEMENT는 inbound로 처리
               inventoryMembers.push(formattedMember);
             }
@@ -132,8 +137,9 @@ export default function ProjectEditPage() {
         // 에러 발생 시 localStorage에서 찾기 (fallback)
         const projectId = Number(id);
         const savedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
-        const foundProject = savedProjects.find((p: any) => p.id === projectId) || 
-                            MOCK_PROJECT_LIST.find((p) => p.id === projectId);
+        const foundProject =
+          savedProjects.find((p: any) => p.id === projectId) ||
+          MOCK_PROJECT_LIST.find((p) => p.id === projectId);
 
         if (foundProject) {
           setProjectNumber(foundProject.projectNumber || '');
@@ -360,7 +366,7 @@ export default function ProjectEditPage() {
               </div>
 
               <div className="w-[390px]">
-                <FormGroup label="물류 업무 담당자">
+                <FormGroup label="출하 업무 담당자">
                   {logisticsManager.length > 0 ? (
                     <DropdownInput
                       initialSelected={logisticsManager}
