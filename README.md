@@ -25,6 +25,33 @@ https://nex-erp.vercel.app/
 
 <video src="https://github.com/user-attachments/assets/1d9eb662-3c55-49d7-b6be-faee7cf53a14" autoplay loop muted playsinline width="100%"></video>
 
+---
+
+! 입고 업무 관리자 영상 추가하기
+
+---
+
+! 출하 업무 관리자 영상 추가하기
+
+---
+
+<video src="https://github.com/user-attachments/assets/0a1efb49-2492-40fe-a729-ecf1f1e7d9c3" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/c8c2171b-c442-4703-a492-c497f78f36b8" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/3196e399-8b58-4fa7-b638-b880e7486e6c" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/8524b914-7c0c-4714-ad46-30d9fe0d04ec" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/9957cdd1-adb2-4785-8388-0b702cf3698f" autoplay loop muted playsinline width="100%"></video>
 
 ## 🛠 4. 시작 가이드 (Getting Started)
 
@@ -110,6 +137,7 @@ src
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
