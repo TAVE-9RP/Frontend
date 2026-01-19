@@ -4,12 +4,10 @@ import { getMemberStatuses, updateMemberStatuses } from '../../apis/admin';
 import ConfirmModal from '../modals/ConfirmModal';
 import SuccessModal from '../modals/SuccessModal';
 import AlertModal from '../modals/AlertModal';
-
 interface MembershipManagementTableProps {
   searchTerm: string;
   isLoading: boolean;
 }
-
 const STATUS_OPTIONS = ['요청 대기', '승인', '거절'];
 const STATUS_MAP: Record<string, string> = {
   PENDING: '요청 대기',
@@ -21,7 +19,6 @@ const REVERSE_STATUS_MAP: Record<string, string> = {
   승인: 'APPROVED',
   거절: 'REJECTED',
 };
-
 // 부서 매핑 함수
 const mapDepartment = (department: string): string => {
   switch (department) {
@@ -35,7 +32,6 @@ const mapDepartment = (department: string): string => {
       return department;
   }
 };
-
 // 직급 매핑 함수
 const mapPosition = (position: string): string => {
   switch (position) {
@@ -55,7 +51,6 @@ const mapPosition = (position: string): string => {
       return position;
   }
 };
-
 export default function MembershipManagementTable({
   searchTerm,
   isLoading: parentLoading,
@@ -64,11 +59,9 @@ export default function MembershipManagementTable({
   const [statusChanges, setStatusChanges] = useState<Record<number, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [localLoading, setLocalLoading] = useState(true);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
-
   const loadData = async () => {
     try {
       setLocalLoading(true);
@@ -80,40 +73,31 @@ export default function MembershipManagementTable({
       setLocalLoading(false);
     }
   };
-
   useEffect(() => {
     loadData();
   }, []);
-
   const filteredList = useMemo(() => {
     if (!membershipList) return [];
     const lowerCaseSearch = searchTerm.toLowerCase();
     return membershipList.filter((emp) => emp.name.toLowerCase().includes(lowerCaseSearch));
   }, [membershipList, searchTerm]);
-
   const handleStatusChange = (memberId: number, newStatus: string) => {
     setStatusChanges((prev) => ({ ...prev, [memberId]: newStatus }));
   };
-
   const handleSaveClick = () => {
     setIsModalOpen(true);
   };
-
   const handleConfirmSave = async () => {
     setIsModalOpen(false);
     setIsSaving(true);
-
     const updates = Object.entries(statusChanges).map(([id, status]) => ({
       memberId: Number(id),
       newStatus: REVERSE_STATUS_MAP[status],
     }));
-
     try {
       await updateMemberStatuses(updates);
-
       setStatusChanges({});
       await loadData();
-
       setIsSuccessModalOpen(true);
     } catch (err: any) {
       console.error('가입 상태 변경 실패:', err);
@@ -123,17 +107,15 @@ export default function MembershipManagementTable({
       setIsSaving(false);
     }
   };
-
   const isDirty = Object.keys(statusChanges).length > 0;
   const isLoading = parentLoading || localLoading;
-
   const headerBase =
     'h-10 flex items-center justify-center bg-subColor-orange050 border border-greyColor-grey200 text-greyColor-grey800 font-pretendard text-[15px] font-bold';
   const cellBase =
     'h-10 flex items-center justify-center border-b border-l border-r border-greyColor-grey200 text-greyColor-grey700 font-pretendard text-[15px] font-normal';
 
   return (
-    <div className="flex w-fit flex-col items-start">
+    <div className="flex w-[1200px] flex-col items-start">
       <div className="w-full">
         <div className="flex w-full">
           <div className={`${headerBase} w-[15%] rounded-tl-[10px]`}>이름</div>
@@ -174,7 +156,6 @@ export default function MembershipManagementTable({
           )}
         </div>
       </div>
-
       <button
         onClick={handleSaveClick}
         disabled={!isDirty || isSaving}
@@ -186,7 +167,6 @@ export default function MembershipManagementTable({
       >
         {isSaving ? '저장 중...' : '저장하기'}
       </button>
-
       <ConfirmModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -198,11 +178,6 @@ export default function MembershipManagementTable({
         isOpen={isSuccessModalOpen}
         onClose={() => setIsSuccessModalOpen(false)}
         description="가입 상태 설정이 저장되었어요"
-      />
-      <AlertModal
-        isOpen={alertModal.isOpen}
-        onClose={() => setAlertModal({ isOpen: false, message: '' })}
-        message={alertModal.message}
       />
       <AlertModal
         isOpen={alertModal.isOpen}
