@@ -9,7 +9,24 @@
 ## 🔗 2. 배포 주소
 https://nex-erp.vercel.app/
 
-## 🛠 3. 시작 가이드 (Getting Started)
+## 👀 3. 서비스 둘러보기
+
+<video src="https://github.com/user-attachments/assets/15255fda-3f61-4eb0-86e6-741c7dc02fba" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/1bd71207-38d2-4b93-ae98-b83a79d54f05" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/e85e75b7-7378-427b-ad7d-76e13fadd3fa" autoplay loop muted playsinline width="100%"></video>
+
+---
+
+<video src="https://github.com/user-attachments/assets/1d9eb662-3c55-49d7-b6be-faee7cf53a14" autoplay loop muted playsinline width="100%"></video>
+
+
+## 🛠 4. 시작 가이드 (Getting Started)
 
 프로젝트를 로컬 환경에서 실행하려면 아래 단계를 따라주세요.
 
@@ -26,7 +43,7 @@ npm run dev
 
 ```
 
-## 🏗 4. 기술 스택 (Tech Stack)
+## 🏗 5. 기술 스택 (Tech Stack)
 
 ### 🎨 Frontend
 
@@ -40,7 +57,7 @@ npm run dev
 - **Build Tool**: Vite
 - **Package Manager**: npm
 
-## 🚀 5. 핵심 기능
+## 🚀 6. 핵심 기능
 
 NexERP는 효율적인 기업 운영을 위해 세 가지 핵심 모듈을 제공합니다.
 
@@ -65,7 +82,7 @@ NexERP는 효율적인 기업 운영을 위해 세 가지 핵심 모듈을 제�
 - **안전 재고 확보율**: 품절 방지를 위한 적정 재고 유지 상태 확인
 - **재고 회전율 및 익월 예측**: 효율적인 자산 유동성 파악 및 데이터 기반의 차기 재고 예측
 
-## 📂 6. 폴더 구조 (Architecture)
+## 📂 7. 폴더 구조 (Architecture)
 
 ```
 src
@@ -87,12 +104,13 @@ src
  ┗ 📜main.tsx 
 ```
 
-## 👥 7. 팀원 소개
+## 👥 8. 팀원 소개
 
 |       이름       |  역할  |
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
