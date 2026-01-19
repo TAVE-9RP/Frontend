@@ -26,13 +26,16 @@ https://nex-erp.vercel.app/
 <video src="https://github.com/user-attachments/assets/1d9eb662-3c55-49d7-b6be-faee7cf53a14" autoplay loop muted playsinline width="100%"></video>
 - 관리자가 프로젝트 정보를 입력하고 입고와 출하 업무를 책임질 담당자를 선택해요. 깔끔한 업무 분담과 스마트한 관리, NexERP가 함께합니다 🚀
 ---
-
-! 입고 업무 관리자 영상 추가하기
-
+### 📝 입고 업무 관리
+<video src="https://github.com/user-attachments/assets/02991fbf-4632-4a54-b747-23130035eb7e" autoplay loop muted playsinline width="100%"></video>
+- 입고 담당자는 나의 업무 토글을 활용해 할당된 업무를 손쉽게 확인합니다.
+- 업무 상세로 들어가 업무명과 설명을 작성하고 신규 재고를 추가하거나 기존 재고를 선택한 뒤 목표 입고 수량을 입력하고 승인 요청을 보내면 끝! 🎯
 ---
-
-! 출하 업무 관리자 영상 추가하기
-
+### 📝 출하 업무 관리
+<video src="https://github.com/user-attachments/assets/4b70f989-957f-43de-adc5-bdcee24bf2b6" autoplay loop muted playsinline width="100%"></video>
+- 출하 담당자도 나의 업무 토글을 활용해 할당된 업무를 손쉽게 확인합니다.
+- 출하 업무 상세로 들어가 업무명과 설명, 운송수단, 운송업체를 입력합니다.
+- 이후 재고 추가 버튼을 눌러 필요한 재고를 등록하고 목표 출하 수량을 입력한 뒤 승인 요청을 보내면 출하 업무 완료! 🎯
 ---
 ### 🖱️ 관리자의 입고/출하 업무 승인 처리
 <video src="https://github.com/user-attachments/assets/0a1efb49-2492-40fe-a729-ecf1f1e7d9c3" autoplay loop muted playsinline width="100%"></video>
@@ -139,6 +142,7 @@ src
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
