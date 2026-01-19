@@ -34,24 +34,26 @@ https://nex-erp.vercel.app/
 ! 출하 업무 관리자 영상 추가하기
 
 ---
-### :🖱️ 관리자의 입고/출하 업무 승인 처리
+### 🖱️ 관리자의 입고/출하 업무 승인 처리
 <video src="https://github.com/user-attachments/assets/0a1efb49-2492-40fe-a729-ecf1f1e7d9c3" autoplay loop muted playsinline width="100%"></video>
 - 관리자는 담당자가 보낸 승인 요청을 확인하고 클릭 한 번으로 결재를 끝냅니다. 빠르고 간단한 승인 프로세스로 업무 효율을 높여보세요 ✨
 ---
-
+### 📦 입고 처리
 <video src="https://github.com/user-attachments/assets/c8c2171b-c442-4703-a492-c497f78f36b8" autoplay loop muted playsinline width="100%"></video>
-
+- 입고할 물품을 선택하고 수량을 입력한 뒤 '입고처리' 버튼만 누르면 끝! 현재 입고 수량과 목표 입고 수량이 같아지면 입고 처리 완료 🎯
 ---
-
+### 🚚 출하 처리
 <video src="https://github.com/user-attachments/assets/3196e399-8b58-4fa7-b638-b880e7486e6c" autoplay loop muted playsinline width="100%"></video>
-
+- 출하할 물품을 선택하고 수량을 입력한 뒤 '출하 처리' 버튼만 누르면 끝! 수량과 딱 맞으면 출하 처리 완료 🎯
 ---
-
+### 🏆 완료된 프로젝트
 <video src="https://github.com/user-attachments/assets/8524b914-7c0c-4714-ad46-30d9fe0d04ec" autoplay loop muted playsinline width="100%"></video>
-
+- 관리자 홈과 전체 프로젝트 리스트에서 완료된 프로젝트들을 한눈에 확인할 수 있어요 🎉 필터 기능으로 진행 중 · 미진행 · 완료 상태를 손쉽게 조회해 보세요.
 ---
-
+### 📊 재고 관리
 <video src="https://github.com/user-attachments/assets/9957cdd1-adb2-4785-8388-0b702cf3698f" autoplay loop muted playsinline width="100%"></video>
+- 리스트에서 품목을 선택해 목표 재고 수량과 안전 재고 수량을 바로 수정해보세요!
+---
 
 ## 🛠 4. 시작 가이드 (Getting Started)
 
@@ -137,6 +139,7 @@ src
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
