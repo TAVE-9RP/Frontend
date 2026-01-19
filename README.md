@@ -1,4 +1,5 @@
 # NexERP Frontend
+<img width="1882" height="867" alt="화면 캡처 2026-01-19 195138" src="https://github.com/user-attachments/assets/98020c8e-733a-444c-9a48-10e46db4855b" />
 
 ## 💡 1. 서비스 한 줄 요약
 
@@ -85,6 +86,8 @@ npm run dev
 - **Framework**: React
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
+- **State Management**: TanStack Query (React Query)
+- **HTTP Client**: Axios
 - **Data Visualization**: Recharts, Ant Design Charts
 
 ### 🛠 Tools
@@ -145,6 +148,7 @@ src
 | :--------------: | :----: |
 | **박하은** |   FE   |
 | **곽채연** | FE, BE |
+
 
 
 
