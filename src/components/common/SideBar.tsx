@@ -146,121 +146,133 @@ export default function SideBar() {
 
   return (
     <aside className="sticky top-0 z-50 flex h-screen min-w-[220px] max-w-[220px] w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
-      <button
-        onClick={() => {
-          if (isManagementUser) {
-            navigate('/management-home');
-          } else if (departmentFromToken === 'LOGISTICS') {
-            navigate('/logistics-home');
-          } else if (departmentFromToken === 'INVENTORY') {
-            navigate('/inventory-home');
-          } else {
-            navigate('/');
-          }
-        }}
-        className="ml-[27px] mt-[24px] flex items-center"
+      {/* AlertModal이 메인 영역(left-[220px]~)만 덮는 구조라, 사이드바에도 동일한 딤/클릭차단 오버레이를 추가 */}
+      {alertModal.isOpen && (
+        <div
+          className="fixed left-0 top-0 z-[9998] h-screen w-[220px] bg-black/50"
+          aria-hidden="true"
+        />
+      )}
+      {/* 로그아웃 완료 모달이 떠 있을 때, 사이드바 영역은 클릭 불가 처리 */}
+      <div
+        className={`flex h-full flex-col ${alertModal.isOpen ? 'pointer-events-none' : ''}`}
       >
-        <img src="/images/logo.png" alt="logo" width={129} height={36.47} />
-      </button>
+        <button
+          onClick={() => {
+            if (isManagementUser) {
+              navigate('/management-home');
+            } else if (departmentFromToken === 'LOGISTICS') {
+              navigate('/logistics-home');
+            } else if (departmentFromToken === 'INVENTORY') {
+              navigate('/inventory-home');
+            } else {
+              navigate('/');
+            }
+          }}
+          className="ml-[27px] mt-[24px] flex items-center"
+        >
+          <img src="/images/logo.png" alt="logo" width={129} height={36.47} />
+        </button>
 
-      <div className="ml-[27px] mt-[20px] flex items-center gap-[10px]">
-        <img src="/images/logistics.png" alt="logistics" width={24} height={24} />
-        <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
-          {departmentFromToken ? ` ${departmentFromToken}` : ''}
-        </span>
-      </div>
-
-      <div className="ml-[27px] mt-[12px] flex items-center gap-[10px]">
-        <img src="/images/owner.png" alt="owner" width={24} height={24} />
-        {(memberPosition || memberName) && (
+        <div className="ml-[27px] mt-[20px] flex items-center gap-[10px]">
+          <img src="/images/logistics.png" alt="logistics" width={24} height={24} />
           <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
-            {memberPosition ? mapPositionToKorean(memberPosition) : ''}
-            {memberPosition && memberName ? ' | ' : ''}
-            {memberName || ''}
+            {departmentFromToken ? ` ${departmentFromToken}` : ''}
           </span>
-        )}
-      </div>
+        </div>
 
-      {menuSections.map((section) => {
-        const isManagementSection = section.title === '관리 서비스';
-        const isDisabled = isManagementSection && !isManagementUser;
+        <div className="ml-[27px] mt-[12px] flex items-center gap-[10px]">
+          <img src="/images/owner.png" alt="owner" width={24} height={24} />
+          {(memberPosition || memberName) && (
+            <span className="font-pretendard text-[17px] font-normal leading-none text-greyColor-grey600">
+              {memberPosition ? mapPositionToKorean(memberPosition) : ''}
+              {memberPosition && memberName ? ' | ' : ''}
+              {memberName || ''}
+            </span>
+          )}
+        </div>
 
-        const hasActiveSubMenu = section.subMenus.some((menu) => {
-          if (menu.path === '/project-management') {
-            return currentPath === '/project-create' || currentPath.startsWith('/project/');
-          }
-          return currentPath.startsWith(menu.path);
-        });
+        {menuSections.map((section) => {
+          const isManagementSection = section.title === '관리 서비스';
+          const isDisabled = isManagementSection && !isManagementUser;
 
-        const isSectionActive = currentPath === section.homePath && !hasActiveSubMenu;
+          const hasActiveSubMenu = section.subMenus.some((menu) => {
+            if (menu.path === '/project-management') {
+              return currentPath === '/project-create' || currentPath.startsWith('/project/');
+            }
+            return currentPath.startsWith(menu.path);
+          });
 
-        return (
-          <div key={section.title}>
-            <button
-              onClick={() => {
-                if (section.homePath && !isDisabled) {
-                  navigate(section.homePath);
-                }
-              }}
-              disabled={isDisabled}
-              className={`ml-[27px] flex w-[179px] items-center gap-[10px] rounded-[5px] py-[5px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${section.marginTop} ${
-                isDisabled
-                  ? 'cursor-not-allowed opacity-50'
-                  : isSectionActive
-                    ? 'bg-mainColor-blue050'
-                    : 'bg-transparent hover:bg-greyColor-grey100'
-              }`}
-            >
-              <img src={section.icon} alt={section.title} width={20} height={20} />
-              <span
-                className={`font-pretendard text-[17px] font-bold leading-normal ${
+          const isSectionActive = currentPath === section.homePath && !hasActiveSubMenu;
+
+          return (
+            <div key={section.title}>
+              <button
+                onClick={() => {
+                  if (section.homePath && !isDisabled) {
+                    navigate(section.homePath);
+                  }
+                }}
+                disabled={isDisabled}
+                className={`ml-[27px] flex w-[179px] items-center gap-[10px] rounded-[5px] py-[5px] pl-[8px] pr-[10px] text-left transition-colors duration-200 ${section.marginTop} ${
                   isDisabled
-                    ? 'text-greyColor-grey400'
+                    ? 'cursor-not-allowed opacity-50'
                     : isSectionActive
-                      ? 'text-mainColor-blue600'
-                      : 'text-greyColor-grey900'
+                      ? 'bg-mainColor-blue050'
+                      : 'bg-transparent hover:bg-greyColor-grey100'
                 }`}
               >
-                {section.title}
-              </span>
-            </button>
+                <img src={section.icon} alt={section.title} width={20} height={20} />
+                <span
+                  className={`font-pretendard text-[17px] font-bold leading-normal ${
+                    isDisabled
+                      ? 'text-greyColor-grey400'
+                      : isSectionActive
+                        ? 'text-mainColor-blue600'
+                        : 'text-greyColor-grey900'
+                  }`}
+                >
+                  {section.title}
+                </span>
+              </button>
 
-            {renderSubMenus(section.subMenus, isManagementSection)}
-          </div>
-        );
-      })}
+              {renderSubMenus(section.subMenus, isManagementSection)}
+            </div>
+          );
+        })}
 
-      <div className="mt-auto mb-[20px] flex flex-col items-center">
-        <button
-          onClick={async () => {
-            try {
-              const response = await postLogout();
-              if (response.isSuccess) {
-                localStorage.removeItem('accessToken');
-                setAlertModal({ isOpen: true, message: '로그아웃 되었습니다', redirectPath: '/' });
-              } else {
+        <div className="mt-auto mb-[20px] flex flex-col items-center">
+          <button
+            onClick={async () => {
+              try {
+                const response = await postLogout();
+                if (response.isSuccess) {
+                  localStorage.removeItem('accessToken');
+                  setAlertModal({ isOpen: true, message: '로그아웃 되었습니다', redirectPath: '/' });
+                } else {
+                  setAlertModal({
+                    isOpen: true,
+                    message: '로그아웃에 실패했습니다.',
+                    redirectPath: '',
+                  });
+                }
+              } catch (error) {
+                console.error('로그아웃 실패:', error);
                 setAlertModal({
                   isOpen: true,
                   message: '로그아웃에 실패했습니다.',
                   redirectPath: '',
                 });
               }
-            } catch (error) {
-              console.error('로그아웃 실패:', error);
-              setAlertModal({
-                isOpen: true,
-                message: '로그아웃에 실패했습니다.',
-                redirectPath: '',
-              });
-            }
-          }}
-          className="flex items-center gap-[10px] text-left"
-        >
-          <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-            로그아웃
-          </span>
-          <img src="/images/logout.png" alt="arrow" width={16} height={16} />
-        </button>
+            }}
+            className="flex items-center gap-[10px] text-left"
+          >
+            <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
+              로그아웃
+            </span>
+            <img src="/images/logout.png" alt="arrow" width={16} height={16} />
+          </button>
+        </div>
       </div>
 
       <AlertModal

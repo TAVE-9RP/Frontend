@@ -29,6 +29,14 @@ export default function InventoryStockListPage() {
     return value ?? '-';
   };
 
+  // 가격 포맷팅 (콤마 + 원 단위)
+  const formatPrice = (value: number | string | null | undefined): string => {
+    if (value === null || value === undefined || value === '') return '-';
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!Number.isFinite(num)) return '-';
+    return `${num.toLocaleString()}원`;
+  };
+
   // API에서 데이터 가져오기
   const fetchStock = async () => {
     setIsLoading(true);
@@ -44,7 +52,7 @@ export default function InventoryStockListPage() {
           inventoryNumber: formatNullValue(item.code),
           itemName: formatNullValue(item.name),
           quantity: item.quantity ?? 0,
-          itemPrice: item.price ? String(item.price) : '-',
+          itemPrice: formatPrice(item.price),
           location: formatNullValue(item.location),
           recentInboundDate: formatNullValue(item.receivedAt),
           creationDate: formatNullValue(item.createdAt),
