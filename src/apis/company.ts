@@ -1,37 +1,31 @@
+import axios from 'axios';
 import memberApi from './member';
+
+const BASE_URL = 'https://nexerp.site';
+
 import type {
   CompanyRegisterRequest,
   CompanyRegisterResponse,
   CompanySearchResponse,
 } from '../types/company';
 
+// memberApi가 아닌 일반 axios 인스턴스 사용
 export const postCompany = async (
   payload: CompanyRegisterRequest,
 ): Promise<CompanyRegisterResponse> => {
-  console.log('=== postCompany 함수 실행 ===');
-  const response = await memberApi.post('/companies', payload, {
+  const response = await axios.post(`${BASE_URL}/companies`, payload, {
     headers: {
       'Content-Type': 'application/json',
     },
   });
-
-  console.log('=== postCompany 응답 ===');
-  console.log('응답 status:', response.status);
-  console.log('응답 data:', response.data);
-
   return response.data;
 };
 
+// memberApi 대신 axios 사용
 export const getCompanies = async (keyword: string = ''): Promise<CompanySearchResponse> => {
-  const response = await memberApi.get('/companies', {
-    params: {
-      keyword,
-    },
-    headers: {
-      Authorization: '',
-    },
+  const response = await memberApi.get(`/companies`, {
+    params: { keyword },
   });
-
   return response.data;
 };
 
@@ -44,7 +38,6 @@ export const uploadCompanyLogo = async (companyId: number, imageFile: File) => {
       'Content-Type': 'multipart/form-data',
     },
   });
-
   return response.data;
 };
 

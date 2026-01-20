@@ -1,37 +1,20 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'https://nexerp.site',
-  withCredentials: true,
-});
-
-api.interceptors.request.use((config) => {
-  let token = localStorage.getItem('accessToken');
-
-  if (token) {
-    const cleanToken = token.replace(/^"(.*)"$/, '$1');
-    config.headers.Authorization = `Bearer ${cleanToken}`;
-  }
-
-  return config;
-});
+import memberApi from './member';
 
 export const getLogisticsList = async (keyword: string = '') => {
-  const response = await api.get('/logistics', {
+  const response = await memberApi.get('/logistics', {
     params: { keyword },
   });
   return response.data;
 };
 
 export const getLogisticsDetail = async (logisticsId: string | number) => {
-  const response = await api.get(`/logistics/${logisticsId}`);
+  const response = await memberApi.get(`/logistics/${logisticsId}`);
   return response.data;
 };
 
 export const getLogisticsItems = async (logisticsId: string | number) => {
-  const response = await api.get(`/logistics/${logisticsId}/items`);
+  const response = await memberApi.get(`/logistics/${logisticsId}/items`);
   return response.data;
 };
 
-export default api;
-
+export default memberApi;
