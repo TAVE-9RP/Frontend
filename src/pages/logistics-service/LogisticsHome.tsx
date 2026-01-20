@@ -92,6 +92,8 @@ export default function LogisticsHome() {
           getDashboard(),
         ]);
 
+        let processedData: LeadTimeChartData[] = [];
+
         if (chartResponse.isSuccess && chartResponse.result?.history) {
           const year = chartResponse.result.year || 2025;
 
@@ -99,63 +101,46 @@ export default function LogisticsHome() {
           const convertMonthFormat = (monthStr: string, year: number): string => {
             // "1월", "2월" 등에서 숫자 추출
             const monthNum = parseInt(monthStr.replace('월', '').trim());
-            if (!isNaN(monthNum)) {
-              return `${year}-${String(monthNum).padStart(2, '0')}`;
-            }
-            return monthStr; // 변환 실패 시 원본 반환
+            return !isNaN(monthNum) ? `${year}-${String(monthNum).padStart(2, '0')}` : monthStr;
           };
 
-          let chartData: LeadTimeChartData[] = chartResponse.result.history
-            .filter(
-              (item: { month: string; value: number }) => item.value != null && !isNaN(item.value),
-            )
-            .map((item: { month: string; value: number }) => ({
+          processedData = chartResponse.result.history
+            .filter((item: any) => item.value != null && !isNaN(item.value))
+            .map((item: any) => ({
               month: convertMonthFormat(item.month, year),
               value: Number(item.value),
               type: 'actual' as const,
             }));
 
           // 마지막 항목(12월)을 predict 타입으로 한 번 더 추가
-          if (chartData.length > 0) {
-            const lastItem = chartData[chartData.length - 1];
-            chartData.push({
-              month: lastItem.month, // "2025-12"
-              value: lastItem.value,
-              type: 'predict' as const,
-            });
+          if (processedData.length > 0) {
+            const lastItem = processedData[processedData.length - 1];
+            processedData.push({ ...lastItem, type: 'predict' as const });
           }
-
-          // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
-          if (
-            dashboardResponse.isSuccess &&
-            dashboardResponse.result?.predShipmentLeadTime != null &&
-            !isNaN(dashboardResponse.result.predShipmentLeadTime) &&
-            dashboardResponse.timestamp
-          ) {
-            const timestamp = dashboardResponse.timestamp;
-            // timestamp에서 년도와 월 추출 (예: "2026-01-16T06:42:20.113894867Z" -> "2026-01")
-            const date = new Date(timestamp);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const monthLabel = `${year}-${month}`;
-
-            chartData.push({
-              month: monthLabel, // "2026-01"
-              value: Number(dashboardResponse.result.predShipmentLeadTime),
-              type: 'predict' as const,
-            });
-          }
-
-          if (chartData.length > 0) {
-            setLeadTimeChartData(chartData);
-          } else {
-            console.warn('출하 리드타임 차트 데이터가 없습니다.');
-          }
-        } else {
-          console.warn('출하 리드타임 차트 API 응답이 올바르지 않습니다:', chartResponse);
         }
+
+        // dashboard 응답에서 timestamp와 predShipmentLeadTime 가져오기
+        if (
+          dashboardResponse.isSuccess &&
+          dashboardResponse.result?.predShipmentLeadTime != null &&
+          !isNaN(dashboardResponse.result.predShipmentLeadTime) &&
+          dashboardResponse.timestamp
+        ) {
+          const timestamp = dashboardResponse.timestamp;
+          const date = new Date(dashboardResponse.timestamp);
+          const monthLabel = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+          processedData.push({
+            month: monthLabel,
+            value: Number(dashboardResponse.result.predShipmentLeadTime),
+            type: 'predict' as const,
+          });
+        }
+
+        setLeadTimeChartData(processedData);
       } catch (error) {
-        console.error('출하 리드타임 차트 데이터 가져오기 실패:', error);
+        console.error('차트 데이터 로드 실패:', error);
+        setLeadTimeChartData([]); // 에러 시에도 빈 배열로 상태 업데이트하여 로딩 종료
       }
     };
 

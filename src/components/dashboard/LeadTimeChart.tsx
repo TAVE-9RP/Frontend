@@ -38,8 +38,10 @@ const LeadTimeChart: React.FC<LeadTimeChartProps> = ({ data: propData }) => {
       return { min: 0, max: 10, tickCount: 3 };
     }
 
-    const values = data.map((d) => d.value).filter((v) => !isNaN(v) && v !== null && v !== undefined);
-    
+    const values = data
+      .map((d) => d.value)
+      .filter((v) => !isNaN(v) && v !== null && v !== undefined);
+
     if (values.length === 0) {
       return { min: 0, max: 10, tickCount: 3 };
     }
@@ -144,11 +146,15 @@ const LeadTimeChart: React.FC<LeadTimeChartProps> = ({ data: propData }) => {
         2025년 - 2026년
       </div>
 
-      {data && data.length > 0 ? (
+      {propData === undefined ? (
+        <div className="flex h-full items-center justify-center text-greyColor-grey500">
+          데이터를 불러오는 중...
+        </div>
+      ) : propData.length > 0 ? (
         <Line {...config} />
       ) : (
         <div className="flex h-full items-center justify-center text-greyColor-grey500">
-          데이터를 불러오는 중...
+          표시할 차트 데이터가 없습니다.
         </div>
       )}
     </div>
