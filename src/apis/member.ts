@@ -6,7 +6,9 @@ import type {
   MemberSignupResponse,
   MemberMeResponse,
 } from '../types/member';
+
 const BASE_URL = 'https://nexerp.site';
+
 const memberApi = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -45,7 +47,8 @@ memberApi.interceptors.response.use(
     // /member/login 또는 /member/signup 요청에서는 reissue 시도하지 않음
     if (
       originalRequest?.url?.includes('/member/login') ||
-      originalRequest?.url?.includes('/member/signup')
+      originalRequest?.url?.includes('/member/signup') ||
+      originalRequest?.url?.includes('/companies') // companies 요청 추가
     ) {
       return Promise.reject(error);
     }
