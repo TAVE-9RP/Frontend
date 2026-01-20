@@ -23,7 +23,7 @@ export const postCompany = async (
 
 // memberApi 대신 axios 사용
 export const getCompanies = async (keyword: string = ''): Promise<CompanySearchResponse> => {
-  const response = await axios.get(`${BASE_URL}/companies`, {
+  const response = await memberApi.get(`/companies`, {
     params: { keyword },
   });
   return response.data;
@@ -33,7 +33,7 @@ export const uploadCompanyLogo = async (companyId: number, imageFile: File) => {
   const formData = new FormData();
   formData.append('file', imageFile);
 
-  const response = await axios.post(`${BASE_URL}/companies/${companyId}/logo`, formData, {
+  const response = await memberApi.post(`/companies/${companyId}/logo`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import type {
   LoginRequest,
   LoginResponse,
@@ -14,28 +15,26 @@ const memberApi = axios.create({
   withCredentials: true,
 });
 
-// 중복 재발급 방지를 위한 변수
+// 변수들을 인터셉터 밖 상단에 선언
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let failedQueue: any[] = []; // 대기열 이름 변경
 
-const addRefreshSubscriber = (callback: (token: string) => void) => {
-  refreshSubscribers.push(callback);
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
+  });
+  failedQueue = [];
 };
 
-const onRefreshed = (token: string) => {
-  refreshSubscribers.map((callback) => callback(token));
-  refreshSubscribers = [];
-};
-
-// interceptor는 토큰이 있을 때만 Authorization 헤더 추가
 memberApi.interceptors.request.use((config) => {
-  let token = localStorage.getItem('accessToken');
-
+  const token = localStorage
+    .getItem('accessToken')
+    ?.replace(/^"(.*)"$/, '$1')
+    .trim();
   if (token) {
-    const cleanToken = token.replace(/^"(.*)"$/, '$1');
-    config.headers.Authorization = `Bearer ${cleanToken}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 
@@ -44,85 +43,61 @@ memberApi.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // /member/login 또는 /member/signup 요청에서는 reissue 시도하지 않음
-    if (
-      originalRequest?.url?.includes('/member/login') ||
-      originalRequest?.url?.includes('/member/signup') ||
-      originalRequest?.url?.includes('/companies') // companies 요청 추가
-    ) {
-      return Promise.reject(error);
-    }
-
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          addRefreshSubscriber((token: string) => {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
-            resolve(axios({ ...originalRequest, baseURL: BASE_URL }));
-          });
-        });
+            return memberApi(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        console.log('AccessToken 만료: 토큰 재발급(reissue) 시도...');
+        const currentToken = localStorage
+          .getItem('accessToken')
+          ?.replace(/^"(.*)"$/, '$1')
+          .trim();
 
-        let token = localStorage.getItem('accessToken');
-        const cleanToken = token ? token.replace(/^"(.*)"$/, '$1') : '';
-
-        const response = await axios.post(
+        const { data } = await axios.post(
           `${BASE_URL}/member/reissue`,
           {},
           {
+            headers: { Authorization: `Bearer ${currentToken}` },
             withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${cleanToken}`,
-            },
           },
         );
 
-        if (response.data.isSuccess) {
-          const newAccessToken = response.data.result.accessToken;
-
-          localStorage.setItem('accessToken', newAccessToken);
-
-          onRefreshed(newAccessToken);
-          isRefreshing = false;
-
-          originalRequest.headers = {
-            ...originalRequest.headers,
-            Authorization: `Bearer ${newAccessToken}`,
-          };
-
-          console.log('재발급 성공! 원래 요청 재시도 중...');
-
-          return axios({
-            ...originalRequest,
-            baseURL: BASE_URL,
-          });
+        if (data.isSuccess) {
+          const newAT = data.result.accessToken.replace(/^"(.*)"$/, '$1').trim();
+          localStorage.setItem('accessToken', newAT);
+          memberApi.defaults.headers.common['Authorization'] = `Bearer ${newAT}`;
+          processQueue(null, newAT);
+          originalRequest.headers.Authorization = `Bearer ${newAT}`;
+          return memberApi(originalRequest);
         }
-      } catch (reissueError: any) {
-        isRefreshing = false;
-
-        if (reissueError.response?.status === 409) {
-          console.log('토큰이 아직 유효함(409). 원래 요청 다시 시도...');
-
-          let token = localStorage.getItem('accessToken');
-          const cleanToken = token ? token.replace(/^"(.*)"$/, '$1') : '';
-          originalRequest.headers.Authorization = `Bearer ${cleanToken}`;
-
-          return axios({
-            ...originalRequest,
-            baseURL: BASE_URL,
-          });
+      } catch (err: any) {
+        if (err.response?.status === 409) {
+          const latestToken = localStorage
+            .getItem('accessToken')
+            ?.replace(/^"(.*)"$/, '$1')
+            .trim();
+          memberApi.defaults.headers.common['Authorization'] = `Bearer ${latestToken}`;
+          processQueue(null, latestToken);
+          originalRequest.headers.Authorization = `Bearer ${latestToken}`;
+          return memberApi(originalRequest);
         }
 
-        console.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+        processQueue(err, null);
         localStorage.removeItem('accessToken');
-        return Promise.reject(reissueError);
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
       }
     }
 
@@ -131,24 +106,14 @@ memberApi.interceptors.response.use(
 );
 
 export const postLogin = async (payload: LoginRequest): Promise<LoginResponse> => {
-  const response = await memberApi.post('/member/login', payload, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
+  const response = await memberApi.post('/member/login', payload);
   return response.data;
 };
 
 export const postMemberSignup = async (
   payload: MemberSignupRequest,
 ): Promise<MemberSignupResponse> => {
-  const response = await memberApi.post('/member/signup', payload, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
+  const response = await memberApi.post('/member/signup', payload);
   return response.data;
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import memberApi from '@/apis/member';
 
 export interface InventoryItem {
   itemId: number;
@@ -39,11 +39,7 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
   const fetchInventoryData = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('accessToken');
-
-      const response = await axios.get('https://nexerp.site/items', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await memberApi.get('/items');
 
       if (response.data && response.data.isSuccess) {
         setInventory(response.data.result);
