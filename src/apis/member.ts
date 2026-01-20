@@ -64,20 +64,18 @@ memberApi.interceptors.response.use(
           ?.replace(/^"(.*)"$/, '$1')
           .trim();
 
-        const { data } = await axios.post(
-          `${BASE_URL}/member/reissue`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${currentToken}` },
-            withCredentials: true,
-          },
-        );
+        const { data } = await memberApi.post('/member/reissue', {}, {
+          headers: { Authorization: `Bearer ${currentToken}` },
+          _retry: true,
+        } as any);
 
         if (data.isSuccess) {
           const newAT = data.result.accessToken.replace(/^"(.*)"$/, '$1').trim();
           localStorage.setItem('accessToken', newAT);
+
           memberApi.defaults.headers.common['Authorization'] = `Bearer ${newAT}`;
           processQueue(null, newAT);
+
           originalRequest.headers.Authorization = `Bearer ${newAT}`;
           return memberApi(originalRequest);
         }
