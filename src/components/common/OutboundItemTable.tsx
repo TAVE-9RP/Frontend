@@ -83,7 +83,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
         return (
           <div
             key={item.logisticsItemId}
-            className={`flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 transition-colors last:border-b-0 ${
+            className={`flex min-h-[40px] items-center border-b-[2px] border-greyColor-grey200 transition-colors last:border-b-0 ${
               isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'
             }`}
           >
@@ -111,7 +111,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             </div>
 
             <div className="flex h-full w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
-              <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-pretendard text-[14px] text-black">
+              <span className="block w-full whitespace-normal break-words text-center font-pretendard text-[14px] leading-snug text-black">
                 {item.itemName || '-'}
               </span>
             </div>
