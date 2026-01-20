@@ -101,6 +101,14 @@ export default function InventoryStockDetailPage() {
     return datePart || '-';
   };
 
+  // 가격 포맷팅 (콤마 + 원 단위)
+  const formatPrice = (value: number | string | null | undefined): string => {
+    if (value === null || value === undefined || value === '') return '-';
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!Number.isFinite(num)) return '-';
+    return `${num.toLocaleString()}원`;
+  };
+
   useEffect(() => {
     const fetchInventoryDetail = async () => {
       if (!itemId) return;
@@ -116,7 +124,7 @@ export default function InventoryStockDetailPage() {
             inventoryNumber: result.code,
             itemName: result.name,
             quantity: result.quantity ?? 0,
-            itemPrice: result.price ? String(result.price) : '-',
+            itemPrice: formatPrice(result.price),
             location: result.location ?? '-',
             creationDate: formatDate(result.createdAt),
             targetQty:
@@ -154,6 +162,7 @@ export default function InventoryStockDetailPage() {
         if (found) {
           setInventoryDetail({
             ...found,
+            itemPrice: formatPrice(found.itemPrice),
             targetQty: found.targetQty === '-' ? '' : found.targetQty,
             safetyQty: found.safetyQty === '-' ? '' : found.safetyQty,
           });
@@ -284,7 +293,7 @@ export default function InventoryStockDetailPage() {
                 <BasicInput
                   name="itemPrice"
                   value={inventoryDetail.itemPrice}
-                  onChange={handleInputChange}
+                  readOnly
                 />
               </FormGroup>
             </div>
