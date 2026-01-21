@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -22,15 +23,15 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
     message.includes('서버 내부 오류') ||
     message.includes('데이터 중복');
 
-  return (
+  return createPortal(
     <div
-      className={`fixed bottom-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50 ${
-        isCenterMode ? 'left-0' : 'left-[220px]'
-      }`}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="flex min-h-[180px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
+        className={`flex min-h-[180px] w-[90vw] max-w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all ${
+          !isCenterMode ? 'md:translate-x-[110px]' : ''
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <p className="mt-[32px] text-center font-pretendard text-[19px] font-bold text-black">
@@ -50,7 +51,8 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
