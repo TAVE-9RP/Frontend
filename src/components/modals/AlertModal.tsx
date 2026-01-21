@@ -12,8 +12,11 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
   if (!isOpen) return null;
 
   let displayMessage = message;
+
   if (message.includes('데이터 중복')) {
     displayMessage = '이미 존재하는 아이디 또는 이메일입니다.';
+  } else if (message.includes('이미 존재하는 재고 번호') || message.includes('상태 충돌')) {
+    displayMessage = '이미 등록된 재고 번호입니다.\n번호를 다시 확인한 후 입력해주세요.';
   }
 
   return createPortal(
