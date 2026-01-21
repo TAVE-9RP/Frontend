@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import BasicInput from '@/components/common/BasicInput';
 import AlertModal from './AlertModal';
 import { createItem } from '@/apis/item';
+import { addInventoryItems } from '@/apis/inventory';
 
 interface NewInventoryModalProps {
   isOpen: boolean;
@@ -10,7 +11,12 @@ interface NewInventoryModalProps {
   inventoryId: string;
 }
 
-export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInventoryModalProps) {
+export default function NewInventoryModal({
+  isOpen,
+  onClose,
+  onAdd,
+  inventoryId,
+}: NewInventoryModalProps) {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -46,41 +52,39 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
 
     setIsSubmitting(true);
     try {
-      console.log('=== 신규 재고 추가 API 호출 ===');
-      console.log('요청 데이터:', {
+      const createResponse = await createItem({
         code: formData.id,
         name: formData.name,
         location: formData.location,
         price: Number(formData.price),
       });
 
-      const response = await createItem({
-        code: formData.id,
-        name: formData.name,
-        location: formData.location,
-        price: Number(formData.price),
-      });
+      if (createResponse.isSuccess) {
+        const newId = createResponse.result.itemId;
 
-      console.log('=== 신규 재고 추가 API 응답 ===');
-      console.log('응답:', response);
+        const addResponse = await addInventoryItems(inventoryId, [newId]);
 
-      if (response.isSuccess) {
-        console.log('신규 재고 추가 성공, itemId:', response.result?.itemId);
-        // 성공 시 모달 닫기 (부모 컴포넌트에서 목록 새로고침 필요)
-        setFormData({ id: '', name: '', location: '', price: '' });
-        onClose();
+        if (addResponse.isSuccess) {
+          onAdd(addResponse.result);
+
+          setFormData({ id: '', name: '', location: '', price: '' });
+          onClose();
+        } else {
+          setAlertModal({ isOpen: true, message: '품목 목록 추가에 실패했습니다.' });
+        }
       } else {
-        setAlertModal({ isOpen: true, message: '신규 재고 추가에 실패했습니다.' });
+        setAlertModal({ isOpen: true, message: '신규 품목 생성에 실패했습니다.' });
       }
     } catch (error: any) {
-      console.error('신규 재고 추가 실패:', error);
-      console.error('에러 응답:', error?.response?.data);
-      console.error('에러 상태 코드:', error?.response?.status);
-      console.error('에러 메시지:', error?.message);
-      setAlertModal({
-        isOpen: true,
-        message: `신규 재고 추가 실패: ${error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.'}`,
-      });
+      const errorMessage = error?.response?.data?.message || '';
+      if (errorMessage.includes('이미 존재하는') || error?.response?.status === 409) {
+        setAlertModal({
+          isOpen: true,
+          message: '이미 등록된 재고 번호입니다.\n번호를 다시 확인한 후 입력해주세요.',
+        });
+      } else {
+        setAlertModal({ isOpen: true, message: '처리 중 오류가 발생했습니다.' });
+      }
     } finally {
       setIsSubmitting(false);
     }
