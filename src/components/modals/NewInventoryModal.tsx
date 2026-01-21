@@ -83,7 +83,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50">
       <div
         className="relative h-[545px] w-[95vw] max-w-[981px] rounded-[20px] bg-white p-[40px] shadow-xl md:p-[64px]"
         onClick={(e) => e.stopPropagation()}

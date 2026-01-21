@@ -20,7 +20,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
       onClick={onClose}
     >
       <div

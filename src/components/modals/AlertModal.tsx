@@ -18,7 +18,7 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
       onClick={onClose}
     >
       <div
