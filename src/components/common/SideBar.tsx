@@ -146,12 +146,6 @@ export default function SideBar() {
 
   return (
     <aside className="sticky top-0 z-50 flex h-screen w-[220px] min-w-[220px] max-w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
-      {alertModal.isOpen && (
-        <div
-          className="fixed left-0 top-0 z-[9998] h-screen w-[220px] bg-black/50"
-          aria-hidden="true"
-        />
-      )}
       <div className={`flex h-full flex-col ${alertModal.isOpen ? 'pointer-events-none' : ''}`}>
         <button
           onClick={() => {
