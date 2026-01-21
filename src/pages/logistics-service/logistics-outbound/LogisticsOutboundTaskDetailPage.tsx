@@ -516,7 +516,21 @@ export default function LogisticsOutboundTaskDetailPage() {
               (taskDetail.logisticsStatus === 'ASSIGNED' ||
                 taskDetail.logisticsStatus === 'REJECT') ? (
               <button
-                onClick={() => setIsApprovalModalOpen(true)}
+                onClick={() => {
+                  const isAnyQuantityMissing = items.some(
+                    (item) => !item.targetedQuantity || item.targetedQuantity <= 0,
+                  );
+
+                  if (isAnyQuantityMissing) {
+                    setAlertModal({
+                      isOpen: true,
+                      message: '모든 품목의 목표 출하 수량을 입력해주세요.',
+                    });
+                    return;
+                  }
+
+                  setIsApprovalModalOpen(true);
+                }}
                 disabled={!canRequestApproval}
                 className={`h-[50px] w-[113px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors ${
                   canRequestApproval
