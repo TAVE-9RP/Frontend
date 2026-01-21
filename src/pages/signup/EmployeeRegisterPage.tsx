@@ -73,11 +73,9 @@ export default function EmployeeRegisterPage() {
     e.preventDefault();
 
     if (!isFormValid) {
-      console.log('폼 유효성 검사 실패');
       return;
     }
 
-    console.log('폼 데이터 제출:', formData);
     navigate('/employeesignup/step2', {
       state: {
         name: formData.name,
