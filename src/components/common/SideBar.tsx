@@ -145,18 +145,14 @@ export default function SideBar() {
   };
 
   return (
-    <aside className="sticky top-0 z-50 flex h-screen min-w-[220px] max-w-[220px] w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
-      {/* AlertModal이 메인 영역(left-[220px]~)만 덮는 구조라, 사이드바에도 동일한 딤/클릭차단 오버레이를 추가 */}
+    <aside className="sticky top-0 z-50 flex h-screen w-[220px] min-w-[220px] max-w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
       {alertModal.isOpen && (
         <div
           className="fixed left-0 top-0 z-[9998] h-screen w-[220px] bg-black/50"
           aria-hidden="true"
         />
       )}
-      {/* 로그아웃 완료 모달이 떠 있을 때, 사이드바 영역은 클릭 불가 처리 */}
-      <div
-        className={`flex h-full flex-col ${alertModal.isOpen ? 'pointer-events-none' : ''}`}
-      >
+      <div className={`flex h-full flex-col ${alertModal.isOpen ? 'pointer-events-none' : ''}`}>
         <button
           onClick={() => {
             if (isManagementUser) {
@@ -241,14 +237,18 @@ export default function SideBar() {
           );
         })}
 
-        <div className="mt-auto mb-[20px] flex flex-col items-center">
+        <div className="mb-[20px] mt-auto flex flex-col items-center">
           <button
             onClick={async () => {
               try {
                 const response = await postLogout();
                 if (response.isSuccess) {
                   localStorage.removeItem('accessToken');
-                  setAlertModal({ isOpen: true, message: '로그아웃 되었습니다', redirectPath: '/' });
+                  setAlertModal({
+                    isOpen: true,
+                    message: '로그아웃 되었습니다',
+                    redirectPath: '/',
+                  });
                 } else {
                   setAlertModal({
                     isOpen: true,

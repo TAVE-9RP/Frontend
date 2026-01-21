@@ -16,22 +16,13 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
     displayMessage = '이미 존재하는 아이디 또는 이메일입니다.';
   }
 
-  const isCenterMode =
-    message.includes('아이디와 비밀번호를 확인해주세요') ||
-    message.includes('요청 데이터 검증 실패') ||
-    message.includes('회원가입이 완료되었습니다.') ||
-    message.includes('서버 내부 오류') ||
-    message.includes('데이터 중복');
-
   return createPortal(
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className={`flex min-h-[180px] w-[90vw] max-w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all ${
-          !isCenterMode ? 'md:translate-x-[110px]' : ''
-        }`}
+        className="flex min-h-[180px] w-[90vw] max-w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="mt-[32px] text-center font-pretendard text-[19px] font-bold text-black">

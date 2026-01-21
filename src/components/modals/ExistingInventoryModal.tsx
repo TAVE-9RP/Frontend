@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import SearchBar from '@/components/common/SearchBar';
 import AlertModal from './AlertModal';
 import { getItems } from '@/apis/item';
@@ -58,8 +59,8 @@ export default function ExistingInventoryModal({
 
         if (response.isSuccess && response.result) {
           const mappedData: InventoryItem[] = response.result.map((item: any) => ({
-            id: item.code, // 재고 번호를 id로 사용
-            itemId: item.itemId, // API 요청에 사용할 itemId
+            id: item.code,
+            itemId: item.itemId,
             name: item.name,
             quantity: item.quantity,
             location: item.location,
@@ -100,16 +101,22 @@ export default function ExistingInventoryModal({
     );
   };
 
-  return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50">
-      <div className="relative flex h-[609px] w-[981px] flex-col rounded-[30px] bg-white p-[64px] shadow-xl">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex h-[609px] w-[95vw] max-w-[981px] flex-col rounded-[30px] bg-white p-[40px] shadow-xl md:p-[64px]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-start justify-between">
           <h2 className="font-pretendard text-[24px] font-bold leading-normal text-black">
             기존 재고 검색 및 추가
           </h2>
           <button
             onClick={onClose}
-            className="absolute right-[50px] top-[50px] text-[30px] text-greyColor-grey600 hover:text-black"
+            className="absolute right-[30px] top-[30px] text-[30px] text-greyColor-grey600 hover:text-black md:right-[50px] md:top-[50px]"
           >
             ✕
           </button>
@@ -118,7 +125,7 @@ export default function ExistingInventoryModal({
         <div className="mt-[32px]">
           <SearchBar
             placeholder="재고 번호, 물품명, 위치를 검색하세요"
-            className="h-[50px] w-[520px]"
+            className="h-[50px] w-full max-w-[520px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -135,22 +142,22 @@ export default function ExistingInventoryModal({
             <table className="w-full border-collapse font-pretendard">
               <thead className="sticky top-0 z-10 bg-greyColor-grey100">
                 <tr className="h-[40px] text-[15px] font-bold text-black">
-                  <th className="w-[40px] border-b-2 border-r-2 border-greyColor-grey200 text-center">
+                  <th className="w-[40px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 text-center">
                     선택
                   </th>
-                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     재고 번호
                   </th>
-                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     물품명
                   </th>
-                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     수량
                   </th>
-                  <th className="w-[140px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[140px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     위치
                   </th>
-                  <th className="w-[160px] border-b-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[160px] text-nowrap border-b-2 border-greyColor-grey200 px-4 text-left">
                     물품 가격
                   </th>
                 </tr>
@@ -259,6 +266,7 @@ export default function ExistingInventoryModal({
 
                 if (response.isSuccess) {
                   console.log('재고 추가 성공:', response.result);
+                  onAdd(selectedItems);
                   setSelectedIds([]);
                   onClose();
                 } else {
@@ -307,6 +315,7 @@ export default function ExistingInventoryModal({
         onClose={() => setAlertModal({ isOpen: false, message: '' })}
         message={alertModal.message}
       />
-    </div>
+    </div>,
+    document.body,
   );
 }
