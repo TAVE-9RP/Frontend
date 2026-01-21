@@ -574,6 +574,7 @@ export default function InventoryInboundTaskDetailPage() {
               setRefreshItems((prev) => prev + 1);
             }}
             onAdd={handleAddNewInventory}
+            inventoryId={projectNumber || ''}
           />
 
           <div className="mt-auto flex justify-end pt-10">

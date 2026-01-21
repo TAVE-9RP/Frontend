@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -11,26 +12,20 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
   if (!isOpen) return null;
 
   let displayMessage = message;
+
   if (message.includes('데이터 중복')) {
     displayMessage = '이미 존재하는 아이디 또는 이메일입니다.';
+  } else if (message.includes('이미 존재하는 재고 번호') || message.includes('상태 충돌')) {
+    displayMessage = '이미 등록된 재고 번호입니다.\n번호를 다시 확인한 후 입력해주세요.';
   }
 
-  const isCenterMode =
-    message.includes('아이디와 비밀번호를 확인해주세요') ||
-    message.includes('요청 데이터 검증 실패') ||
-    message.includes('회원가입이 완료되었습니다.') ||
-    message.includes('서버 내부 오류') ||
-    message.includes('데이터 중복');
-
-  return (
+  return createPortal(
     <div
-      className={`fixed bottom-0 right-0 top-0 z-[9999] flex items-center justify-center bg-black/50 ${
-        isCenterMode ? 'left-0' : 'left-[220px]'
-      }`}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
       onClick={onClose}
     >
       <div
-        className="flex min-h-[180px] w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)]"
+        className="flex min-h-[180px] w-[90vw] max-w-[450px] flex-col items-center rounded-[20px] bg-white shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="mt-[32px] text-center font-pretendard text-[19px] font-bold text-black">
@@ -50,7 +45,8 @@ const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, message, title
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

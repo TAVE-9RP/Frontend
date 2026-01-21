@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { OutboundItem, LogisticsStatus, ItemProcessingStatus } from '@/types/logistics';
 import AlertModal from '@/components/modals/AlertModal';
+import { getItemDetail } from '@/apis/logistics';
 
 interface ExtendedOutboundItem extends OutboundItem {
   tempProcessedQuantity?: number;
@@ -29,13 +30,39 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   const isTaskAssignment = currentStatus === 'ASSIGNED';
   const isApprovalPending = currentStatus === 'PENDING';
   const isInProgress = currentStatus === 'IN_PROGRESS';
-  const isCompletedStatus = currentStatus === 'COMPLETED';
   const showHyphenInSelect = isTaskAssignment || isApprovalPending;
 
   const statusMap: Record<ItemProcessingStatus, string> = {
     NOT_STARTED: '미진행',
     IN_PROGRESS: '진행 중',
     COMPLETED: '완료',
+  };
+
+  const handleTargetQtyChange = async (item: ExtendedOutboundItem, value: string) => {
+    const rawValue = value.replace(/[^0-9]/g, '');
+    const inputQty = rawValue === '' ? 0 : Number(rawValue);
+
+    if (inputQty > 0) {
+      try {
+        const response = await getItemDetail(item.itemId);
+        if (response.isSuccess && response.result) {
+          const currentStock = response.result.quantity;
+
+          if (inputQty > currentStock) {
+            setAlertModal({
+              isOpen: true,
+              message: `목표 출하 수량은 현재 재고보다 작거나 같아야 합니다.\n현재 재고: ${currentStock}개`,
+            });
+            onTargetQuantityChange?.(item.logisticsItemId, 0);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('재고 정보 조회 실패:', error);
+      }
+    }
+
+    onTargetQuantityChange?.(item.logisticsItemId, inputQty);
   };
 
   const columns = [
@@ -72,8 +99,6 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
       {items.map((item) => {
         const isSelected = selectedItemIds.includes(item.logisticsItemId);
         const isItemCompleted = item.logisticsProcessingStatus === 'COMPLETED';
-        const isItemProcessing = item.logisticsProcessingStatus === 'IN_PROGRESS';
-
         const price = item.itemPrice ?? 0;
         const totalPrice = item.itemTotalPrice ?? 0;
         const currentProcessedQtyFromApi = item.processedQuantity ?? 0;
@@ -127,7 +152,6 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   onChange={(e) => {
                     const value = e.target.value.replace(/[^0-9]/g, '');
                     const inputQty = value === '' ? 0 : Number(value);
-
                     const currentProcessed = item.processedQuantity ?? 0;
                     const targetQty = item.targetedQuantity ?? 0;
                     const remainingQty = targetQty - currentProcessed;
@@ -140,7 +164,6 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                       onProcessedQuantityChange?.(item.logisticsItemId, 0);
                       return;
                     }
-
                     onProcessedQuantityChange?.(item.logisticsItemId, inputQty);
                   }}
                   disabled={!isSelected || isItemCompleted}
@@ -169,13 +192,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   type="text"
                   inputMode="numeric"
                   value={targetedQty === 0 ? '' : targetedQty}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, '');
-                    onTargetQuantityChange?.(
-                      item.logisticsItemId,
-                      value === '' ? 0 : Number(value),
-                    );
-                  }}
+                  onChange={(e) => handleTargetQtyChange(item, e.target.value)}
                   className="h-[30px] w-[80%] rounded border border-greyColor-grey300 bg-white text-center font-pretendard text-[14px] text-black focus:border-mainColor-blue500 focus:outline-none"
                 />
               ) : (
@@ -186,40 +203,31 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {price.toLocaleString()}
             </div>
-
             <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
               {totalPrice ? totalPrice.toLocaleString() : '-'}
             </div>
 
             <div className="flex min-h-[40px] w-[97px] items-center justify-center font-pretendard text-[14px]">
               {item.logisticsProcessingStatus === 'IN_PROGRESS' ? (
-                <div className="flex items-center justify-center">
-                  <img
-                    src="/images/management/진행중.png"
-                    alt="진행 중"
-                    className="h-auto w-[71px] object-contain"
-                  />
-                </div>
+                <img
+                  src="/images/management/진행중.png"
+                  alt="진행 중"
+                  className="h-auto w-[71px] object-contain"
+                />
               ) : item.logisticsProcessingStatus === 'NOT_STARTED' ? (
-                <div className="flex items-center justify-center">
-                  <img
-                    src="/images/management/미진행.png"
-                    alt="미진행"
-                    className="h-auto w-[71px] object-contain"
-                  />
-                </div>
+                <img
+                  src="/images/management/미진행.png"
+                  alt="미진행"
+                  className="h-auto w-[71px] object-contain"
+                />
               ) : item.logisticsProcessingStatus === 'COMPLETED' ? (
-                <div className="flex items-center justify-center">
-                  <img
-                    src="/images/management/완료.png"
-                    alt="완료"
-                    className="h-auto w-[71px] object-contain"
-                  />
-                </div>
+                <img
+                  src="/images/management/완료.png"
+                  alt="완료"
+                  className="h-auto w-[55px] object-contain"
+                />
               ) : (
-                <div
-                  className={`flex h-[24px] items-center justify-center rounded-[50px] bg-greyColor-grey200 px-[8px] text-[13px] font-bold leading-none text-greyColor-grey600`}
-                >
+                <div className="flex h-[24px] items-center justify-center rounded-[50px] bg-greyColor-grey200 px-[8px] text-[13px] font-bold text-greyColor-grey600">
                   {statusMap[item.logisticsProcessingStatus] || '미진행'}
                 </div>
               )}

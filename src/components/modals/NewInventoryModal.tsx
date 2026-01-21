@@ -7,6 +7,7 @@ interface NewInventoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (newItem: any) => void;
+  inventoryId: string;
 }
 
 export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInventoryModalProps) {
@@ -26,7 +27,7 @@ export default function NewInventoryModal({ isOpen, onClose, onAdd }: NewInvento
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
-      // 모달이 닫힐 때 폼 초기화
+
       setFormData({ id: '', name: '', location: '', price: '' });
     }
     return () => {

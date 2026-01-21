@@ -44,7 +44,9 @@ const ManagerApprovalModal: React.FC<ManagerApprovalModalProps> = ({
 
   const isRequestMode = variant === 'request';
 
-  const displayManagerName = fetchedAdminName || initialManagerName || '관리자';
+  const displayManagerName = isRequestMode
+    ? fetchedAdminName || '...'
+    : initialManagerName || '관리자';
 
   const content = {
     title: isRequestMode ? `승인 관리자: ${displayManagerName}` : '관리자 결재를 진행하시겠습니까?',

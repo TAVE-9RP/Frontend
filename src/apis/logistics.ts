@@ -87,4 +87,9 @@ export const patchTargetQuantity = async (
   return response.data;
 };
 
+export const getItemDetail = async (itemId: number): Promise<ApiResponse<any>> => {
+  const response = await memberApi.get(`/items/${itemId}`);
+  return response.data;
+};
+
 export default memberApi;

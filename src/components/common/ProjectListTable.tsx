@@ -15,13 +15,13 @@ interface Project {
 interface ProjectListTableProps {
   data: Project[];
   isLoading: boolean;
-  width?: string; 
+  width?: string;
 }
 
-export default function ProjectListTable({ 
-  data, 
-  isLoading, 
-  width = "1200px" 
+export default function ProjectListTable({
+  data,
+  isLoading,
+  width = '1200px',
 }: ProjectListTableProps) {
   const navigate = useNavigate();
 
@@ -37,29 +37,44 @@ export default function ProjectListTable({
 
   const getStatusImage = (status: Project['status']) => {
     switch (status) {
-      case 'IN_PROGRESS': return '/images/management/진행중.png';
-      case 'PENDING': return '/images/management/미진행.png';
-      case 'COMPLETED': return '/images/management/완료.png';
-      default: return '/images/management/미진행.png';
+      case 'IN_PROGRESS':
+        return '/images/management/진행중.png';
+      case 'PENDING':
+        return '/images/management/미진행.png';
+      case 'COMPLETED':
+        return '/images/management/완료.png';
+      default:
+        return '/images/management/미진행.png';
     }
   };
 
   return (
     <div className="h-auto w-fit overflow-hidden rounded-[10px] border-2 border-greyColor-grey200 font-pretendard">
       <div className="overflow-x-auto">
-        <table 
-          className="table-fixed border-collapse bg-white"
-          style={{ width: width }}
-        >
+        <table className="table-fixed border-collapse bg-white" style={{ width: width }}>
           <thead className="bg-subColor-orange050">
             <tr>
-              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>프로젝트 넘버</th>
-              <th className={`${tableHeaderClasses}`} style={{ width: '22%' }}>프로젝트 제목</th>
-              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>프로젝트 설명</th>
-              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>거래처</th>
-              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>생성 일자</th>
-              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>담당자</th>
-              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>진행 상태</th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>
+                프로젝트 넘버
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '22%' }}>
+                프로젝트 제목
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>
+                프로젝트 설명
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>
+                거래처
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '12%' }}>
+                생성 일자
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>
+                담당자
+              </th>
+              <th className={`${tableHeaderClasses}`} style={{ width: '14%' }}>
+                진행 상태
+              </th>
             </tr>
           </thead>
 
@@ -67,15 +82,15 @@ export default function ProjectListTable({
             {isLoading ? (
               <tr>
                 <td colSpan={7} className="h-[100px] bg-white align-middle">
-                  <div className="flex w-full justify-center items-center">
-                    <p className="text-greyColor-grey500 text-lg">목록을 불러오는 중...</p>
+                  <div className="flex w-full items-center justify-center">
+                    <p className="text-lg text-greyColor-grey500">목록을 불러오는 중...</p>
                   </div>
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
                 <td colSpan={7} className="h-[100px] bg-white align-middle">
-                  <div className="flex w-full justify-center items-center">
+                  <div className="flex w-full items-center justify-center">
                     <p className="text-sm text-greyColor-grey500">해당 프로젝트 목록이 없습니다.</p>
                   </div>
                 </td>

@@ -55,7 +55,7 @@ export default function InboundItemTable({
   }
 
   const cellBase =
-     'flex min-h-[40px] items-center justify-center border-b border-r border-greyColor-grey200 shrink-0';
+    'flex min-h-[40px] items-center justify-center border-b border-r border-greyColor-grey200 shrink-0';
   const cell110 = `${cellBase} w-[110px]`;
   const cell40 = `${cellBase} w-[40px]`;
 
@@ -114,12 +114,12 @@ export default function InboundItemTable({
                 </div>
 
                 <div className={`${cell110} text-greyColor-grey900`}>{item.id}</div>
-                 {/* 물품명: 표 사이즈 유지 + ... 제거 + 길면 줄바꿈 */}
-                 <div className={`${cell110} px-2 text-greyColor-grey900`}>
-                   <span className="block w-full whitespace-normal break-words text-center leading-snug">
-                     {item.name}
-                   </span>
-                 </div>
+                {/* 물품명: 표 사이즈 유지 + ... 제거 + 길면 줄바꿈 */}
+                <div className={`${cell110} px-2 text-greyColor-grey900`}>
+                  <span className="block w-full whitespace-normal break-words text-center leading-snug">
+                    {item.name}
+                  </span>
+                </div>
                 <div className={`${cell110} text-greyColor-grey900`}>
                   {typeof item.price === 'number' ? `${item.price.toLocaleString()}원` : item.price}
                 </div>
@@ -186,7 +186,7 @@ export default function InboundItemTable({
                       <img
                         src="/images/management/완료.png"
                         alt="완료"
-                        className="h-auto w-[71px] object-contain"
+                        className="h-auto w-[55px] object-contain"
                       />
                     </div>
                   ) : (

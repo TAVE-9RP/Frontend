@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import memberApi from '@/apis/member';
+import AlertModal from './AlertModal';
 
 export interface InventoryItem {
   itemId: number;
@@ -21,6 +22,8 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   useEffect(() => {
     if (isOpen) {
@@ -64,6 +67,28 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
+  };
+
+  const handleAddClick = () => {
+    if (inventory.length === 0) {
+      setAlertModal({
+        isOpen: true,
+        message: '재고가 존재하지 않습니다.\n입고 직원에게 입고를 먼저 요청해주세요.',
+      });
+      return;
+    }
+
+    if (selectedIds.length === 0) {
+      setAlertModal({
+        isOpen: true,
+        message: '추가할 재고를 선택해주세요.',
+      });
+      return;
+    }
+
+    const itemsToAdd = inventory.filter((item) => selectedIds.includes(item.itemId));
+    onAdd(itemsToAdd);
+    onClose();
   };
 
   return (
@@ -177,17 +202,19 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
         <div className="flex-1" />
         <div className="mt-[40px] flex justify-end">
           <button
-            onClick={() => {
-              const itemsToAdd = inventory.filter((item) => selectedIds.includes(item.itemId));
-              onAdd(itemsToAdd);
-              onClose();
-            }}
+            onClick={handleAddClick}
             className="h-[50px] w-[120px] rounded-[10px] bg-mainColor-blue600 font-pretendard text-[19px] font-bold text-white shadow-md hover:bg-mainColor-blue700"
           >
             추가하기
           </button>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ ...alertModal, isOpen: false })}
+        message={alertModal.message}
+      />
     </div>
   );
 };

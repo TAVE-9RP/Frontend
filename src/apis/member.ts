@@ -92,7 +92,6 @@ memberApi.interceptors.response.use(
         }
 
         processQueue(err, null);
-        localStorage.removeItem('accessToken');
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

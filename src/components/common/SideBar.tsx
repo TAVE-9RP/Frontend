@@ -25,6 +25,8 @@ export default function SideBar() {
   const [memberName, setMemberName] = useState<string>('');
   const [memberPosition, setMemberPosition] = useState<string>('');
   const [alertModal, setAlertModal] = useState({ isOpen: false, message: '', redirectPath: '' });
+  // 중복 클릭 방지를 위한 상태 추가
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -85,15 +87,6 @@ export default function SideBar() {
   ];
 
   const isManagementUser = departmentFromToken === 'MANAGEMENT';
-  const managementPaths = [
-    '/project-management',
-    '/project-create',
-    '/project/',
-    '/inbound-task',
-    '/outbound-task',
-    '/hrmanagement',
-    '/management-home',
-  ];
 
   const renderSubMenus = (
     subMenus: { text: string; path: string }[],
@@ -145,18 +138,8 @@ export default function SideBar() {
   };
 
   return (
-    <aside className="sticky top-0 z-50 flex h-screen min-w-[220px] max-w-[220px] w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
-      {/* AlertModal이 메인 영역(left-[220px]~)만 덮는 구조라, 사이드바에도 동일한 딤/클릭차단 오버레이를 추가 */}
-      {alertModal.isOpen && (
-        <div
-          className="fixed left-0 top-0 z-[9998] h-screen w-[220px] bg-black/50"
-          aria-hidden="true"
-        />
-      )}
-      {/* 로그아웃 완료 모달이 떠 있을 때, 사이드바 영역은 클릭 불가 처리 */}
-      <div
-        className={`flex h-full flex-col ${alertModal.isOpen ? 'pointer-events-none' : ''}`}
-      >
+    <aside className="sticky top-0 z-50 flex h-screen w-[220px] min-w-[220px] max-w-[220px] flex-shrink-0 flex-col overflow-hidden border-r border-greyColor-grey200 bg-white">
+      <div className={`flex h-full flex-col ${alertModal.isOpen ? 'pointer-events-none' : ''}`}>
         <button
           onClick={() => {
             if (isManagementUser) {
@@ -241,14 +224,46 @@ export default function SideBar() {
           );
         })}
 
-        <div className="mt-auto mb-[20px] flex flex-col items-center">
+        <div className="mb-[20px] mt-auto flex flex-col items-center">
           <button
+            disabled={isLoggingOut}
             onClick={async () => {
+              if (isLoggingOut) return;
+              setIsLoggingOut(true);
               try {
                 const response = await postLogout();
                 if (response.isSuccess) {
                   localStorage.removeItem('accessToken');
-                  setAlertModal({ isOpen: true, message: '로그아웃 되었습니다', redirectPath: '/' });
+                  setAlertModal({
+                    isOpen: true,
+                    message: '로그아웃 되었습니다',
+                    redirectPath: '/',
+                  });
+                } else {
+                  if (response.status === 401) {
+                    localStorage.removeItem('accessToken');
+                    setAlertModal({
+                      isOpen: true,
+                      message: '로그아웃 되었습니다',
+                      redirectPath: '/',
+                    });
+                  } else {
+                    setAlertModal({
+                      isOpen: true,
+                      message: '로그아웃에 실패했습니다.',
+                      redirectPath: '',
+                    });
+                  }
+                }
+              } catch (error: any) {
+                console.error('로그아웃 실패:', error);
+                if (error?.response?.status === 401) {
+                  localStorage.removeItem('accessToken');
+                  setAlertModal({
+                    isOpen: true,
+                    message: '로그아웃 되었습니다',
+                    redirectPath: '/',
+                  });
                 } else {
                   setAlertModal({
                     isOpen: true,
@@ -256,19 +271,14 @@ export default function SideBar() {
                     redirectPath: '',
                   });
                 }
-              } catch (error) {
-                console.error('로그아웃 실패:', error);
-                setAlertModal({
-                  isOpen: true,
-                  message: '로그아웃에 실패했습니다.',
-                  redirectPath: '',
-                });
+              } finally {
+                setIsLoggingOut(false);
               }
             }}
-            className="flex items-center gap-[10px] text-left"
+            className={`flex items-center gap-[10px] text-left ${isLoggingOut ? 'cursor-not-allowed opacity-50' : ''}`}
           >
             <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-              로그아웃
+              {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
             </span>
             <img src="/images/logout.png" alt="arrow" width={16} height={16} />
           </button>
