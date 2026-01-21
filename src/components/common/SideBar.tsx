@@ -25,6 +25,8 @@ export default function SideBar() {
   const [memberName, setMemberName] = useState<string>('');
   const [memberPosition, setMemberPosition] = useState<string>('');
   const [alertModal, setAlertModal] = useState({ isOpen: false, message: '', redirectPath: '' });
+  // 중복 클릭 방지를 위한 상태 추가
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -85,15 +87,6 @@ export default function SideBar() {
   ];
 
   const isManagementUser = departmentFromToken === 'MANAGEMENT';
-  const managementPaths = [
-    '/project-management',
-    '/project-create',
-    '/project/',
-    '/inbound-task',
-    '/outbound-task',
-    '/hrmanagement',
-    '/management-home',
-  ];
 
   const renderSubMenus = (
     subMenus: { text: string; path: string }[],
@@ -233,10 +226,38 @@ export default function SideBar() {
 
         <div className="mb-[20px] mt-auto flex flex-col items-center">
           <button
+            disabled={isLoggingOut}
             onClick={async () => {
+              if (isLoggingOut) return;
+              setIsLoggingOut(true);
               try {
                 const response = await postLogout();
                 if (response.isSuccess) {
+                  localStorage.removeItem('accessToken');
+                  setAlertModal({
+                    isOpen: true,
+                    message: '로그아웃 되었습니다',
+                    redirectPath: '/',
+                  });
+                } else {
+                  if (response.status === 401) {
+                    localStorage.removeItem('accessToken');
+                    setAlertModal({
+                      isOpen: true,
+                      message: '로그아웃 되었습니다',
+                      redirectPath: '/',
+                    });
+                  } else {
+                    setAlertModal({
+                      isOpen: true,
+                      message: '로그아웃에 실패했습니다.',
+                      redirectPath: '',
+                    });
+                  }
+                }
+              } catch (error: any) {
+                console.error('로그아웃 실패:', error);
+                if (error?.response?.status === 401) {
                   localStorage.removeItem('accessToken');
                   setAlertModal({
                     isOpen: true,
@@ -250,19 +271,14 @@ export default function SideBar() {
                     redirectPath: '',
                   });
                 }
-              } catch (error) {
-                console.error('로그아웃 실패:', error);
-                setAlertModal({
-                  isOpen: true,
-                  message: '로그아웃에 실패했습니다.',
-                  redirectPath: '',
-                });
+              } finally {
+                setIsLoggingOut(false);
               }
             }}
-            className="flex items-center gap-[10px] text-left"
+            className={`flex items-center gap-[10px] text-left ${isLoggingOut ? 'cursor-not-allowed opacity-50' : ''}`}
           >
             <span className="font-pretendard text-[17px] font-normal leading-normal text-greyColor-grey600">
-              로그아웃
+              {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
             </span>
             <img src="/images/logout.png" alt="arrow" width={16} height={16} />
           </button>

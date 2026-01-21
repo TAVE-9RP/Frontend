@@ -213,7 +213,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
                   <img
                     src="/images/management/완료.png"
                     alt="완료"
-                    className="h-auto w-[71px] object-contain"
+                    className="h-auto w-[55px] object-contain"
                   />
                 </div>
               ) : (
