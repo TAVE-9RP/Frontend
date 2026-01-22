@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import SideBar from '../../../components/common/SideBar';
 import SearchBar from '../../../components/common/SearchBar';
 import TabToggle from '../../../components/common/TabToggle';
 import EmployeeListTable from '../../../components/common/EmployeeListTable';
@@ -36,7 +35,6 @@ export default function HRManagementPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
       <main className="flex flex-1 flex-col items-center">
         <div className="flex w-full flex-col items-center pt-10">
           <div className="w-[1200px]">

@@ -28,6 +28,7 @@ import InventoryHome from './pages/inventory-service/InventoryHome';
 import LogisticsHome from './pages/logistics-service/LogisticsHome';
 import ManagementHome from './pages/management-service/ManagementHome';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import RootLayout from './components/common/RootLayout';
 
 const queryClient = new QueryClient();
 
@@ -45,143 +46,145 @@ function App() {
         <Route path="signupsuccess" element={<SignupSuccessPage />} />
         <Route path="signupfailure" element={<SignupFailurePage />} />
         <Route path="login" element={<LoginPage />} />
-        <Route
-          path="/project-management"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <ProjectManagementListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/project-create"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <ProjectCreatePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/project/:id"
-          element={
-            <ProtectedRoute>
-              <ProjectEditPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inbound-task"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <InboundTaskListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inbound-task/:inventoryId"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <InboundTaskDetailPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/outbound-task"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <OutBoundTaskListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/outbound-task/:logisticsId"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <OutboundTaskDetailPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventory-inbound-task"
-          element={
-            <ProtectedRoute>
-              <InventoryInboundTaskListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventory-home"
-          element={
-            <ProtectedRoute>
-              <InventoryHome />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventory-inbound-task/:projectNumber"
-          element={
-            <ProtectedRoute>
-              <InventoryInboundTaskDetailPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/logistics-outbound-task"
-          element={
-            <ProtectedRoute>
-              <LogisticsOutboundTaskListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="logistics-home"
-          element={
-            <ProtectedRoute>
-              <LogisticsHome />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/logistics-outbound-task/:id"
-          element={
-            <ProtectedRoute>
-              <LogisticsOutboundTaskDetailPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="inventory-stock"
-          element={
-            <ProtectedRoute>
-              <InventoryStockListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventory-stock/:inventoryNumber"
-          element={
-            <ProtectedRoute>
-              <InventoryDetailPage />
-            </ProtectedRoute>
-          }
-        />
 
-        <Route
-          path="hrmanagement"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <HRManagementPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="management-home"
-          element={
-            <ProtectedRoute requiredDepartment="MANAGEMENT">
-              <ManagementHome />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<RootLayout />}>
+          <Route
+            path="/project-management"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <ProjectManagementListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project-create"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <ProjectCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectEditPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inbound-task"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <InboundTaskListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inbound-task/:inventoryId"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <InboundTaskDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/outbound-task"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <OutBoundTaskListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/outbound-task/:logisticsId"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <OutboundTaskDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory-inbound-task"
+            element={
+              <ProtectedRoute>
+                <InventoryInboundTaskListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory-home"
+            element={
+              <ProtectedRoute>
+                <InventoryHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory-inbound-task/:projectNumber"
+            element={
+              <ProtectedRoute>
+                <InventoryInboundTaskDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics-outbound-task"
+            element={
+              <ProtectedRoute>
+                <LogisticsOutboundTaskListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="logistics-home"
+            element={
+              <ProtectedRoute>
+                <LogisticsHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics-outbound-task/:id"
+            element={
+              <ProtectedRoute>
+                <LogisticsOutboundTaskDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="inventory-stock"
+            element={
+              <ProtectedRoute>
+                <InventoryStockListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory-stock/:inventoryNumber"
+            element={
+              <ProtectedRoute>
+                <InventoryDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="hrmanagement"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <HRManagementPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="management-home"
+            element={
+              <ProtectedRoute requiredDepartment="MANAGEMENT">
+                <ManagementHome />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
       </Routes>
     </QueryClientProvider>
   );

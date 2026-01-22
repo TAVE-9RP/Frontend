@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SideBar from '@/components/common/SideBar';
 import DashboardChart from '@/components/dashboard/DashboardChart';
 import ProjectListTable from '@/components/dashboard/ProjectListTable';
 import DashboardTab from '@/components/dashboard/DashboardTab';
@@ -118,7 +117,6 @@ export default function InventoryHome() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-greyColor-grey100">
-      <SideBar />
 
       <main className="flex flex-1 flex-col items-center overflow-y-auto">
         <div className="flex w-full flex-col items-center pt-[60px]">

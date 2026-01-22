@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import AssignmentChip from '../../../components/common/AssignmentChip';
@@ -267,7 +266,6 @@ export default function ProjectEditPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
 
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
         <div className="flex min-h-[1300px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">

@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import AssignmentChip from '../../../components/common/AssignmentChip';
@@ -204,8 +203,6 @@ export default function ProjectCreatePage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
-
       <main className="flex flex-1 justify-center pb-10 pt-[70px]">
         <div className="flex min-h-[1300px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-[0_0_10px_rgba(0,0,0,0.10)]">
           <h1 className="font-pretendard text-2xl font-bold text-black">프로젝트 생성하기</h1>
