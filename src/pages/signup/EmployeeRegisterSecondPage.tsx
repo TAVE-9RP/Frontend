@@ -121,7 +121,14 @@ export default function EmployeeRegisterSecondPage() {
           type="button"
           variant="primary"
           size="md"
-          onClick={() => navigate('/employeesignup')}
+          onClick={() => navigate('/employeesignup', {
+            state: {
+              name,
+              userId,
+              email,
+              password,
+            },
+          })}
           className="flex !h-[60px] !w-[180px] items-center justify-center whitespace-nowrap rounded-[10px] border-[#63656C] font-pretendard text-[24px] font-bold leading-none text-greyColor-grey500"
         >
           이전 단계
