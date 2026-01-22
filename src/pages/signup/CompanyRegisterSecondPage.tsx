@@ -189,7 +189,13 @@ export default function CompanyRegisterSecondPage() {
             type="button"
             variant="primary"
             size="md"
-            onClick={() => navigate('/companysignup')}
+            onClick={() => navigate('/companysignup', {
+              state: {
+                companyName: location.state?.companyName,
+                businessType: location.state?.businessType,
+                companyDescription: location.state?.companyDescription,
+              },
+            })}
             className="h-[50px] w-[180px] rounded-[10px] border-[#63656C] px-[10px] font-pretendard text-[24px] font-bold leading-none text-greyColor-grey500"
           >
             이전 단계

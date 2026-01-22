@@ -2,17 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { InputField } from '@/components/signup/InputField';
 import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function EmployeeRegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // location.state에서 이전에 입력한 값이 있으면 초기값으로 설정
+  const prevState = (location.state as {
+    name?: string;
+    userId?: string;
+    email?: string;
+    password?: string;
+  }) || {};
 
   const [formData, setFormData] = useState({
-    name: '',
-    userId: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
+    name: prevState.name || '',
+    userId: prevState.userId || '',
+    email: prevState.email || '',
+    password: prevState.password || '',
+    passwordConfirm: prevState.password || '',
   });
 
   const [errors, setErrors] = useState({
