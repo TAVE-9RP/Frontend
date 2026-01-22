@@ -92,6 +92,8 @@ memberApi.interceptors.response.use(
         }
 
         processQueue(err, null);
+        // 재발급 실패 시 못 쓰는 토큰을 즉시 삭제하여 시스템 정화
+        localStorage.removeItem('accessToken');
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -120,8 +122,13 @@ export const getMemberMe = async (): Promise<MemberMeResponse> => {
 };
 
 export const postLogout = async () => {
-  const response = await memberApi.post('/member/logout');
-  return response.data;
+  try {
+    const response = await memberApi.post('/member/logout');
+    return response.data;
+  } finally {
+    // 서버 응답과 관계없이 브라우저 토큰은 무조건 삭제
+    localStorage.removeItem('accessToken');
+  }
 };
 
 export default memberApi;
