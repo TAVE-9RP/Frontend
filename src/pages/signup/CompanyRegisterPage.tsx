@@ -2,18 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { InputField } from '@/components/signup/InputField';
 import Header from '@/components/signup/Header';
 import Button from '@/components/common/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { postCompany, uploadCompanyLogo } from '@/apis/company';
 import type { CompanyRegisterRequest } from '@/types/company';
 import AlertModal from '@/components/modals/AlertModal';
 
 export default function CompanyRegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // location.state에서 이전에 입력한 값이 있으면 초기값으로 설정
+  const prevState = (location.state as {
+    companyName?: string;
+    businessType?: string;
+    companyDescription?: string;
+  }) || {};
 
   const [formData, setFormData] = useState({
-    companyName: '',
-    businessType: '',
-    companyDescription: '',
+    companyName: prevState.companyName || '',
+    businessType: prevState.businessType || '',
+    companyDescription: prevState.companyDescription || '',
     companyLogo: null as File | null,
   });
 
@@ -79,7 +87,14 @@ export default function CompanyRegisterPage() {
         }
       }
 
-      navigate('/companysignup/step2', { state: { companyId } });
+      navigate('/companysignup/step2', {
+        state: {
+          companyId,
+          companyName: formData.companyName,
+          businessType: formData.businessType,
+          companyDescription: formData.companyDescription,
+        },
+      });
     } catch (error: any) {
       console.error('Registration error:', error);
       const errorMessage = error?.response?.data?.message || '등록 중 오류가 발생했습니다.';
