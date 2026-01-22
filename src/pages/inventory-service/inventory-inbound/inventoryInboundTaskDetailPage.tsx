@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import LargeInput from '../../../components/common/LargeInput';
 import StatusStepBar from '../../../components/common/StatusStepBar';
@@ -437,7 +436,6 @@ export default function InventoryInboundTaskDetailPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <h1 className="font-pretendard text-[24px] font-bold text-black">입고 업무 상세</h1>

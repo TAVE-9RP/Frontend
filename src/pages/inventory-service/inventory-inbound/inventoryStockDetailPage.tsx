@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import SideBar from '../../../components/common/SideBar';
 import BasicInput from '../../../components/common/BasicInput';
 import InventoryHistoryTable from '@/components/modals/InventoryHistoryTable';
 import StockEditConfirmModal from '@/components/modals/StockEditConfirmModal';
@@ -253,7 +252,6 @@ export default function InventoryStockDetailPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
       <main className="flex flex-1 justify-center pb-20 pt-[70px]">
         <div className="relative flex min-h-[1200px] w-[967px] flex-col rounded-[30px] bg-white p-[78px] shadow-xl">
           <header>

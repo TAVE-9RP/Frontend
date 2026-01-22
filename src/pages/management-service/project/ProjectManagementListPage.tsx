@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../../../components/common/SearchBar';
-import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import ProjectListTable from '../../../components/common/ProjectListTable';
 import { useNavigate } from 'react-router-dom';
@@ -142,7 +141,6 @@ export default function ProjectManagementListPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
       <main className="flex flex-1 flex-col items-center">
         <div className="pt-[60px] w-full flex flex-col items-center">
           <div className="w-[1200px]">

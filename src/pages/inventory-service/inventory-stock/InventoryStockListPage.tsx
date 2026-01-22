@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../../../components/common/SearchBar';
-import SideBar from '../../../components/common/SideBar';
 import InventoryStockListTable from '../../../components/common/InventoryStockListTable';
 import { getItems } from '../../../apis/item';
 
@@ -79,7 +78,6 @@ export default function InventoryStockListPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
 
       <main className="flex flex-1 flex-col items-center">
         <div className="flex w-full flex-col items-center pt-[60px]">

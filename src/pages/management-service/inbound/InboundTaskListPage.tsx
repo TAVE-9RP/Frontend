@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../../../components/common/SearchBar';
-import SideBar from '../../../components/common/SideBar';
 import ProjectStatusButton from '../../../components/common/ProjectStatusButton';
 import TaskListTable from '../../../components/common/TaskListTable';
 import { getInventoryList } from '../../../apis/inventory';
@@ -195,7 +194,6 @@ export default function InboundTaskListPage() {
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">
-      <SideBar />
 
       <main className="flex flex-1 flex-col items-center">
         <div className="flex w-full flex-col items-center pt-[60px]">
