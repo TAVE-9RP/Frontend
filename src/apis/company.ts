@@ -21,9 +21,9 @@ export const postCompany = async (
   return response.data;
 };
 
-// memberApi 대신 axios 사용
+// memberApi 대신 axios 사용 (토큰 없이 호출)
 export const getCompanies = async (keyword: string = ''): Promise<CompanySearchResponse> => {
-  const response = await memberApi.get(`/companies`, {
+  const response = await axios.get(`${BASE_URL}/companies`, {
     params: { keyword },
   });
   return response.data;
