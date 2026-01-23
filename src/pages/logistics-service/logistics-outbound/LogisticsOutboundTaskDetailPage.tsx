@@ -302,7 +302,21 @@ export default function LogisticsOutboundTaskDetailPage() {
       }
     } catch (error: any) {
       console.error('승인 요청 프로세스 오류:', error);
-      setAlertModal({ isOpen: true, message: error.message || '처리 중 오류가 발생했습니다.' });
+      const errorStatus = error?.response?.status;
+      const errorMessage = error?.response?.data?.message || '';
+
+      if (
+        errorStatus === 403 ||
+        errorStatus === 401 ||
+        errorMessage.includes('접근 권한') ||
+        errorMessage.includes('권한이 없음') ||
+        errorMessage.includes('해당 업무에 접근')
+      ) {
+        setIsApprovalModalOpen(false);
+        setAlertModal({ isOpen: true, message: '해당 업무에 대한 접근 권한이 없습니다.' });
+      } else {
+        setAlertModal({ isOpen: true, message: error?.message || '처리 중 오류가 발생했습니다.' });
+      }
     }
   };
 

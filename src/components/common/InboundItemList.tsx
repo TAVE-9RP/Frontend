@@ -30,14 +30,29 @@ const InboundItemList: React.FC<InboundItemListProps> = ({ status, items = [] })
   return (
     <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
       <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-        {columns.map((col, idx) => (
-          <div
-            key={idx}
-            className={`${col.width} flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black last:border-r-0`}
-          >
-            {col.label}
-          </div>
-        ))}
+        {columns.map((col, idx) => {
+          const isFirstColumn = col.label === '재고 번호';
+          const isSecondColumn = col.label === '물품명';
+          
+          return (
+            <div
+              key={idx}
+              className={`${col.width} flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black last:border-r-0 ${isFirstColumn || isSecondColumn ? 'overflow-hidden' : ''}`}
+            >
+              {isFirstColumn ? (
+                <div className="overflow-x-auto max-w-full px-2">
+                  <span className="whitespace-nowrap inline-block flex-shrink-0">{col.label}</span>
+                </div>
+              ) : isSecondColumn ? (
+                <div className="overflow-x-auto max-w-[160px] px-2">
+                  {col.label}
+                </div>
+              ) : (
+                col.label
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {!isTaskAssignment && !hasItems && (
@@ -53,9 +68,11 @@ const InboundItemList: React.FC<InboundItemListProps> = ({ status, items = [] })
             key={item.id}
             className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-white transition-colors last:border-b-0"
           >
-            <div className="flex h-full w-[150px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] text-black overflow-hidden">
-              <div className="overflow-x-auto max-w-[150px] flex items-center px-2">
-                {item.stockNumber}
+            <div className="flex h-full w-[150px] items-center justify-center border-r-[2px] border-greyColor-grey200 overflow-hidden">
+              <div className="overflow-x-auto max-w-full px-2">
+                <span className="font-pretendard text-[14px] text-black whitespace-nowrap flex-shrink-0 inline-block">
+                  {item.stockNumber}
+                </span>
               </div>
             </div>
             <div className="flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 overflow-hidden">

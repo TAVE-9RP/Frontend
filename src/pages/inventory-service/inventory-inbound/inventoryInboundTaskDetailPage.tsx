@@ -262,7 +262,21 @@ export default function InventoryInboundTaskDetailPage() {
       }
     } catch (error: any) {
       console.error('처리 실패:', error);
-      setAlertModal({ isOpen: true, message: '처리 중 오류가 발생했습니다.' });
+      
+      const errorMessage = error?.response?.data?.message || '';
+      const errorStatus = error?.response?.status;
+
+      if (
+        errorStatus === 403 ||
+        errorMessage.includes('접근 권한') ||
+        errorMessage.includes('권한이 없음') ||
+        errorMessage.includes('해당 업무에 접근')
+      ) {
+        setIsApprovalModalOpen(false);
+        setAlertModal({ isOpen: true, message: '해당 업무에 대한 접근 권한이 없습니다.' });
+      } else {
+        setAlertModal({ isOpen: true, message: '처리 중 오류가 발생했습니다.' });
+      }
     }
   };
 
@@ -475,7 +489,7 @@ export default function InventoryInboundTaskDetailPage() {
 
   const isPending = taskDetail.status === 'APPROVAL_PENDING';
   const isInProgress = taskDetail.status === 'IN_PROGRESS';
-  const isDisabled = isInProgress || isFullyDone;
+  const isDisabled = isPending || isInProgress || isFullyDone;
 
   const isTaskNameEmpty = !taskDetail.taskName || taskDetail.taskName.trim() === '';
   const isDescriptionEmpty = !taskDetail.description || taskDetail.description.trim() === '';

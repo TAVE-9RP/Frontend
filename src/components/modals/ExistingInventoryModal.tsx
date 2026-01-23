@@ -51,12 +51,7 @@ export default function ExistingInventoryModal({
 
       setIsLoading(true);
       try {
-        console.log('=== 기존 재고 목록 API 호출 ===');
-        console.log('keyword:', searchTerm);
         const response = await getItems(searchTerm);
-        console.log('=== 기존 재고 목록 API 응답 ===');
-        console.log('응답:', response);
-
         if (response.isSuccess && response.result) {
           const mappedData: InventoryItem[] = response.result.map((item: any) => ({
             id: item.code,
@@ -67,16 +62,11 @@ export default function ExistingInventoryModal({
             price: item.price,
           }));
           setInventoryData(mappedData);
-          console.log('=== 매핑된 데이터 ===');
-          console.log('mappedData:', mappedData);
         } else {
           setInventoryData([]);
         }
       } catch (error: any) {
         console.error('기존 재고 목록 가져오기 실패:', error);
-        console.error('에러 응답:', error?.response?.data);
-        console.error('에러 상태 코드:', error?.response?.status);
-        console.error('에러 메시지:', error?.message);
         setInventoryData([]);
       } finally {
         setIsLoading(false);
@@ -131,7 +121,7 @@ export default function ExistingInventoryModal({
           />
         </div>
 
-        <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto overflow-x-hidden border-2 border-greyColor-grey200">
+        <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto border-2 border-greyColor-grey200">
           {isLoading ? (
             <div className="flex h-[200px] items-center justify-center">
               <span className="font-pretendard text-[15px] text-greyColor-grey500">
@@ -139,29 +129,25 @@ export default function ExistingInventoryModal({
               </span>
             </div>
           ) : (
-            <table className="w-full border-collapse font-pretendard">
+            <table className="w-full table-fixed border-collapse font-pretendard">
               <thead className="sticky top-0 z-10 bg-greyColor-grey100">
                 <tr className="h-[40px] text-[15px] font-bold text-black">
-                  <th className="w-[40px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 text-center">
+                  <th className="w-[40px] border-b-2 border-r-2 border-greyColor-grey200 text-center">
                     선택
                   </th>
-                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left overflow-hidden">
-                    <div className="overflow-x-auto px-2">
-                      재고 번호
-                    </div>
+                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                    재고 번호
                   </th>
-                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 overflow-hidden text-left">
-                    <div className="overflow-x-auto px-2">
-                      물품명
-                    </div>
+                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                    물품명
                   </th>
-                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[160px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     수량
                   </th>
-                  <th className="w-[140px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[140px] border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     위치
                   </th>
-                  <th className="w-[160px] text-nowrap border-b-2 border-greyColor-grey200 px-4 text-left">
+                  <th className="w-[160px] border-b-2 border-greyColor-grey200 px-4 text-left">
                     물품 가격
                   </th>
                 </tr>
@@ -189,7 +175,7 @@ export default function ExistingInventoryModal({
                         className={`h-[40px] transition-colors ${isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'}`}
                       >
                         <td
-                          className={`w-[40px] border-r-2 border-greyColor-grey200 text-center ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`border-r-2 border-greyColor-grey200 text-center ${!isLastRow ? 'border-b-2' : ''}`}
                         >
                           <div className="flex justify-center">
                             <button
@@ -197,9 +183,7 @@ export default function ExistingInventoryModal({
                               className="flex h-10 w-10 items-center justify-center"
                             >
                               <img
-                                src={
-                                  isSelected ? '/images/checkbox_check.png' : '/images/checkbox.png'
-                                }
+                                src={isSelected ? '/images/checkbox_check.png' : '/images/checkbox.png'}
                                 alt="checkbox"
                                 className="h-5 w-5 object-contain"
                               />
@@ -207,31 +191,31 @@ export default function ExistingInventoryModal({
                           </div>
                         </td>
                         <td
-                          className={`w-[160px] border-r-2 border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`border-r-2 border-greyColor-grey200 ${!isLastRow ? 'border-b-2' : ''}`}
                         >
-                          <div className="overflow-x-auto max-w-[160px] px-2">
+                          <div className="scrollbar-hide max-w-[160px] overflow-x-auto whitespace-nowrap px-4">
                             {item.id}
                           </div>
                         </td>
                         <td
-                          className={`w-[160px] border-r-2 border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`border-r-2 border-greyColor-grey200 ${!isLastRow ? 'border-b-2' : ''}`}
                         >
-                          <div className="overflow-x-auto max-w-[160px] px-2">
+                          <div className="scrollbar-hide max-w-[160px] overflow-x-auto whitespace-nowrap px-4">
                             {item.name}
                           </div>
                         </td>
                         <td
-                          className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
                         >
                           {item.quantity}
                         </td>
                         <td
-                          className={`w-[140px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
                         >
                           {item.location}
                         </td>
                         <td
-                          className={`w-[160px] border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
                         >
                           {item.price.toLocaleString()}
                         </td>
@@ -253,27 +237,16 @@ export default function ExistingInventoryModal({
                 setAlertModal({ isOpen: true, message: '입고 업무 ID가 없습니다.' });
                 return;
               }
-
               const selectedItems = inventoryData.filter((item) => selectedIds.includes(item.id));
-
               if (selectedItems.length === 0) {
                 setAlertModal({ isOpen: true, message: '추가할 재고를 선택해주세요.' });
                 return;
               }
-
               setIsAdding(true);
               try {
-                console.log('=== 재고 추가 API 호출 ===');
-                console.log('inventoryId:', inventoryId);
                 const itemIds = selectedItems.map((item) => item.itemId);
-                console.log('itemIds:', itemIds);
-
                 const response = await addInventoryItems(inventoryId, itemIds);
-                console.log('=== 재고 추가 API 응답 ===');
-                console.log('응답:', response);
-
                 if (response.isSuccess) {
-                  console.log('재고 추가 성공:', response.result);
                   onAdd(selectedItems);
                   setSelectedIds([]);
                   onClose();
@@ -281,14 +254,12 @@ export default function ExistingInventoryModal({
                   setAlertModal({ isOpen: true, message: '재고 추가에 실패했습니다.' });
                 }
               } catch (error: any) {
-                console.error('재고 추가 실패:', error);
-                console.error('에러 응답:', error?.response?.data);
-
-                const errorMessage = error?.response?.data?.message || error?.message || '';
+                const errorMessage = error?.response?.data?.message || '';
                 const errorStatus = error?.response?.status;
-
+                
                 if (
                   errorStatus === 403 ||
+                  errorStatus === 401 ||
                   errorMessage.includes('접근 권한') ||
                   errorMessage.includes('권한이 없음') ||
                   errorMessage.includes('해당 업무에 접근')
@@ -300,7 +271,7 @@ export default function ExistingInventoryModal({
                 } else {
                   setAlertModal({
                     isOpen: true,
-                    message: `재고 추가 실패: ${errorMessage || '알 수 없는 오류가 발생했습니다.'}`,
+                    message: `재고 추가 실패: ${errorMessage || '오류가 발생했습니다.'}`,
                   });
                 }
               } finally {
@@ -324,6 +295,7 @@ export default function ExistingInventoryModal({
         onClose={() => setAlertModal({ isOpen: false, message: '' })}
         message={alertModal.message}
       />
+
     </div>,
     document.body,
   );

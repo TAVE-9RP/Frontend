@@ -359,9 +359,11 @@ export default function InboundTaskDetailPage() {
                 {taskDetail.status === 'TASK_ASSIGNMENT' || taskDetail.inventoryStatus === 'REJECT' ? (
                   <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
                     <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
-                      <div className="w-[150px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
-                        재고 번호
-                      </div>
+                  <div className="w-[150px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black overflow-hidden">
+                    <div className="overflow-x-auto max-w-[130px] px-2">
+                      재고 번호
+                    </div>
+                  </div>
                       <div className="w-[180px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
                         물품명
                       </div>

@@ -119,19 +119,17 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
         </div>
 
         <div className="mt-[40px] max-h-[300px] w-full overflow-y-auto border-[2px] border-greyColor-grey200">
-          <table className="w-full border-collapse text-center font-pretendard">
+          <table className="w-full border-collapse text-center font-pretendard table-fixed">
             <thead className="sticky top-0 z-10 bg-greyColor-grey100">
               <tr className="h-[40px] text-[14px] font-bold text-black">
                 <th className="w-[40px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
                   선택
                 </th>
                 <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
-                  재고 번호
+                  <div className="px-2">재고 번호</div>
                 </th>
-                <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200 overflow-hidden">
-                  <div className="overflow-x-auto px-2">
-                    물품명
-                  </div>
+                <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
+                  <div className="px-2">물품명</div>
                 </th>
                 <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
                   수량
@@ -176,17 +174,17 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
                         </button>
                       </td>
                       <td
-                        className={`border-r-[2px] border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                        className={`border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
                       >
-                        <div className="overflow-x-auto max-w-full px-2">
+                        <div className="overflow-x-auto px-2 whitespace-nowrap scrollbar-hide">
                           {item.code}
                         </div>
                       </td>
                       <td
-                        className={`border-r-[2px] border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                        className={`border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
                       >
-                        <div className="overflow-x-auto max-w-[150px] px-2">
-                          <span className="whitespace-nowrap">{item.name}</span>
+                        <div className="overflow-x-auto px-2 whitespace-nowrap scrollbar-hide">
+                          {item.name}
                         </div>
                       </td>
                       <td
@@ -221,6 +219,7 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
         onClose={() => setAlertModal({ ...alertModal, isOpen: false })}
         message={alertModal.message}
       />
+      
     </div>
   );
 };
