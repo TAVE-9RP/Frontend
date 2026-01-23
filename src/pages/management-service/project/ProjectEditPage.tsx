@@ -226,7 +226,6 @@ export default function ProjectEditPage() {
       return;
     }
 
-    // 목표 완료일 검증
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     

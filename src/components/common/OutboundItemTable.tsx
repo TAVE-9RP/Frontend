@@ -39,27 +39,37 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   };
 
   const handleTargetQtyChange = async (item: ExtendedOutboundItem, value: string) => {
+    if (value.includes('-')) {
+      setAlertModal({
+        isOpen: true,
+        message: '목표 출하 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
     const rawValue = value.replace(/[^0-9]/g, '');
     const inputQty = rawValue === '' ? 0 : Number(rawValue);
 
-    if (inputQty > 0) {
-      try {
-        const response = await getItemDetail(item.itemId);
-        if (response.isSuccess && response.result) {
-          const currentStock = response.result.quantity;
+    if (inputQty === 0) {
+      onTargetQuantityChange?.(item.logisticsItemId, 0);
+      return;
+    }
 
-          if (inputQty > currentStock) {
-            setAlertModal({
-              isOpen: true,
-              message: `목표 출하 수량은 현재 재고보다 작거나 같아야 합니다.\n현재 재고: ${currentStock}개`,
-            });
-            onTargetQuantityChange?.(item.logisticsItemId, 0);
-            return;
-          }
+    try {
+      const response = await getItemDetail(item.itemId);
+      if (response.isSuccess && response.result) {
+        const currentStock = response.result.quantity;
+
+        if (inputQty > currentStock) {
+          setAlertModal({
+            isOpen: true,
+            message: `목표 출하 수량은 현재 재고보다 작거나 같아야 합니다.\n현재 재고: ${currentStock}개`,
+          });
+          return;
         }
-      } catch (error) {
-        console.error('재고 정보 조회 실패:', error);
       }
+    } catch (error) {
+      console.error('재고 정보 조회 실패:', error);
     }
 
     onTargetQuantityChange?.(item.logisticsItemId, inputQty);
