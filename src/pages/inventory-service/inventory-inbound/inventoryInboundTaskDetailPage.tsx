@@ -64,7 +64,7 @@ const mapStatusForStepBar = (status: string): string => {
     case 'PENDING':
       return 'APPROVAL_PENDING';
     case 'REJECT':
-      return 'APPROVAL_PENDING'; // REJECT는 StatusStepBar에 없으므로 APPROVAL_PENDING으로 매핑
+      return 'TASK_ASSIGNMENT'; // REJECT는 업무 할당 단계로 매핑
     case 'IN_PROGRESS':
       return 'IN_PROGRESS';
     case 'COMPLETED':
@@ -424,7 +424,7 @@ export default function InventoryInboundTaskDetailPage() {
 
   const isPending = taskDetail.status === 'APPROVAL_PENDING';
   const isInProgress = taskDetail.status === 'IN_PROGRESS';
-  const isDisabled = isPending || isInProgress || isFullyDone;
+  const isDisabled = isInProgress || isFullyDone;
 
   const isTaskNameEmpty = !taskDetail.taskName || taskDetail.taskName.trim() === '';
   const isDescriptionEmpty = !taskDetail.description || taskDetail.description.trim() === '';
@@ -432,7 +432,7 @@ export default function InventoryInboundTaskDetailPage() {
     (item) => !item.targetQty || item.targetQty === '' || item.targetQty === '-',
   );
   const canRequestApproval =
-    !isPending && items.length > 0 && !isTaskNameEmpty && !isDescriptionEmpty && !hasEmptyTargetQty;
+    taskDetail.status === 'TASK_ASSIGNMENT' && items.length > 0 && !isTaskNameEmpty && !isDescriptionEmpty && !hasEmptyTargetQty;
 
   return (
     <div className="flex min-h-screen w-full bg-greyColor-grey100">

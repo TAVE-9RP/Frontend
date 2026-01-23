@@ -108,7 +108,7 @@ const mapStatusForStepBar = (status: string): string => {
     case 'PENDING':
       return 'APPROVAL_PENDING';
     case 'REJECT':
-      return 'APPROVAL_PENDING'; // REJECT는 StatusStepBar에 없으므로 APPROVAL_PENDING으로 매핑
+      return 'TASK_ASSIGNMENT'; // REJECT는 업무 할당 단계로 매핑
     case 'IN_PROGRESS':
       return 'IN_PROGRESS';
     case 'COMPLETED':
@@ -325,8 +325,8 @@ export default function InboundTaskDetailPage() {
               <FormGroup label="입고 업무명" className="w-[390px]">
                 <BasicInput 
                   value={taskDetail.taskName || ''} 
-                  disabled={true} 
-                  readOnly 
+                  disabled={taskDetail.status !== 'TASK_ASSIGNMENT'} 
+                  readOnly={taskDetail.status !== 'TASK_ASSIGNMENT'}
                   placeholder=""
                 />
               </FormGroup>
@@ -347,8 +347,8 @@ export default function InboundTaskDetailPage() {
               <FormGroup label="업무 설명">
                 <LargeInput
                   value={taskDetail.description || ''}
-                  disabled={true}
-                  readOnly
+                  disabled={taskDetail.status !== 'TASK_ASSIGNMENT'}
+                  readOnly={taskDetail.status !== 'TASK_ASSIGNMENT'}
                   placeholder=""
                   className="h-[240px]"
                 />
@@ -356,7 +356,7 @@ export default function InboundTaskDetailPage() {
             </div>
             <div className="mb-[40px] mt-[80px]">
               <FormGroup label="입고 물품 목록">
-                {taskDetail.status === 'TASK_ASSIGNMENT' ? (
+                {taskDetail.status === 'TASK_ASSIGNMENT' || taskDetail.inventoryStatus === 'REJECT' ? (
                   <div className="w-full overflow-hidden rounded-t-[10px] border-[2px] border-greyColor-grey200">
                     <div className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-greyColor-grey100">
                       <div className="w-[150px] flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold text-black">
@@ -388,10 +388,10 @@ export default function InboundTaskDetailPage() {
           <div className="mt-[50px] flex justify-end">
             {taskDetail.status !== 'IN_PROGRESS' && taskDetail.status !== 'COMPLETED' && (
               <button
-                disabled={taskDetail.status !== 'APPROVAL_PENDING' || taskDetail.inventoryStatus === 'REJECT'}
+                disabled={taskDetail.status !== 'APPROVAL_PENDING'}
                 onClick={() => setIsModalOpen(true)}
                 className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                  taskDetail.status === 'APPROVAL_PENDING' && taskDetail.inventoryStatus !== 'REJECT'
+                  taskDetail.status === 'APPROVAL_PENDING'
                     ? 'cursor-pointer bg-mainColor-blue600'
                     : 'cursor-default bg-greyColor-grey300'
                 } `}

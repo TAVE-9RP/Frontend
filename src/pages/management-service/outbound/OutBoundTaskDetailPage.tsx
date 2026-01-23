@@ -132,7 +132,7 @@ const mapStatusForStepBar = (status: string): string => {
     case 'PENDING':
       return 'APPROVAL_PENDING';
     case 'REJECT':
-      return 'APPROVAL_PENDING'; // REJECT는 StatusStepBar에 없으므로 APPROVAL_PENDING으로 매핑
+      return 'TASK_ASSIGNMENT'; // REJECT는 업무 할당 단계로 매핑
     case 'IN_PROGRESS':
       return 'IN_PROGRESS';
     case 'COMPLETED':
@@ -372,8 +372,8 @@ export default function OutboundTaskDetailPage() {
               <FormGroup label="출하 업무명" className="w-[390px]">
                 <BasicInput
                   value={taskDetail.taskName || ''}
-                  disabled={true}
-                  readOnly
+                  disabled={taskDetail.status !== 'TASK_ASSIGNMENT'}
+                  readOnly={taskDetail.status !== 'TASK_ASSIGNMENT'}
                   placeholder=""
                   className="text-black"
                 />
@@ -397,8 +397,8 @@ export default function OutboundTaskDetailPage() {
                 <FormGroup label="운송수단">
                   <BasicInput
                     value={taskDetail.vehicle || ''}
-                    disabled={true}
-                    readOnly
+                    disabled={taskDetail.status !== 'TASK_ASSIGNMENT'}
+                    readOnly={taskDetail.status !== 'TASK_ASSIGNMENT'}
                     placeholder=""
                     className="text-black"
                   />
@@ -408,8 +408,8 @@ export default function OutboundTaskDetailPage() {
                 <FormGroup label="운송업체">
                   <BasicInput
                     value={taskDetail.carrier || ''}
-                    disabled={true}
-                    readOnly
+                    disabled={taskDetail.status !== 'TASK_ASSIGNMENT'}
+                    readOnly={taskDetail.status !== 'TASK_ASSIGNMENT'}
                     placeholder=""
                     className="text-black"
                   />
@@ -421,8 +421,8 @@ export default function OutboundTaskDetailPage() {
               <FormGroup label="업무 설명">
                 <LargeInput
                   value={taskDetail.description || ''}
-                  disabled={true}
-                  readOnly
+                  disabled={taskDetail.status !== 'TASK_ASSIGNMENT'}
+                  readOnly={taskDetail.status !== 'TASK_ASSIGNMENT'}
                   placeholder=""
                   className="h-[240px]"
                 />
@@ -439,14 +439,10 @@ export default function OutboundTaskDetailPage() {
           {taskDetail.logisticsStatus !== 'IN_PROGRESS' && (
             <div className="mt-[50px] flex justify-end">
               <button
-                disabled={
-                  taskDetail.status !== 'APPROVAL_PENDING' ||
-                  taskDetail.logisticsStatus === 'REJECT'
-                }
+                disabled={taskDetail.status !== 'APPROVAL_PENDING'}
                 onClick={() => setIsModalOpen(true)}
                 className={`flex h-[50px] w-[113px] items-center justify-center gap-[10px] rounded-[10px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                  taskDetail.status === 'APPROVAL_PENDING' &&
-                  taskDetail.logisticsStatus !== 'REJECT'
+                  taskDetail.status === 'APPROVAL_PENDING'
                     ? 'cursor-pointer bg-mainColor-blue600'
                     : 'cursor-default bg-greyColor-grey300'
                 }`}
