@@ -40,6 +40,14 @@ const FormGroup: React.FC<{ label: string; children: React.ReactNode; className?
   </div>
 );
 
+// 반려 상태를 업무 할당으로 표시하기 위한 매핑 함수
+const mapStatusForDisplay = (status: LogisticsStatus): LogisticsStatus => {
+  if (status === 'REJECT') {
+    return 'ASSIGNED';
+  }
+  return status;
+};
+
 export default function LogisticsOutboundTaskDetailPage() {
   const { id: logisticsId } = useParams<{ id: string }>();
 
@@ -415,7 +423,7 @@ export default function LogisticsOutboundTaskDetailPage() {
             <div className="mb-[70px] flex justify-between">
               <FormGroup label="진행 상태" className="w-fit">
                 <StatusStepBar
-                  currentStatus={taskDetail.logisticsStatus as LogisticsStatus}
+                  currentStatus={mapStatusForDisplay(taskDetail.logisticsStatus)}
                   type="outbound"
                 />
               </FormGroup>

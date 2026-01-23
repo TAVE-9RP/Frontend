@@ -30,7 +30,8 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
   const isTaskAssignment = currentStatus === 'ASSIGNED';
   const isApprovalPending = currentStatus === 'PENDING';
   const isInProgress = currentStatus === 'IN_PROGRESS';
-  const showHyphenInSelect = isTaskAssignment || isApprovalPending;
+  const isReject = currentStatus === 'REJECT';
+  const showHyphenInSelect = isTaskAssignment || isApprovalPending || isReject;
 
   const statusMap: Record<ItemProcessingStatus, string> = {
     NOT_STARTED: '미진행',
