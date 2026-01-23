@@ -390,16 +390,67 @@ export default function InventoryInboundTaskDetailPage() {
   };
 
   const handleTargetQtyChange = (id: string, value: string) => {
+    if (value === '') {
+      setItems((prevItems) =>
+        prevItems.map((item) => (item.id === id ? { ...item, targetQty: value } : item)),
+      );
+      return;
+    }
+
+    if (value.includes('-')) {
+      setAlertModal({
+        isOpen: true,
+        message: '목표 입고 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
+    const numericValue = value.replace(/[^0-9]/g, '');
+    const numValue = Number(numericValue);
+
+    if (numValue < 1) {
+      setAlertModal({
+        isOpen: true,
+        message: '목표 입고 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
     setItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? { ...item, targetQty: value } : item)),
+      prevItems.map((item) => (item.id === id ? { ...item, targetQty: numericValue } : item)),
     );
   };
 
   const handleInboundQtyChange = (id: string, value: string) => {
+    if (value === '') {
+      setItems((prevItems) =>
+        prevItems.map((item) => (item.id === id ? { ...item, inboundQty: value } : item)),
+      );
+      return;
+    }
+
+    if (value.includes('-')) {
+      setAlertModal({
+        isOpen: true,
+        message: '입고 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
+    const numericValue = value.replace(/[^0-9]/g, '');
+    const numValue = Number(numericValue);
+
+    if (numValue < 1) {
+      setAlertModal({
+        isOpen: true,
+        message: '입고 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
     const targetItem = items.find((item) => item.id === id);
 
     if (targetItem) {
-      const numValue = value === '' ? 0 : Number(value);
       const currentProcessed = targetItem.currentQty === '-' ? 0 : Number(targetItem.currentQty);
       const targetLimit = targetItem.targetQty === '-' ? 0 : Number(targetItem.targetQty);
       const remainingQty = targetLimit - currentProcessed;
@@ -418,7 +469,7 @@ export default function InventoryInboundTaskDetailPage() {
     }
 
     setItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? { ...item, inboundQty: value } : item)),
+      prevItems.map((item) => (item.id === id ? { ...item, inboundQty: numericValue } : item)),
     );
   };
 

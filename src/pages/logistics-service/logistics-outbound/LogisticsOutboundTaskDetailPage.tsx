@@ -158,6 +158,14 @@ export default function LogisticsOutboundTaskDetailPage() {
   };
 
   const handleTargetQuantityChange = (id: number, quantity: number) => {
+    if (quantity < 0) {
+      setAlertModal({
+        isOpen: true,
+        message: '목표 출하 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.logisticsItemId === id ? { ...item, targetedQuantity: quantity } : item,
@@ -166,6 +174,14 @@ export default function LogisticsOutboundTaskDetailPage() {
   };
 
   const handleProcessedQuantityChange = (id: number, quantity: number) => {
+    if (quantity < 1) {
+      setAlertModal({
+        isOpen: true,
+        message: '출하 수량은 1 이상이어야 합니다.',
+      });
+      return;
+    }
+
     setItems((prev) =>
       prev.map((item) =>
         item.logisticsItemId === id ? { ...item, tempProcessedQuantity: quantity } : item,
