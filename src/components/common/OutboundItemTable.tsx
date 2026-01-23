@@ -98,7 +98,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
           return (
             <div
               key={idx}
-              className={`${col.width} flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold ${headerTextColor} last:border-r-0`}
+              className={`${col.width} flex h-full items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] font-bold ${headerTextColor} last:border-r-0 flex-shrink-0`}
             >
               {col.label}
             </div>
@@ -122,7 +122,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               isSelected ? 'bg-mainColor-blue050' : 'bg-white hover:bg-greyColor-grey50'
             }`}
           >
-            <div className="flex min-h-[40px] w-[40px] items-center justify-center border-r-[2px] border-greyColor-grey200">
+            <div className="flex min-h-[40px] w-[40px] items-center justify-center border-r-[2px] border-greyColor-grey200 flex-shrink-0">
               {showHyphenInSelect ? (
                 <span className="font-pretendard text-[14px] text-greyColor-grey300">-</span>
               ) : (
@@ -143,21 +143,21 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               )}
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black overflow-hidden">
-              <div className="overflow-x-auto max-w-[97px] px-2">
+            {/* 재고 번호 영역 수정 */}
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center flex-shrink-0 overflow-hidden">
+              <div className="scrollbar-hide max-w-full overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[14px] text-black">
                 {item.itemCode || '-'}
               </div>
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 overflow-hidden">
-              <div className="overflow-x-auto max-w-[85px] px-2">
-                <span className="font-pretendard text-[14px] text-black whitespace-nowrap">
-                  {item.itemName || '-'}
-                </span>
+            {/* 물품명 영역 수정 */}
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 flex-shrink-0 overflow-hidden">
+              <div className="scrollbar-hide max-w-full overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[14px] text-black">
+                {item.itemName || '-'}
               </div>
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200">
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 flex-shrink-0">
               {isInProgress ? (
                 <input
                   type="text"
@@ -193,14 +193,14 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
             </div>
 
             <div
-              className={`flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] ${
+              className={`flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] flex-shrink-0 ${
                 isTaskAssignment || isApprovalPending ? 'text-greyColor-grey300' : 'text-black'
               }`}
             >
               {isTaskAssignment || isApprovalPending ? '-' : currentProcessedQtyFromApi}
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px]">
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] flex-shrink-0">
               {isEditable ? (
                 <input
                   type="text"
@@ -214,14 +214,14 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               )}
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black flex-shrink-0">
               {price.toLocaleString()}
             </div>
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black flex-shrink-0">
               {totalPrice ? totalPrice.toLocaleString() : '-'}
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center font-pretendard text-[14px]">
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center font-pretendard text-[14px] flex-shrink-0">
               {item.logisticsProcessingStatus === 'IN_PROGRESS' ? (
                 <img
                   src="/images/management/진행중.png"
@@ -255,6 +255,7 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
         onClose={() => setAlertModal({ isOpen: false, message: '' })}
         message={alertModal.message}
       />
+
     </div>
   );
 };
