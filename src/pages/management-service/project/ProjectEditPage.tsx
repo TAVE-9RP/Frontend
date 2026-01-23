@@ -7,6 +7,7 @@ import DropdownInput, { DropdownOption } from '../../../components/common/Dropdo
 import DateInput from '../../../components/common/DateInput';
 import ProjectCreateModal from '../../../components/modals/ProjectCreateModal';
 import ProjectSuccessModal from '@/components/modals/ProjectSuccessModal';
+import AlertModal from '@/components/modals/AlertModal';
 import { getProjectDetail } from '@/apis/admin';
 
 const MOCK_PROJECT_LIST = [
@@ -63,6 +64,7 @@ export default function ProjectEditPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
 
   useEffect(() => {
     const fetchProjectDetail = async () => {
@@ -216,9 +218,41 @@ export default function ProjectEditPage() {
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
 
   const handleCreateProject = () => {
-    if (isFormValid) {
-      setIsModalOpen(true);
+    if (!isFormValid) {
+      setAlertModal({
+        isOpen: true,
+        message: '모든 필수 정보를 입력해주세요.',
+      });
+      return;
     }
+
+    // 목표 완료일 검증
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const targetDate = new Date(
+      parseInt(formData.targetYear),
+      parseInt(formData.targetMonth) - 1,
+      parseInt(formData.targetDay)
+    );
+
+    if (isNaN(targetDate.getTime())) {
+      setAlertModal({
+        isOpen: true,
+        message: '유효한 날짜를 입력해주세요.',
+      });
+      return;
+    }
+
+    if (targetDate < today) {
+      setAlertModal({
+        isOpen: true,
+        message: '목표 완료일은 오늘 이후의 날짜여야 합니다.',
+      });
+      return;
+    }
+
+    setIsModalOpen(true);
   };
 
   const handleModalConfirm = () => {
@@ -453,6 +487,11 @@ export default function ProjectEditPage() {
         type="edit"
       />
       <ProjectSuccessModal isOpen={isSuccessModalOpen} onClose={handleSuccessClose} type="edit" />
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ isOpen: false, message: '' })}
+        message={alertModal.message}
+      />
     </div>
   );
 }

@@ -148,9 +148,40 @@ export default function ProjectCreatePage() {
   }, [formData, activeAssignment, inventoryManager, logisticsManager]);
 
   const handleCreateProject = () => {
-    if (isFormValid) {
-      setIsConfirmModalOpen(true);
+    if (!isFormValid) {
+      setAlertModal({
+        isOpen: true,
+        message: '모든 필수 정보를 입력해주세요.',
+      });
+      return;
     }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const targetDate = new Date(
+      parseInt(formData.targetYear),
+      parseInt(formData.targetMonth) - 1,
+      parseInt(formData.targetDay)
+    );
+
+    if (isNaN(targetDate.getTime())) {
+      setAlertModal({
+        isOpen: true,
+        message: '유효한 날짜를 입력해주세요.',
+      });
+      return;
+    }
+
+    if (targetDate < today) {
+      setAlertModal({
+        isOpen: true,
+        message: '목표 완료일은 오늘 이후의 날짜여야 합니다.',
+      });
+      return;
+    }
+
+    setIsConfirmModalOpen(true);
   };
 
   const handleModalConfirm = async () => {
@@ -368,12 +399,7 @@ export default function ProjectCreatePage() {
           <div className="mt-auto flex justify-end">
             <button
               onClick={handleCreateProject}
-              disabled={!isFormValid}
-              className={`flex h-[50px] w-[113px] items-center justify-center rounded-[10px] px-[15px] py-[5px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 ${
-                isFormValid
-                  ? 'cursor-pointer bg-mainColor-blue600 hover:bg-mainColor-blue700'
-                  : 'cursor-not-allowed bg-greyColor-grey300'
-              }`}
+              className="flex h-[50px] w-[113px] items-center justify-center rounded-[10px] px-[15px] py-[5px] font-pretendard text-[19px] font-bold text-white transition-colors duration-300 cursor-pointer bg-mainColor-blue600 hover:bg-mainColor-blue700"
             >
               생성하기
             </button>
