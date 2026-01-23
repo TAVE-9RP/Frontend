@@ -67,6 +67,11 @@ export const rejectLogistics = async (logisticsId: string | number) => {
   return response.data;
 };
 
+export const resetLogisticsToAssigned = async (logisticsId: string | number) => {
+  const response = await memberApi.patch(`/admin/logistics/${logisticsId}/reset-status`);
+  return response.data;
+};
+
 export const getAdminInfo = async () => {
   const response = await memberApi.get('/admin/info');
   return response.data;

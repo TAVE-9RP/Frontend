@@ -49,6 +49,11 @@ export const rejectInventory = async (inventoryId: string | number) => {
   return response.data;
 };
 
+export const resetInventoryToAssigned = async (inventoryId: string | number) => {
+  const response = await memberApi.patch(`/admin/inventory/${inventoryId}/reset-status`);
+  return response.data;
+};
+
 export const updateInventoryItemTargetQuantity = async (
   inventoryId: string | number,
   updates: { inventoryItemId: number; targetQuantity: number }[],
