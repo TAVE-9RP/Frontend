@@ -88,7 +88,7 @@ export default function InventoryStockListPage() {
 
             <div className="mt-[60px]">
               <SearchBar
-                placeholder="재고 번호 또는 물품명을 입력하세요."
+                placeholder=" 또는 물품명을 입력하세요."
                 value={searchTerm}
                 onChange={handleSearchChange}
               />

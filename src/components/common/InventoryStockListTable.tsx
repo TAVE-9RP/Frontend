@@ -67,11 +67,15 @@ export default function InventoryStockListTable({ data, isLoading }: InventorySt
                   className="flex cursor-pointer transition duration-150 hover:bg-mainColor-blue050"
                   onClick={() => handleRowClick(stock.id)}
                 >
-                  <td className={`${commonCellClasses} w-[16%] justify-center`}>
-                    <span className={bodyTextClasses}>{stock.inventoryNumber}</span>
+                  <td className={`${commonCellClasses} w-[16%] justify-center overflow-hidden`}>
+                    <div className="overflow-x-auto max-w-full px-2">
+                      <span className={bodyTextClasses}>{stock.inventoryNumber}</span>
+                    </div>
                   </td>
-                  <td className={`${commonCellClasses} w-[16%] justify-center`}>
-                    <span className={bodyTextClasses}>{stock.itemName}</span>
+                  <td className={`${commonCellClasses} w-[16%] justify-center overflow-hidden`}>
+                    <div className="overflow-x-auto max-w-[140px] px-2">
+                      <span className={`${bodyTextClasses} whitespace-nowrap`}>{stock.itemName}</span>
+                    </div>
                   </td>
                   <td className={`${commonCellClasses} w-[14%] justify-center`}>
                     <span className={bodyTextClasses}>{stock.quantity}</span>

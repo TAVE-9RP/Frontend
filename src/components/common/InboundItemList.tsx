@@ -53,13 +53,17 @@ const InboundItemList: React.FC<InboundItemListProps> = ({ status, items = [] })
             key={item.id}
             className="flex h-[40px] items-center border-b-[2px] border-greyColor-grey200 bg-white transition-colors last:border-b-0"
           >
-            <div className="flex h-full w-[150px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] text-black">
-              {item.stockNumber}
+            <div className="flex h-full w-[150px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] text-black overflow-hidden">
+              <div className="overflow-x-auto max-w-[150px] flex items-center px-2">
+                {item.stockNumber}
+              </div>
             </div>
-            <div className="flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
-              <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-pretendard text-[14px] text-black">
-                {item.itemName}
-              </span>
+            <div className="flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 overflow-hidden">
+              <div className="overflow-x-auto max-w-[160px] flex items-center px-2">
+                <span className="font-pretendard text-[14px] text-black whitespace-nowrap">
+                  {item.itemName}
+                </span>
+              </div>
             </div>
             <div
               className={`flex h-full w-[180px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[14px] ${item.currQty === '-' ? 'text-greyColor-grey300' : 'text-black'}`}

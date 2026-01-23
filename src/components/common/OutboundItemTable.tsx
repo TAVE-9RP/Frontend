@@ -143,14 +143,18 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               )}
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black">
-              {item.itemCode || '-'}
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center font-pretendard text-[14px] text-black overflow-hidden">
+              <div className="overflow-x-auto max-w-[97px] px-2">
+                {item.itemCode || '-'}
+              </div>
             </div>
 
-            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
-              <span className="block w-full whitespace-normal break-words text-center font-pretendard text-[14px] leading-snug text-black">
-                {item.itemName || '-'}
-              </span>
+            <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 overflow-hidden">
+              <div className="overflow-x-auto max-w-[85px] px-2">
+                <span className="font-pretendard text-[14px] text-black whitespace-nowrap">
+                  {item.itemName || '-'}
+                </span>
+              </div>
             </div>
 
             <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200">

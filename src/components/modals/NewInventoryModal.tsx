@@ -77,7 +77,19 @@ export default function NewInventoryModal({
       }
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || '';
-      if (errorMessage.includes('이미 존재하는') || error?.response?.status === 409) {
+      const errorStatus = error?.response?.status;
+      
+      if (
+        errorStatus === 403 ||
+        errorMessage.includes('접근 권한') ||
+        errorMessage.includes('권한이 없음') ||
+        errorMessage.includes('해당 업무에 접근')
+      ) {
+        setAlertModal({
+          isOpen: true,
+          message: '해당 업무에 대한 접근 권한이 없습니다.',
+        });
+      } else if (errorMessage.includes('이미 존재하는') || errorStatus === 409) {
         setAlertModal({
           isOpen: true,
           message: '이미 등록된 재고 번호입니다.\n번호를 다시 확인한 후 입력해주세요.',

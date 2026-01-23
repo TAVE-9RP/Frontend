@@ -113,12 +113,18 @@ export default function InboundItemTable({
                   )}
                 </div>
 
-                <div className={`${cell110} text-greyColor-grey900`}>{item.id}</div>
-                {/* 물품명: 표 사이즈 유지 + ... 제거 + 길면 줄바꿈 */}
-                <div className={`${cell110} px-2 text-greyColor-grey900`}>
-                  <span className="block w-full whitespace-normal break-words text-center leading-snug">
-                    {item.name}
-                  </span>
+                <div className={`${cell110} text-greyColor-grey900 overflow-hidden`}>
+                  <div className="overflow-x-auto max-w-full px-2">
+                    {item.id}
+                  </div>
+                </div>
+                {/* 물품명: 재고 번호처럼 스크롤 처리 */}
+                <div className={`${cell110} text-greyColor-grey900 overflow-hidden`}>
+                  <div className="overflow-x-auto max-w-[100px] px-2">
+                    <span className="whitespace-nowrap">
+                      {item.name}
+                    </span>
+                  </div>
                 </div>
                 <div className={`${cell110} text-greyColor-grey900`}>
                   {typeof item.price === 'number' ? `${item.price.toLocaleString()}원` : item.price}
