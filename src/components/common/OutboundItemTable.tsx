@@ -143,16 +143,14 @@ const OutboundItemTable: React.FC<OutboundItemListProps> = ({
               )}
             </div>
 
-            {/* 재고 번호 영역 수정 */}
             <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 text-center flex-shrink-0 overflow-hidden">
-              <div className="scrollbar-hide max-w-full overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[14px] text-black">
+              <div className="scrollbar-hide max-w-[85px] overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[14px] text-black flex-shrink-0 inline-block">
                 {item.itemCode || '-'}
               </div>
             </div>
 
-            {/* 물품명 영역 수정 */}
             <div className="flex min-h-[40px] w-[97px] items-center justify-center border-r-[2px] border-greyColor-grey200 flex-shrink-0 overflow-hidden">
-              <div className="scrollbar-hide max-w-full overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[14px] text-black">
+              <div className="scrollbar-hide max-w-[85px] overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[14px] text-black flex-shrink-0 inline-block">
                 {item.itemName || '-'}
               </div>
             </div>

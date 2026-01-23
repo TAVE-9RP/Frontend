@@ -86,10 +86,10 @@ const OutboundItemList: React.FC<OutboundItemListProps> = ({ status, items = [] 
                   rowIdx !== items.length - 1 ? 'border-b-[2px] border-greyColor-grey200' : ''
                 }`}
               >
-                <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 px-2">
-                  <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-pretendard text-[13px] text-black">
+                <div className="box-border flex h-full w-[130px] items-center justify-center border-r-[2px] border-greyColor-grey200 overflow-hidden">
+                  <div className="scrollbar-hide max-w-[110px] overflow-x-auto whitespace-nowrap px-2 font-pretendard text-[13px] text-black flex-shrink-0 inline-block">
                     {item.itemName}
-                  </span>
+                  </div>
                 </div>
                 <div className="box-border flex h-full w-[140px] items-center justify-center border-r-[2px] border-greyColor-grey200 font-pretendard text-[13px]">
                   <span style={{ color: isApprovalPending ? '#9CA3AF' : '#000000' }}>
