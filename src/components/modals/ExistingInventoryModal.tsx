@@ -145,11 +145,15 @@ export default function ExistingInventoryModal({
                   <th className="w-[40px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 text-center">
                     선택
                   </th>
-                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
-                    재고 번호
+                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left overflow-hidden">
+                    <div className="overflow-x-auto px-2">
+                      재고 번호
+                    </div>
                   </th>
-                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
-                    물품명
+                  <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 overflow-hidden text-left">
+                    <div className="overflow-x-auto px-2">
+                      물품명
+                    </div>
                   </th>
                   <th className="w-[160px] text-nowrap border-b-2 border-r-2 border-greyColor-grey200 px-4 text-left">
                     수량
@@ -203,14 +207,18 @@ export default function ExistingInventoryModal({
                           </div>
                         </td>
                         <td
-                          className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`w-[160px] border-r-2 border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-2' : ''}`}
                         >
-                          {item.id}
+                          <div className="overflow-x-auto max-w-[160px] px-2">
+                            {item.id}
+                          </div>
                         </td>
                         <td
-                          className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
+                          className={`w-[160px] border-r-2 border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-2' : ''}`}
                         >
-                          {item.name}
+                          <div className="overflow-x-auto max-w-[160px] px-2">
+                            {item.name}
+                          </div>
                         </td>
                         <td
                           className={`w-[160px] border-r-2 border-greyColor-grey200 px-4 ${!isLastRow ? 'border-b-2' : ''}`}
@@ -281,8 +289,9 @@ export default function ExistingInventoryModal({
 
                 if (
                   errorStatus === 403 ||
-                  errorMessage.includes('접근 권한 없음') ||
-                  errorMessage.includes('해당 업무에 접근할 수 없습니다')
+                  errorMessage.includes('접근 권한') ||
+                  errorMessage.includes('권한이 없음') ||
+                  errorMessage.includes('해당 업무에 접근')
                 ) {
                   setAlertModal({
                     isOpen: true,

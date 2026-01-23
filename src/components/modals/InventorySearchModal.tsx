@@ -128,8 +128,10 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
                 <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
                   재고 번호
                 </th>
-                <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
-                  물품명
+                <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200 overflow-hidden">
+                  <div className="overflow-x-auto px-2">
+                    물품명
+                  </div>
                 </th>
                 <th className="w-[160px] border-b-[2px] border-r-[2px] border-greyColor-grey200">
                   수량
@@ -174,14 +176,18 @@ const InventorySearchModal: React.FC<InventorySearchModalProps> = ({ isOpen, onC
                         </button>
                       </td>
                       <td
-                        className={`border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                        className={`border-r-[2px] border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-[2px]' : ''}`}
                       >
-                        {item.code}
+                        <div className="overflow-x-auto max-w-full px-2">
+                          {item.code}
+                        </div>
                       </td>
                       <td
-                        className={`border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
+                        className={`border-r-[2px] border-greyColor-grey200 overflow-hidden ${!isLastRow ? 'border-b-[2px]' : ''}`}
                       >
-                        {item.name}
+                        <div className="overflow-x-auto max-w-[150px] px-2">
+                          <span className="whitespace-nowrap">{item.name}</span>
+                        </div>
                       </td>
                       <td
                         className={`border-r-[2px] border-greyColor-grey200 ${!isLastRow ? 'border-b-[2px]' : ''}`}
