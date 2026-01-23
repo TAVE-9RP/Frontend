@@ -112,7 +112,7 @@ export default function InventoryHome() {
   }, []);
 
   const handleItemClick = (id: string) => {
-    navigate(`/inventory/${id}`);
+    navigate(`/inventory-inbound-task/${id}`);
   };
 
   return (
